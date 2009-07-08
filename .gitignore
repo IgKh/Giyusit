@@ -1,0 +1,6 @@
+build/*
+
+giyusit.properties
+*.gdp
+*.jar
+*.qm

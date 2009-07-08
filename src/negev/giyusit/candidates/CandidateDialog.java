@@ -1,0 +1,633 @@
+/*
+ * Copyright (c) 2008-2009 The Negev Project
+ *
+ * Redistribution and use in source and binary forms, with or without 
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * - Redistributions of source code must retain the above copyright notice, 
+ *   this list of conditions and the following disclaimer.
+ *
+ * - Redistributions in binary form must reproduce the above copyright notice, 
+ *   this list of conditions and the following disclaimer in the documentation 
+ *   and/or other materials provided with the distribution.
+ *
+ * - Neither the name of The Negev Project nor the names of its contributors 
+ *   may be used to endorse or promote products derived from this software 
+ *   without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE 
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+ * POSSIBILITY OF SUCH DAMAGE.
+ */
+package negev.giyusit.candidates;
+
+import com.trolltech.qt.core.*;
+import com.trolltech.qt.gui.*;
+
+import java.text.MessageFormat;
+
+import negev.giyusit.db.LookupTableModel;
+import negev.giyusit.util.CitiesCompleter;
+import negev.giyusit.util.DBColumnCompleter;
+import negev.giyusit.util.DBValuesTranslator;
+import negev.giyusit.util.DirtyStateWatcher;
+import negev.giyusit.util.MessageDialog;
+import negev.giyusit.util.RowSetModel;
+import negev.giyusit.util.RowSet;
+import negev.giyusit.util.Row;
+import negev.giyusit.widgets.DataGrid;
+import negev.giyusit.widgets.DialogField;
+
+public class CandidateDialog extends QDialog {
+	
+	// Dialog Widgets
+	private QLabel id;
+	private QLineEdit nationalId;
+	private QLineEdit firstName;
+	private QLineEdit lastName;
+	private QLineEdit gender;
+	private QLineEdit address;
+	private QLineEdit city;
+	private QLineEdit zipCode;
+	private QLineEdit homePhone;
+	private QLineEdit cellPhone;
+	private QLineEdit email;
+	private QCheckBox wrongDetailsInd;
+		
+	private QLabel status;
+	private QLineEdit school;
+	private QLineEdit origin;
+	private QComboBox owner;
+	private QComboBox recruiter;
+	private QCheckBox signedDahashInd;
+	private QCheckBox canceledDahashInd;
+	private QTextEdit notes;
+		
+	// Buttons
+	private QPushButton candidateStatusesButton;
+	
+	private QPushButton saveButton;
+	private QPushButton resetButton;
+	private QPushButton closeButton;
+	
+	// Properties
+	private int candidateId;
+	private boolean dbModified;
+	
+	private LookupTableModel staffModel;
+	
+	private DirtyStateWatcher watcher;
+		
+	public CandidateDialog(QWidget parent, int id) {
+		super(parent);
+		
+		this.candidateId = id;
+		this.dbModified = false;
+		
+		watcher = new DirtyStateWatcher(this);
+		watcher.dirtyChanged.connect(this, "dirtyChanged(Boolean)");
+		
+		initUI();
+		initComboModelsAndCompleters();
+		
+		updateWindowTitle();
+		loadCandidateData();
+	}
+	
+	public boolean isDbModified() {
+		return dbModified;
+	}
+	
+	@Override
+	protected void closeEvent(QCloseEvent e) {
+		if (watcher.isDirty()) {
+            QMessageBox msgBox = new QMessageBox(this);
+            
+            msgBox.setIcon(QMessageBox.Icon.Warning);
+            msgBox.setWindowTitle(tr("Giyusit"));
+            msgBox.setText(tr("<b>There are unsaved changed in the form</b>"));
+            msgBox.setInformativeText(tr("Would you like to save your cahnges?"));
+            
+            QPushButton save = msgBox.addButton(tr("&Save"), QMessageBox.ButtonRole.AcceptRole);
+            QPushButton discard = msgBox.addButton(QMessageBox.StandardButton.Discard);
+            QPushButton cancel = msgBox.addButton(QMessageBox.StandardButton.Cancel);
+            
+            msgBox.exec();
+            
+            if (msgBox.clickedButton() == save) {
+            	saveCandidateData();
+            	e.accept();
+            }
+            else if (msgBox.clickedButton() == cancel) {
+                e.ignore();
+            }
+            else
+            	e.accept();
+		}
+		else
+			e.accept();
+	}
+		
+	private void initUI() {
+		id = new QLabel();
+			
+		nationalId = new QLineEdit();
+		watcher.watchWidget(nationalId);
+			
+		firstName = new QLineEdit();
+		watcher.watchWidget(firstName);
+			
+		lastName = new QLineEdit();
+		watcher.watchWidget(lastName);
+			
+		gender = new QLineEdit();
+		gender.setMaximumWidth(15);
+		watcher.watchWidget(gender);
+			
+		address = new QLineEdit();
+		watcher.watchWidget(address);
+			
+		city = new QLineEdit();
+		watcher.watchWidget(city);
+			
+		zipCode = new QLineEdit();
+		watcher.watchWidget(zipCode);
+			
+		homePhone = new QLineEdit();
+		watcher.watchWidget(homePhone);
+			
+		cellPhone = new QLineEdit();
+		watcher.watchWidget(cellPhone);
+			
+		email = new QLineEdit();
+		email.setLayoutDirection(Qt.LayoutDirection.LeftToRight);
+		watcher.watchWidget(email);
+		
+		wrongDetailsInd = new QCheckBox(tr("Wrong Details"));
+		watcher.watchWidget(wrongDetailsInd);
+			
+		status = new QLabel();
+		watcher.watchWidget(status);
+		
+		school = new QLineEdit();
+		watcher.watchWidget(school);
+		
+		origin = new QLineEdit();
+		watcher.watchWidget(origin);
+			
+		owner = new QComboBox();
+		watcher.watchWidget(owner);
+			
+		recruiter = new QComboBox();
+		watcher.watchWidget(recruiter);
+			
+		signedDahashInd = new QCheckBox(tr("Signed Dahash"));
+		watcher.watchWidget(signedDahashInd);
+			
+		canceledDahashInd = new QCheckBox(tr("Canceled Dahash"));
+		watcher.watchWidget(canceledDahashInd);
+			
+		notes = new QTextEdit();
+		notes.setMaximumHeight(60);
+		watcher.watchWidget(notes);
+		
+		candidateStatusesButton = new QPushButton(tr("Candidate Statuses"));
+		candidateStatusesButton.clicked.connect(this, "candidateStatuses()");
+			
+		saveButton = new QPushButton(tr("Save"));
+		saveButton.setEnabled(false);
+		saveButton.setIcon(new QIcon("classpath:/icons/save.png"));
+		saveButton.clicked.connect(this, "saveCandidateData()");
+			
+		resetButton = new QPushButton(tr("Reset"));
+		resetButton.setEnabled(false);
+		resetButton.setIcon(new QIcon("classpath:/icons/revert.png"));
+		resetButton.clicked.connect(this, "loadCandidateData()");
+			
+		closeButton = new QPushButton(tr("Close"));
+		closeButton.setIcon(new QIcon("classpath:/icons/close.png"));
+		closeButton.clicked.connect(this, "close()");
+			
+		//
+		// Layout
+		//
+		QHBoxLayout personalInfoTopLayout = new QHBoxLayout();
+		personalInfoTopLayout.addWidget(new DialogField(tr("ID: "), id));
+		personalInfoTopLayout.addWidget(new DialogField(tr("National ID: "), nationalId));
+		personalInfoTopLayout.addWidget(new DialogField(tr("First Name: "), firstName));
+		personalInfoTopLayout.addWidget(new DialogField(tr("Last Name: "), lastName));
+		personalInfoTopLayout.addWidget(new DialogField(tr("Gender: "), gender));
+		
+		QGroupBox addressBox = new QGroupBox(tr("Address"));
+		
+		QGridLayout addressLayout = new QGridLayout(addressBox);
+		addressLayout.addWidget(new DialogField(tr("Address: "), address),	1, 1, 1, 2);
+		addressLayout.addWidget(new DialogField(tr("City: "), city),		2, 1);
+		addressLayout.addWidget(new DialogField(tr("Zip Code: "), zipCode),	2, 2);
+		
+		QGroupBox contactBox = new QGroupBox(tr("Contact Details"));
+		
+		QFormLayout contactLayout = new QFormLayout(contactBox);
+		contactLayout.addRow(tr("Home Phone: "),	homePhone);
+		contactLayout.addRow(tr("Cell Phone: "),	cellPhone);
+		contactLayout.addRow(tr("E-Mail: "), 		email);
+		
+		QHBoxLayout helperLayout1 = new QHBoxLayout();
+		helperLayout1.addWidget(addressBox);
+		helperLayout1.addWidget(contactBox);
+		
+		QHBoxLayout personalInfoBottomLayout = new QHBoxLayout();
+		personalInfoBottomLayout.addWidget(wrongDetailsInd);
+		personalInfoBottomLayout.addStretch(1);
+		
+		QGroupBox personalInfoBox = new QGroupBox(tr("Personal Info"));
+		
+		QVBoxLayout personalInfoLayout = new QVBoxLayout(personalInfoBox);
+		personalInfoLayout.addLayout(personalInfoTopLayout);
+		personalInfoLayout.addLayout(helperLayout1);
+		personalInfoLayout.addLayout(personalInfoBottomLayout);
+		
+		//--------------------------------------------------------------
+		
+		QGroupBox giyusDataBox = new QGroupBox(tr("Giyus Data"));
+		
+		QGridLayout giyusDataLayout = new QGridLayout(giyusDataBox);
+		giyusDataLayout.addWidget(new DialogField(tr("School: "), school), 1, 1);
+		giyusDataLayout.addWidget(new DialogField(tr("Owner: "), owner),   2, 1);
+		giyusDataLayout.addWidget(new DialogField(tr("Origin: "), origin), 1, 2);
+		giyusDataLayout.addWidget(new DialogField(tr("Recruiter: "), recruiter), 2, 2);
+		
+		QGroupBox giyusIndBox = new QGroupBox(tr("Indicators"));
+		
+		QVBoxLayout giyusIndLayout = new QVBoxLayout(giyusIndBox);
+		giyusIndLayout.addWidget(signedDahashInd);
+		giyusIndLayout.addWidget(canceledDahashInd);
+		giyusIndLayout.addStretch(1);
+		
+		giyusDataLayout.addWidget(giyusIndBox, 1, 3, 2, 1);
+		
+		QHBoxLayout giyusBottomLayout = new QHBoxLayout();
+		giyusBottomLayout.setMargin(0);
+		giyusBottomLayout.addWidget(new DialogField(tr("Status: "), status));
+		giyusBottomLayout.addStretch(1);
+		giyusBottomLayout.addWidget(candidateStatusesButton);
+		
+		giyusDataLayout.addLayout(giyusBottomLayout, 3, 1, 1, 3);
+		
+		//--------------------------------------------------------------
+		
+		QGroupBox notesBox = new QGroupBox(tr("Notes"));
+		
+		QVBoxLayout notesLayout = new QVBoxLayout(notesBox);
+		notesLayout.addWidget(notes);
+		
+		//--------------------------------------------------------------
+		
+		QHBoxLayout buttonLayout = new QHBoxLayout();
+		buttonLayout.addWidget(saveButton);
+		buttonLayout.addWidget(resetButton);
+		buttonLayout.addStretch(1);
+		buttonLayout.addWidget(closeButton);
+		
+		QVBoxLayout layout = new QVBoxLayout(this);
+		layout.addWidget(personalInfoBox);
+		layout.addWidget(giyusDataBox);
+		layout.addWidget(notesBox);
+		layout.addLayout(buttonLayout);
+	}
+	
+	private void initComboModelsAndCompleters() {
+		// Lookup models
+		staffModel = new LookupTableModel("Staff");
+		
+		owner.setModel(staffModel);
+		owner.setModelColumn(LookupTableModel.VALUE_COLUMN);
+		
+		recruiter.setModel(staffModel);
+		recruiter.setModelColumn(LookupTableModel.VALUE_COLUMN);
+		
+		// Completers
+		city.setCompleter(new CitiesCompleter());
+		school.setCompleter(new DBColumnCompleter("Candidates", "School"));
+		origin.setCompleter(new DBColumnCompleter("Candidates", "Origin"));
+	}
+	
+	private void loadCandidateData() {
+		CandidateHelper helper = new CandidateHelper();
+		
+		try {
+			Row candidate = helper.fetchById(candidateId);
+			
+			// Text fields
+			id.setText(candidate.getString("ID"));
+			nationalId.setText(candidate.getString("NationalID"));
+			firstName.setText(candidate.getString("FirstName"));
+			lastName.setText(candidate.getString("LastName"));
+			gender.setText(candidate.getString("Gender"));
+			address.setText(candidate.getString("Address"));
+			city.setText(candidate.getString("City"));
+			zipCode.setText(candidate.getString("ZipCode"));
+			homePhone.setText(candidate.getString("HomePhone"));
+			cellPhone.setText(candidate.getString("CellPhone"));
+			email.setText(candidate.getString("EMail"));
+			school.setText(candidate.getString("School"));
+			origin.setText(candidate.getString("Origin"));
+			
+			notes.setPlainText(candidate.getString("Notes"));
+			
+			// Check boxes
+			wrongDetailsInd.setChecked(candidate.getBoolean("WrongDetailsInd"));
+			signedDahashInd.setChecked(candidate.getBoolean("SignedDahashInd"));
+			canceledDahashInd.setChecked(candidate.getBoolean("CanceledDahashInd"));
+			
+			// Combo boxes
+			owner.setCurrentIndex(
+					staffModel.keyToRow(candidate.getString("OwnerID")));
+			
+			recruiter.setCurrentIndex(
+					staffModel.keyToRow(candidate.getString("RecruiterID")));
+			
+			// Status
+			status.setText(helper.candidateStatusName(candidateId));
+			
+			//
+			watcher.setDirty(false);
+		}
+		catch (Exception e) {
+			MessageDialog.showException(this, e);
+		}
+		finally {
+			helper.close();
+		}
+	}
+	
+	private void saveCandidateData() {
+		CandidateHelper helper = new CandidateHelper();
+		
+		try {
+			Row candidate = new Row();
+			
+			// Text fields
+			candidate.put("NationalID", nationalId.text());
+			candidate.put("FirstName", firstName.text());
+			candidate.put("LastName", lastName.text());
+			candidate.put("Gender", gender.text());
+			candidate.put("Address", address.text());
+			candidate.put("City", city.text());
+			candidate.put("ZipCode", zipCode.text());
+			candidate.put("HomePhone", homePhone.text());
+			candidate.put("CellPhone", cellPhone.text());
+			candidate.put("EMail", email.text());
+			candidate.put("School", school.text());
+			candidate.put("Origin", origin.text());
+			
+			candidate.put("Notes", notes.toPlainText());
+			
+			// Check boxes
+			candidate.put("WrongDetailsInd", wrongDetailsInd.isChecked());
+			candidate.put("SignedDahashInd", signedDahashInd.isChecked());
+			candidate.put("CanceledDahashInd", canceledDahashInd.isChecked());
+			
+			// Combo boxes
+			candidate.put("OwnerID", staffModel.rowToKey(owner.currentIndex()));
+			candidate.put("RecruiterID", staffModel.rowToKey(recruiter.currentIndex()));
+			
+			// Update DB
+			helper.updateRecord(candidateId, candidate);
+			
+			dbModified = true;
+			watcher.setDirty(false);
+		}
+		catch (Exception e) {
+			MessageDialog.showException(this, e);
+		}
+		finally {
+			helper.close();
+		}
+	}
+	
+	private void updateWindowTitle() {
+		setWindowTitle(firstName.text() + " " + lastName.text() + "[*]");
+	}
+	
+	private void dirtyChanged(Boolean dirty) {
+		updateWindowTitle();
+		setWindowModified(dirty);
+		
+		saveButton.setEnabled(dirty);
+		resetButton.setEnabled(dirty);
+	}
+	
+	private void updateCandidateStatus() {
+		CandidateHelper helper = new CandidateHelper();
+		
+		try {
+			status.setText(helper.candidateStatusName(candidateId));
+		}
+		catch (Exception e) {
+			MessageDialog.showException(this, e);
+		}
+		finally {
+			helper.close();
+		}
+	}
+	
+	private void candidateStatuses() {
+		CandidateStatusesDialog dlg = new CandidateStatusesDialog(this, candidateId);
+		
+		dlg.exec();
+		
+		if (dlg.isDbModified()) {
+			dbModified = true;
+			updateCandidateStatus();
+		}
+	}
+}
+
+class CandidateStatusesDialog extends QDialog {
+
+	// Widgets
+	private DataGrid dataGrid;
+	private QComboBox status;
+	private QDateEdit startDate;
+	
+	// Buttons
+	private QPushButton addStatusButton;
+	private QPushButton removeLastStatusButton;
+	
+	// Properties
+	private RowSetModel model;
+	private LookupTableModel statusesModel;
+	
+	private int candidateId;
+	private boolean dbModified = false;
+
+	public CandidateStatusesDialog(QWidget parent, int candidateId) {
+		super(parent);
+		
+		this.candidateId = candidateId;
+		
+		// Models
+		model = new RowSetModel(new String[] {"StartDate", "StatusName"});
+		statusesModel = new LookupTableModel("CandidateStatusValues");
+		
+		DBValuesTranslator.translateModelHeaders(model);
+		
+		initUI();
+		updateTitle();
+		loadData();
+	}
+	
+	public boolean isDbModified() {
+		return dbModified;
+	}
+	
+	private void initUI() {
+		// Widgets
+		dataGrid = new DataGrid();
+		dataGrid.setModel(model);
+		
+		status = new QComboBox();
+		
+		status.setModel(statusesModel);
+		status.setModelColumn(LookupTableModel.VALUE_COLUMN);
+		status.setCurrentIndex(-1);
+		
+		status.currentIndexChanged.connect(this, "statusComboIndexChanged(int)");
+		
+		startDate = new QDateEdit();
+		startDate.setCalendarPopup(true);
+		startDate.setDisplayFormat("dd/MM/yyyy");
+		startDate.setDate(QDate.currentDate());
+		
+		addStatusButton = new QPushButton(tr("Update"));
+		addStatusButton.setEnabled(false);
+		addStatusButton.clicked.connect(this, "addStatus()");
+		
+		removeLastStatusButton = new QPushButton(tr("Remove Last Status"));
+		removeLastStatusButton.clicked.connect(this, "removeLastStatus()");
+		
+		QPushButton closeButton = new QPushButton(tr("Close"));
+		closeButton.setIcon(new QIcon("classpath:/icons/close.png"));
+		closeButton.clicked.connect(this, "close()");
+		
+		// Layout
+		QGroupBox updateStatusGroup = new QGroupBox(tr("Update Status"));
+		
+		QHBoxLayout updateStatusLayout = new QHBoxLayout(updateStatusGroup);
+		updateStatusLayout.addWidget(new DialogField(tr("Status: "), status));
+		updateStatusLayout.addWidget(new DialogField(tr("Start Date: "), startDate));
+		updateStatusLayout.addStretch(1);
+		updateStatusLayout.addWidget(addStatusButton);
+		
+		QHBoxLayout buttonLayout = new QHBoxLayout();
+		buttonLayout.addWidget(removeLastStatusButton);
+		buttonLayout.addStretch(1);
+		buttonLayout.addWidget(closeButton);
+		
+		QVBoxLayout layout = new QVBoxLayout(this);
+		layout.addWidget(updateStatusGroup);
+		layout.addWidget(dataGrid, 1);
+		layout.addLayout(buttonLayout);
+	}
+	
+	private void loadData() {
+		CandidateHelper helper = new CandidateHelper();
+		
+		try {
+			model.setData(helper.getCandidateStatuses(candidateId));
+		}
+		catch (Exception e) {
+			MessageDialog.showException(this, e);
+		}
+		finally {
+			helper.close();
+		}
+	}
+	
+	private void updateTitle() {
+		CandidateHelper helper = new CandidateHelper();
+		
+		try {
+			String title = tr("Statuses for candidate {0}");
+			
+			setWindowTitle(MessageFormat.format(title, 
+									helper.candidateFullName(candidateId)));
+		}
+		catch (Exception e) {
+			MessageDialog.showException(this, e);
+		}
+		finally {
+			helper.close();
+		}
+	}
+	
+	private void statusComboIndexChanged(int index) {
+		addStatusButton.setEnabled(index != -1);
+	}
+	
+	private void addStatus() {
+		//
+		CandidateHelper helper = new CandidateHelper();
+		
+		try {
+			if (helper.hasStatusInDate(candidateId, startDate.date())) {
+				MessageDialog.showUserError(this,  
+							tr("Candidate already has a status in the specified date"));
+				
+				return;
+			}
+			
+			// Insert the new status
+			int statusId = Integer.parseInt(
+							statusesModel.rowToKey(status.currentIndex()));
+			
+			helper.addStatus(candidateId, statusId, startDate.date());
+			
+			dbModified = true;
+			
+			// Refresh window
+			loadData();
+			
+			status.setCurrentIndex(-1);
+			startDate.setDate(QDate.currentDate());
+		}
+		catch (Exception e) {
+			MessageDialog.showException(this, e);
+		}
+		finally {
+			helper.close();
+		}
+	}
+	
+	private void removeLastStatus() {
+		if (model.rowCount() <= 1) {
+			MessageDialog.showUserError(this, tr("Can't remove initial status"));
+			return;
+		}
+		
+		CandidateHelper helper = new CandidateHelper();
+		
+		try {
+			helper.removeLastStatus(candidateId);
+			
+			// Refresh window
+			dbModified = true;
+			loadData();
+		}
+		catch (Exception e) {
+			MessageDialog.showException(this, e);
+		}
+		finally {
+			helper.close();
+		}
+	}
+}

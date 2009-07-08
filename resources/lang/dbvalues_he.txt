@@ -1,0 +1,35 @@
+# General
+ID : קוד
+Name : שם
+StartDate : תאריך תחילה 
+EndDate : תאריך סיום
+Active : פעיל
+
+# Candidates
+NationalID : ת"ז
+FirstName : שם פרטי
+LastName : שם משפחה
+Gender : מין
+Address : כתובת
+City : ישוב
+ZipCode : מיקוד
+HomePhone : טלפון בבית
+CellPhone : טלפון נייד
+EMail : דוא"ל
+
+Origin : מקור
+School : בית ספר
+Notes  : הערות
+OwnerID : קוד אחראי
+RecruiterID : קוד מגייס
+StatusID : קוד סטטוס
+
+Owner : אחראי
+Status : סטטוס
+StatusName : סטטוס
+
+# Events
+Type : סוג
+Location : מיקום
+ActiveAttendants : משתתפים פעילים
+AttType : סוג השתתפות
