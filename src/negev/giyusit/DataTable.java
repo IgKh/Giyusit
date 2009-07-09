@@ -32,6 +32,7 @@ package negev.giyusit;
 import com.trolltech.qt.core.*;
 import com.trolltech.qt.gui.*;
 
+import negev.giyusit.util.MessageDialog;
 import negev.giyusit.widgets.DataGrid;
 
 public class DataTable extends QWidget {
@@ -68,18 +69,15 @@ public class DataTable extends QWidget {
 		filterLine = new QLineEdit();
 		filterLine.returnPressed.connect(this, "doFilter()");
 		
-		/*
 		QPushButton filterGoButton = new QPushButton();
 		filterGoButton.setFlat(true);
-		filterGoButton.setIconSize(new QSize(16, 16));
+		filterGoButton.setMaximumWidth(15);
+		filterGoButton.clicked.connect(this, "doFilter()");
 		
 		if (QApplication.isRightToLeft())
-			filterGoButton.setIcon(new QIcon("classpath:/icons/arrow-left.png"));
+			filterGoButton.setText(">");
 		else
-			filterGoButton.setIcon(new QIcon("classpath:/icons/arrow-right.png"));
-		
-		filterGoButton.clicked.connect(this, "doFilter()");
-		*/
+			filterGoButton.setText("<");
 		
 		//
 		// Shortcuts
@@ -94,6 +92,11 @@ public class DataTable extends QWidget {
 									this, Qt.ShortcutContext.WindowShortcut);
 		
 		gotoDataGrid.activated.connect(dataGrid, "setFocus()");
+		
+		QShortcut refreshTable = new QShortcut(new QKeySequence(tr("F5")), 
+									this, Qt.ShortcutContext.WindowShortcut);
+		
+		refreshTable.activated.connect(this, "refresh()");
 			
 		//
 		// Layout
@@ -101,8 +104,10 @@ public class DataTable extends QWidget {
 		filterWidget = new QWidget();
 		
 		QHBoxLayout filterLayout = new QHBoxLayout(filterWidget);
+		filterLayout.setMargin(0);
 		filterLayout.addWidget(new QLabel(tr("Quick Filter: ")));
-		filterLayout.addWidget(filterLine);
+		filterLayout.addWidget(filterLine, 1);
+		filterLayout.addWidget(filterGoButton);
 		filterLayout.addSpacing(4);
 			
 		QHBoxLayout topLayout = new QHBoxLayout();
@@ -153,6 +158,19 @@ public class DataTable extends QWidget {
 	
 	public void refresh() {
 		if (currentDataView != null) {
+			// If out parent is the main window, use its status bar
+			QStatusBar statusBar = null;
+			
+			if (window() instanceof QMainWindow)
+				statusBar = ((QMainWindow) window()).statusBar();
+			
+			// Show loading message
+			QApplication.setOverrideCursor(new QCursor(Qt.CursorShape.WaitCursor));
+			setEnabled(false);
+			
+			if (statusBar != null)
+				statusBar.showMessage(tr("Working..."));
+			
 			// Get the model from the data view 
 			QAbstractItemModel model = null;
 			
@@ -160,12 +178,19 @@ public class DataTable extends QWidget {
 				model = currentDataView.getModel();
 			}
 			catch (Exception e) {
-				e.printStackTrace();
+				MessageDialog.showException(window(), e);
 				return;
 			}
 			
 			//
 			setModelInternal(model);
+			
+			// Restore everything
+			setEnabled(true);
+			QApplication.restoreOverrideCursor();
+			
+			if (statusBar != null)
+				statusBar.clearMessage();
 		}
 	}
 	
@@ -185,14 +210,7 @@ public class DataTable extends QWidget {
 		String msg = tr("%n record(s) displayed", "", filteredCount);
 		
 		if (!filterLine.text().isEmpty()) {
-			msg += " ";
-			
-			if (sourceCount == 1) {
-				msg += tr("(out of one)");
-			}
-			else {
-				msg += tr("(out of %n)", "", sourceCount);
-			}
+			msg += (" " + tr("(out of %n)", "", sourceCount));
 		}
 		statusLabel.setText(msg);
 	}
