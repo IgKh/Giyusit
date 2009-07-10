@@ -44,6 +44,7 @@ import negev.giyusit.util.RowSetModel;
 import negev.giyusit.util.RowSet;
 import negev.giyusit.util.Row;
 import negev.giyusit.widgets.DataGrid;
+import negev.giyusit.widgets.DatePicker;
 import negev.giyusit.widgets.DialogField;
 
 public class CandidateDialog extends QDialog {
@@ -503,10 +504,7 @@ class CandidateStatusesDialog extends QDialog {
 		
 		status.currentIndexChanged.connect(this, "statusComboIndexChanged(int)");
 		
-		startDate = new QDateEdit();
-		startDate.setCalendarPopup(true);
-		startDate.setDisplayFormat("dd/MM/yyyy");
-		startDate.setDate(QDate.currentDate());
+		startDate = new DatePicker();
 		
 		addStatusButton = new QPushButton(tr("Update"));
 		addStatusButton.setEnabled(false);

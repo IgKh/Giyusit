@@ -36,6 +36,7 @@ import negev.giyusit.db.LookupTableModel;
 import negev.giyusit.util.MessageDialog;
 import negev.giyusit.util.Row;
 
+import negev.giyusit.widgets.DatePicker;
 import negev.giyusit.widgets.DialogField;
 
 public class EventDataPane extends QWidget {
@@ -123,15 +124,9 @@ public class EventDataPane extends QWidget {
 		
 		type = new QComboBox();
 		
-		startDate = new QDateEdit();
-		startDate.setCalendarPopup(true);
-		startDate.setDisplayFormat("dd/MM/yyyy");
-		startDate.setDate(QDate.currentDate());
+		startDate = new DatePicker();
 		
-		endDate = new QDateEdit();
-		endDate.setCalendarPopup(true);
-		endDate.setDisplayFormat("dd/MM/yyyy");
-		endDate.setDate(QDate.currentDate());
+		endDate = new DatePicker();
 		
 		location = new QLineEdit();
 		
