@@ -35,7 +35,11 @@ import com.trolltech.qt.gui.*;
 import java.text.MessageFormat;
 
 public class PdfExporter extends AbstractExporter {
-		
+	
+	// Are we in a RTL layout?
+	private static final boolean RTL = 
+		(QApplication.layoutDirection() == Qt.LayoutDirection.RightToLeft);
+	
 	// Size constraintes
 	private static final int HEADER_HEIGHT = 60;
 	private static final int FOOTER_HEIGHT = 60;
@@ -58,6 +62,7 @@ public class PdfExporter extends AbstractExporter {
 	private String footerDatesTemplate;
 	
 	private int[] columnWidths;
+	private int firstColumnWidth;
 	
 	//
 	private QAbstractItemModel model;
@@ -143,6 +148,10 @@ public class PdfExporter extends AbstractExporter {
 		
 		for (int i = 0; i < colCount; i++)
 			columnWidths[i] = getColumnWidth(i);
+		
+		// Calculate the width of the first visible column (need this
+		// for RTL prints)
+		firstColumnWidth = columnWidths[getFirstVisibleColumn(0)];
 	}
 	
 	//
@@ -158,7 +167,7 @@ public class PdfExporter extends AbstractExporter {
 		if (end > 1000)
 			end = 1000;
 		
-		for (int i = 0; i < end; i++) {
+		for (int i = start; i < end; i++) {
 			Object data = model.data(i, col);
 			
 			if (data == null)
@@ -183,15 +192,40 @@ public class PdfExporter extends AbstractExporter {
 	}
 	
 	//
+	// Returns the number of the first exported column, starting from 
+	// start (inclusive)
+	//
+	// FIXME: What if there are no exported columns?
+	//
+	private int getFirstVisibleColumn(int start) {
+		int n = start;
+		boolean found = false;
+		
+		int k = model.columnCount();
+		while (n < k && !found) {
+			if (isColumnExported(n))
+				found = true;
+			else
+				n++;
+		}
+		return n;
+	}
+	
+	//
 	// Paints a page into the painter
 	//
 	private void paintPage(QPainter painter, int pageNo) {
 		int colCount = model.columnCount();
 		int rowCount = model.rowCount();
 		
+		// 
+		
 		// Paint the table header
-		int colOffset = 0;
 		int headerY = HEADER_HEIGHT + (SPACING * 2);
+		int colOffset = 0;
+		
+		if (RTL)
+			colOffset = printer.pageRect().width() - firstColumnWidth;
 		
 		painter.setFont(headerFont);
 		
@@ -210,7 +244,13 @@ public class PdfExporter extends AbstractExporter {
 								/*Qt.AlignmentFlag.AlignCenter.value()*/0, text);
 			
 			// Advance offset
-			colOffset += colSize;
+			if (RTL) {
+				// In RTL mode, only if this is not the last column
+				if (i + 1 < colCount)
+					colOffset -= (columnWidths[getFirstVisibleColumn(i + 1)]);
+			}
+			else
+				colOffset += colSize;
 		}
 		
 		// Paint table rows
@@ -219,8 +259,11 @@ public class PdfExporter extends AbstractExporter {
 		painter.setFont(font);
 		
 		for (int i = 0; i < linesPerPage; i++) {
-			colOffset = 0;
 			rowY = HEADER_HEIGHT + (rowHeight * 2) + (rowHeight * i);
+			colOffset = 0;
+			
+			if (RTL)
+				colOffset = printer.pageRect().width() - firstColumnWidth;
 			
 			int rowNo = (pageNo - 1) * linesPerPage + i;
 			if (rowNo > rowCount)
@@ -244,7 +287,13 @@ public class PdfExporter extends AbstractExporter {
 				painter.drawText(colOffset, rowY, colSize, rowHeight, 0, text);
 				
 				// Advance offset
-				colOffset += colSize;
+				if (RTL) {
+					// In RTL mode, only if this is not the last column
+					if (j + 1 < colCount)
+						colOffset -= (columnWidths[getFirstVisibleColumn(j + 1)]);
+				}
+				else
+					colOffset += colSize;
 			}
 		}
 		
