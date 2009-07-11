@@ -47,6 +47,7 @@ import negev.giyusit.db.ConnectionProvider;
 import negev.giyusit.db.DatabaseException;
 import negev.giyusit.db.DatabaseUtils;
 import negev.giyusit.db.RulerCache;
+import negev.giyusit.util.MessageDialog;
 
 public class GiyusitWindow extends QMainWindow {
 		
@@ -236,17 +237,28 @@ public class GiyusitWindow extends QMainWindow {
 		settings.setValue("window/geometry", saveGeometry());
 		
 		// If there is a file already loaded save the DataViewList state
-		if (!currentFileName.isEmpty()) {
-			String key = "viewList/" + currentFileName;
-			
-			settings.setValue(key, dataViewList.saveState());
-		}
+		if (!currentFileName.isEmpty())
+			saveViewListState(settings);
 	}
 	
 	private void restoreWindowState() {
 		QSettings settings = new QSettings();
 		
 		restoreGeometry((QByteArray) settings.value("window/geometry"));
+	}
+	
+	private void saveViewListState(QSettings settings) {
+		String f = currentFileName.replace(File.separatorChar, '@');
+		String key = "viewList/" + f;
+			
+		settings.setValue(key, dataViewList.saveState());
+	}
+	
+	private void restoreViewListState(QSettings settings) {
+		String f = currentFileName.replace(File.separatorChar, '@');
+		String key = "viewList/" + f;
+		
+		dataViewList.restoreState(settings.value(key, "").toString());
 	}
 	
 	private void updateWindowTitle() {
@@ -293,11 +305,8 @@ public class GiyusitWindow extends QMainWindow {
 		}
 		
 		// If there is a file already loaded save the DataViewList state
-		if (!currentFileName.isEmpty()) {
-			String key = "viewList/" + currentFileName;
-			
-			settings.setValue(key, dataViewList.saveState());
-		}
+		if (!currentFileName.isEmpty())
+			saveViewListState(settings);
 		
 		// Make sure the UI is disabled
 		currentFileName = "";
@@ -335,7 +344,7 @@ public class GiyusitWindow extends QMainWindow {
 			}
 		}
 		catch (DatabaseException e) {
-			e.printStackTrace();
+			MessageDialog.showException(this, e);
 		}
 		
 		// Save this database as the last one
@@ -346,8 +355,7 @@ public class GiyusitWindow extends QMainWindow {
 		dataViewList.rebuildList();
 		
 		//
-		dataViewList.restoreState(
-					settings.value("viewList/" + fileName, "").toString());
+		restoreViewListState(settings);
 		
 		//
 		currentFileName = fileName;
@@ -358,8 +366,8 @@ public class GiyusitWindow extends QMainWindow {
 	
 	@SuppressWarnings("unused")
 	private void newFile() {
-		String fileName = QFileDialog.getSaveFileName(this, tr("New File"), "",
-				new QFileDialog.Filter(tr("Giyusit Data Profile (*.gdp)")));
+		String fileName = MessageDialog.getSaveFileName(this, tr("New File"),
+				tr("Giyusit Data Profile (*.gdp)"));
 		
 		if (fileName != null && !fileName.isEmpty())
 			loadDatabase(fileName, true);
@@ -367,8 +375,8 @@ public class GiyusitWindow extends QMainWindow {
 	
 	@SuppressWarnings("unused")
 	private void loadFile() {
-		String fileName = QFileDialog.getOpenFileName(this, tr("Load File"), "",
-				new QFileDialog.Filter(tr("Giyusit Data Profile (*.gdp)")));
+		String fileName = MessageDialog.getOpenFileName(this, tr("Load File"), 
+				tr("Giyusit Data Profile (*.gdp)"));
 		
 		if (fileName != null && !fileName.isEmpty())
 			loadDatabase(fileName, false);

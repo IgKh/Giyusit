@@ -116,18 +116,6 @@ public class ExportDataDialog extends QDialog {
 	}
 	
 	private void save() {
-		// Get "My Documents" path on Windows and home on UNIX
-		String os = System.getProperty("os.name").toLowerCase();
-		String startDir;
-		
-		if (os.indexOf("win") != -1) {
-			// On Windows
-			startDir = QDesktopServices.storageLocation(
-								QDesktopServices.StandardLocation.DocumentsLocation);
-		}
-		else
-			startDir = System.getProperty("user.home");
-		
 		// Assemble filters list
 		StringBuilder filters = new StringBuilder();
 		
@@ -135,8 +123,8 @@ public class ExportDataDialog extends QDialog {
 		filters.append(";;").append(tr("PDF Document (*.pdf)"));
 		
 		// Show file dialog
-		String fileName = QFileDialog.getSaveFileName(this, tr("Save File"), startDir,
-				new QFileDialog.Filter(filters.toString()));
+		String fileName = MessageDialog.getSaveFileName(this, tr("Save File"), 
+				filters.toString());
 		
 		if (fileName == null || fileName.isEmpty())
 			return;

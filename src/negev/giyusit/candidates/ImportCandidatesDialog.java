@@ -132,8 +132,8 @@ public class ImportCandidatesDialog extends QDialog {
 	}
 	
 	private void selectFile() {
-		String fileName = QFileDialog.getOpenFileName(this, tr("Select Import File"), 
-        						"", new QFileDialog.Filter(tr("Excel Workbook (*.xls)")));
+		String fileName = MessageDialog.getOpenFileName(this, tr("Select Import File"), 
+        						tr("Excel Workbook (*.xls)"));
         
        	if (fileName == null || fileName.isEmpty())
                return;

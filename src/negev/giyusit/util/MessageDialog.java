@@ -111,4 +111,38 @@ public class MessageDialog extends QMessageBox {
 		// Display the dialog
 		dlg.exec();
 	}
+	
+	/**
+	 * A convinience method to display an open file dialog whose start dir
+	 * is "My Documents" on Windows and the home directory on *nix systems,
+	 * and takes a regular string for the filter
+	 */
+	public static String getOpenFileName(QWidget parent, String title, String filter) {
+		return QFileDialog.getOpenFileName(parent, title, getPlatfromStartDir(),
+				new QFileDialog.Filter(filter));
+	}
+	
+	/**
+	 * A convinience method to display a save file dialog whose start dir
+	 * is "My Documents" on Windows and the home directory on *nix systems,
+	 * and takes a regular string for the filter
+	 */
+	public static String getSaveFileName(QWidget parent, String title, String filter) {
+		return QFileDialog.getSaveFileName(parent, title, getPlatfromStartDir(),
+				new QFileDialog.Filter(filter));
+	}
+	
+	private static String getPlatfromStartDir() {
+		String os = System.getProperty("os.name").toLowerCase();
+		String startDir = "";
+		
+		if (os.indexOf("win") != -1) {
+			// On Windows
+			startDir = QDesktopServices.storageLocation(QDesktopServices.StandardLocation.DocumentsLocation);
+		}
+		else
+			startDir = System.getProperty("user.home");
+		
+		return startDir;
+	}
 }
