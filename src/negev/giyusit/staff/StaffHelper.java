@@ -39,6 +39,12 @@ public class StaffHelper extends GenericHelper {
 		super("Staff");
 	}
 	
+	public RowSet getRealStaffMemebers() {
+		String sql = "select * from Staff where RealInd = 'true'";
+		
+		return getQueryWrapper().queryForRowSet(sql);
+	}
+	
 	public RowSet getTopLevelStaffMembers() {
 		String sql = "select * from Staff where ParentID isnull";
 		

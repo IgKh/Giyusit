@@ -33,6 +33,7 @@ import com.trolltech.qt.core.*;
 import com.trolltech.qt.gui.*;
 
 import java.text.MessageFormat;
+import java.util.List;
 
 public class PdfExporter extends AbstractExporter {
 	
@@ -105,6 +106,15 @@ public class PdfExporter extends AbstractExporter {
 		printer.setPageSize(QPrinter.PageSize.A4);
 		printer.setOutputFileName(fileName);
 		
+		// Orientation
+		if (getOrientation() != null)
+			setOrientation(Qt.Orientation.Vertical);
+		
+		if (getOrientation() == Qt.Orientation.Vertical)
+			printer.setOrientation(QPrinter.Orientation.Portrait);
+		else
+			printer.setOrientation(QPrinter.Orientation.Landscape);
+		
 		// Update variables
 		setupPage();
 
@@ -117,6 +127,51 @@ public class PdfExporter extends AbstractExporter {
 			
 			if (page < pages)
 				printer.newPage();
+		}
+		painter.end();
+	}
+	
+	public void exportBatch(List<QAbstractItemModel> models, List<String> titles, String fileName) {
+		if (models.size() != titles.size())
+			throw new IllegalArgumentException("Titles and models don't match in length");
+		
+		// Setup printer
+		printer = new QPrinter();
+		
+		printer.setOutputFormat(QPrinter.OutputFormat.PdfFormat);
+		printer.setPageSize(QPrinter.PageSize.A4);
+		printer.setOutputFileName(fileName);
+		
+		// Orientation
+		if (getOrientation() != null)
+			setOrientation(Qt.Orientation.Vertical);
+		
+		if (getOrientation() == Qt.Orientation.Vertical)
+			printer.setOrientation(QPrinter.Orientation.Portrait);
+		else
+			printer.setOrientation(QPrinter.Orientation.Landscape);
+		
+		// Start the painter
+		QPainter painter = new QPainter(printer);
+		
+		for (int i = 0; i < models.size(); i++) {
+			this.model = models.get(i);
+			
+			// Update title
+			setOutputTitle(titles.get(i));
+			
+			// Update variables
+			setupPage();
+			
+			// Print model
+			for (int page = 1; page <= pages; page++) {
+				// Paint the page
+				paintPage(painter, page);
+			
+				// Unless we are at the last page of the last model
+				if (!(i + 1 >= models.size() && page >= pages))
+					printer.newPage();
+			}
 		}
 		painter.end();
 	}
@@ -267,7 +322,7 @@ public class PdfExporter extends AbstractExporter {
 				colOffset = printer.pageRect().width() - firstColumnWidth;
 			
 			int rowNo = (pageNo - 1) * linesPerPage + i;
-			if (rowNo > rowCount)
+			if (rowNo >= rowCount)
 				break;
 			
 			// Draw "Zebra Stripe" under odd rows

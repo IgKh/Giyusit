@@ -35,6 +35,7 @@ import com.trolltech.qt.*;
 public abstract class AbstractExporter extends QtJambiObject {
 
 	private String outputTitle;
+	private Qt.Orientation orientation;
 	private int[] exportedColumns;
 	
 	public String getOutputTitle() {
@@ -43,6 +44,14 @@ public abstract class AbstractExporter extends QtJambiObject {
 	
 	public void setOutputTitle(String outputTitle) {
 		this.outputTitle = outputTitle;
+	}
+	
+	public Qt.Orientation getOrientation() {
+		return orientation;
+	}
+	
+	public void setOrientation(Qt.Orientation orientation) {
+		this.orientation = orientation;
 	}
 	
 	public boolean isColumnExported(int column) {

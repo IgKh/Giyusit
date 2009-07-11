@@ -32,8 +32,11 @@ package negev.giyusit.staff;
 import com.trolltech.qt.core.*;
 import com.trolltech.qt.gui.*;
 
+import java.io.File;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 
+import negev.giyusit.exporters.PdfExporter;
 import negev.giyusit.util.DataTableDialog;
 import negev.giyusit.util.DBValuesTranslator;
 import negev.giyusit.util.MessageDialog;
@@ -68,6 +71,7 @@ public class StaffAdminDialog extends QDialog {
 	
 	private QPushButton ownedCandidatesButton;
 	private QPushButton treeOwnedCandidatesButton;
+	private QPushButton printFollowupPagesButton;
 		
 	public StaffAdminDialog(QWidget parent) {
 		super(parent);
@@ -110,6 +114,9 @@ public class StaffAdminDialog extends QDialog {
 		treeOwnedCandidatesButton = new QPushButton(tr("Tree Owned Candidates"));
 		treeOwnedCandidatesButton.clicked.connect(this, "treeOwnedCandidates()");
 		
+		printFollowupPagesButton = new QPushButton(tr("Print Followup Pages"));
+		printFollowupPagesButton.clicked.connect(this, "printFollowupPages()");
+		
 		addButton = new QPushButton(tr("Add"));
 		addButton.setIcon(new QIcon("classpath:/icons/add.png"));
 		addButton.clicked.connect(this, "addStaffMember()");
@@ -144,9 +151,9 @@ public class StaffAdminDialog extends QDialog {
 		QGroupBox actionButtonsBox = new QGroupBox();
 		
 		QHBoxLayout actionButtonsLayout = new QHBoxLayout(actionButtonsBox);
-		actionButtonsLayout.addStretch(1);
 		actionButtonsLayout.addWidget(ownedCandidatesButton);
 		actionButtonsLayout.addWidget(treeOwnedCandidatesButton);
+		actionButtonsLayout.addWidget(printFollowupPagesButton);
 		
 		QVBoxLayout leftLayout = new QVBoxLayout();
 		leftLayout.addWidget(infoBox);
@@ -437,6 +444,50 @@ public class StaffAdminDialog extends QDialog {
     		// Show results
 			dlg.getDataTable().setModel(model);
 			dlg.exec();
+    	}
+    	catch (Exception e) {
+			MessageDialog.showException(this, e);
+		}
+    	finally {
+    		helper.close();
+    	}
+	}
+	
+	private void printFollowupPages() {
+		StaffHelper helper = new StaffHelper();
+		
+		try {
+    		RowSet realStaff = helper.getRealStaffMemebers();
+    		
+    		ArrayList<QAbstractItemModel> models = new ArrayList<QAbstractItemModel>();
+    		ArrayList<String> titles = new ArrayList<String>();
+    		
+    		// Build a model for every real staff member that owns candidates
+    		for (Row member : realStaff) {
+    			RowSet candidates = helper.getOwnedCandidates(member.getInt("ID"));
+    			
+    			if (candidates.size() == 0)
+    				continue;
+    			
+    			RowSetModel model = new RowSetModel(RULER.split(","));
+    			model.setData(candidates);
+    			
+    			DBValuesTranslator.translateModelHeaders(model);
+    			
+    			// Add to lists
+    			models.add(model);
+    			titles.add(MessageFormat.format(tr("Candidates owned by {0}"), 
+    						member.getString("Name")));
+    		}
+    		
+    		// Export to a temporary PDF file
+    		PdfExporter exporter = new PdfExporter();
+			exporter.setOrientation(Qt.Orientation.Horizontal);
+			
+			String fileName = File.createTempFile("giyusit_", ".pdf").getAbsolutePath();
+			
+			exporter.exportBatch(models, titles, fileName);
+			QDesktopServices.openUrl(QUrl.fromLocalFile(fileName));
     	}
     	catch (Exception e) {
 			MessageDialog.showException(this, e);
