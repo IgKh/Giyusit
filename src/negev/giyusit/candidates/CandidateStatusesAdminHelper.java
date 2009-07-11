@@ -94,7 +94,7 @@ class CSVItemDialog extends GenericAdminItemDialog {
 	
 	public boolean validate() {
 		if (name.text().isEmpty()) {
-			MessageDialog.showUserError(this, tr("Please enter a name for the event"));
+			MessageDialog.showUserError(this, tr("Please enter a name"));
 			name.setFocus();
 			return false;
 		}
