@@ -257,6 +257,7 @@ public class PdfExporter extends AbstractExporter {
 		int rowY;
 		
 		painter.setFont(font);
+		painter.setBrush(new QBrush(QColor.lightGray));
 		
 		for (int i = 0; i < linesPerPage; i++) {
 			rowY = HEADER_HEIGHT + (rowHeight * 2) + (rowHeight * i);
@@ -268,6 +269,13 @@ public class PdfExporter extends AbstractExporter {
 			int rowNo = (pageNo - 1) * linesPerPage + i;
 			if (rowNo > rowCount)
 				break;
+			
+			// Draw "Zebra Stripe" under odd rows
+			if (i % 2 == 1) {
+				painter.fillRect(
+							new QRect(0, rowY, printer.pageRect().width(), rowHeight), 
+							painter.brush());
+			}
 			
 			for (int j = 0; j < colCount; j++) {
 				if (!isColumnExported(j))
