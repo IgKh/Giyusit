@@ -35,6 +35,8 @@ import com.trolltech.qt.gui.*;
 import java.text.MessageFormat;
 
 import negev.giyusit.util.DataTableDialog;
+import negev.giyusit.util.DBValuesTranslator;
+import negev.giyusit.util.MessageDialog;
 import negev.giyusit.util.RowSetModel;
 import negev.giyusit.util.RowSet;
 import negev.giyusit.util.Row;
@@ -43,6 +45,12 @@ public class StaffAdminDialog extends QDialog {
 
 	private static final int ID_ROLE = Qt.ItemDataRole.UserRole;
 	private static final int ROOT_TYPE = QTreeWidgetItem.ItemType.UserType.value();
+
+	// Rulers for reports
+	private static final String RULER = "ID,FirstName,LastName,Gender,Status," + 
+										"Address,City,ZipCode,HomePhone,CellPhone,EMail";
+	
+	private static final String TREE_RULER = RULER + ",Owner";
 
 	// Widgets
 	private QTreeWidget staffTree;
@@ -103,12 +111,15 @@ public class StaffAdminDialog extends QDialog {
 		treeOwnedCandidatesButton.clicked.connect(this, "treeOwnedCandidates()");
 		
 		addButton = new QPushButton(tr("Add"));
+		addButton.setIcon(new QIcon("classpath:/icons/add.png"));
 		addButton.clicked.connect(this, "addStaffMember()");
 		
 		removeButton = new QPushButton(tr("Remove"));
+		removeButton.setIcon(new QIcon("classpath:/icons/remove.png"));
 		removeButton.clicked.connect(this, "removeStaffMember()");
 		
 		closeButton = new QPushButton(tr("Close"));
+		closeButton.setIcon(new QIcon("classpath:/icons/close.png"));
 		closeButton.clicked.connect(this, "close()");
 						     
 		//
@@ -179,9 +190,12 @@ public class StaffAdminDialog extends QDialog {
 				// Children
 				doChildItem(member, item, helper);
 				
-				//
+				// Expand the entire tree
 				staffTree.expandAll();
 			}
+		}
+		catch (Exception e) {
+			MessageDialog.showException(this, e);
 		}
 		finally {
 			helper.close();
@@ -237,6 +251,9 @@ public class StaffAdminDialog extends QDialog {
         		role.setText(member.getString("Role"));
         		isReal.setChecked(member.getBoolean("RealInd"));
         	}
+        	catch (Exception e) {
+				MessageDialog.showException(this, e);
+			}
         	finally {
         		helper.close();
         	}
@@ -264,6 +281,9 @@ public class StaffAdminDialog extends QDialog {
     		// Update the relevant item in the tree
     		item.setText(0, name.text());
     	}
+    	catch (Exception e) {
+			MessageDialog.showException(this, e);
+		}
     	finally {
     		helper.close();
     	}
@@ -301,6 +321,9 @@ public class StaffAdminDialog extends QDialog {
     		
     		// TODO: move to the new record
     	}
+    	catch (Exception e) {
+			MessageDialog.showException(this, e);
+		}
     	finally {
     		helper.close();
     	}
@@ -339,6 +362,9 @@ public class StaffAdminDialog extends QDialog {
     		// Refresh tree
     		rebuildTree();
     	}
+    	catch (Exception e) {
+			MessageDialog.showException(this, e);
+		}
     	finally {
     		helper.close();
     	}
@@ -357,17 +383,26 @@ public class StaffAdminDialog extends QDialog {
 		
 		try {
     		RowSet candidates = helper.getOwnedCandidates(id);
-    		String ruler = "ID,FirstName,LastName,Gender";
     		
-    		// Show results
+    		// Create dialog and model
     		DataTableDialog dlg = new DataTableDialog(this);
     		
-    		RowSetModel model = new RowSetModel(ruler.split(","));
+    		dlg.setWindowTitle(MessageFormat.format(tr("Candidates owned by {0}"), name));
+    		dlg.resize((int) (dlg.width() * 1.25), dlg.height());
+    		
+    		RowSetModel model = new RowSetModel(RULER.split(","));
     		model.setData(candidates);
-			
+    		
+    		// Translate column headers
+    		DBValuesTranslator.translateModelHeaders(model);
+    		
+    		// Show results
 			dlg.getDataTable().setModel(model);
 			dlg.exec();
     	}
+    	catch (Exception e) {
+			MessageDialog.showException(this, e);
+		}
     	finally {
     		helper.close();
     	}
@@ -386,17 +421,26 @@ public class StaffAdminDialog extends QDialog {
 		
 		try {
     		RowSet candidates = helper.getTreeOwnedCandidates(id);
-    		String ruler = "ID,FirstName,LastName,Gender,Owner";
     		
-    		// Show results
+    		// Create dialog and model
     		DataTableDialog dlg = new DataTableDialog(this);
     		
-    		RowSetModel model = new RowSetModel(ruler.split(","));
+    		dlg.setWindowTitle(MessageFormat.format(tr("Candidates tree owned by {0}"), name));
+    		dlg.resize((int) (dlg.width() * 1.25), dlg.height());
+    		
+    		RowSetModel model = new RowSetModel(TREE_RULER.split(","));
     		model.setData(candidates);
-			
+    		
+    		// Translate column headers
+    		DBValuesTranslator.translateModelHeaders(model);
+    		
+    		// Show results
 			dlg.getDataTable().setModel(model);
 			dlg.exec();
     	}
+    	catch (Exception e) {
+			MessageDialog.showException(this, e);
+		}
     	finally {
     		helper.close();
     	}
