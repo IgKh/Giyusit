@@ -46,6 +46,8 @@ import jxl.Sheet;
 import jxl.Workbook;
 
 import negev.giyusit.db.ConnectionProvider;
+import negev.giyusit.util.DBValuesTranslator;
+import negev.giyusit.util.MessageDialog;
 
 public class ImportCandidatesDialog extends QDialog {
 	
@@ -60,6 +62,7 @@ public class ImportCandidatesDialog extends QDialog {
 	// Widgets
 	private QComboBox sheetsCombo;
 	private MappingList mappingsList;
+	private QProgressBar progressBar;
 	
 	// Buttons
 	private QPushButton fileSelectButton;
@@ -83,6 +86,7 @@ public class ImportCandidatesDialog extends QDialog {
         // Widgets
         //
         fileSelectButton = new QPushButton(tr("Select File..."));
+        fileSelectButton.setIcon(new QIcon("classpath:/icons/open.png"));
         fileSelectButton.clicked.connect(this, "selectFile()");
         
         sheetsCombo = new QComboBox();
@@ -91,6 +95,9 @@ public class ImportCandidatesDialog extends QDialog {
         
         mappingsList = new MappingList();
         mappingsList.setEnabled(false);
+        
+        progressBar = new QProgressBar();
+        progressBar.setEnabled(false);
         
         cancelButton = new QPushButton(tr("Cancel"));
         cancelButton.clicked.connect(this, "reject()");
@@ -118,8 +125,9 @@ public class ImportCandidatesDialog extends QDialog {
         buttonLayout.addWidget(cancelButton);
         
         QVBoxLayout layout = new QVBoxLayout(this);
-        layout.addWidget(fileSelectButton);
+		layout.addWidget(fileSelectButton);
         layout.addWidget(mappingGroup, 1);
+		layout.addWidget(progressBar);
         layout.addLayout(buttonLayout);
 	}
 	
@@ -135,10 +143,15 @@ public class ImportCandidatesDialog extends QDialog {
        		 currentWorkbook = Workbook.getWorkbook(new File(fileName));
        	}
        	catch (Exception e) {
-       		e.printStackTrace();
-       		
+       		MessageDialog.showException(this, e);
        		return;
        	}
+       	
+       	// Update the select file button to relect the selected file
+       	String label = tr("Select File ({0})...");
+       	
+       	//fileSelectButton.setText(MessageFormat.format(label, 
+       	//									new File(fileName).getName()));
        	
         // Update the worksheets combo. The first one will be selected automatically
         sheetsCombo.setEnabled(true);
@@ -169,6 +182,34 @@ public class ImportCandidatesDialog extends QDialog {
 	}
 	
 	private void doImport() {
+		// Setup progress bar
+		progressBar.setEnabled(true);
+		progressBar.setMinimum(0);
+		progressBar.setMaximum(currentSheet.getRows() - 1);
+		
+		cancelButton.setEnabled(false);
+		
+		// Do the import
+		try {
+			int count = doImportInternal();
+			
+			if (count == -1) {
+				cancelButton.setEnabled(true);
+				return;
+			}
+			
+			String msg = tr("%n candidate(s) added succesfully", "", count);
+			
+			MessageDialog.showSuccess(this, msg); 
+			accept();
+		}
+		catch (Exception e) {
+			MessageDialog.showException(this, e);
+		}
+	}
+	
+	private int doImportInternal() {
+		int count = 0;
 		
 		// Assemble a list of the database columns that were mapped by the
 		// user and their corresponding excel columns
@@ -183,9 +224,21 @@ public class ImportCandidatesDialog extends QDialog {
 		}
 		
 		// If no columns were mapped, there is no reason to continue
-		if (mappedCols.isEmpty())
-			return;
+		if (mappedCols.isEmpty()) {
+			MessageDialog.showUserError(this, tr("No mappings were defined"));
 			
+			return -1;
+		}
+			
+		// Make sure the first name is mapped
+		if (!mappedCols.containsKey("FirstName")) {
+			MessageDialog.showUserError(this, tr("First Name column wasn't mapped"));
+			
+			return -1;
+		}
+		
+		int firstNameCol = mappedCols.get("FirstName");
+		
 		// I need the mapped columns in a stable order, and with random access
 		ArrayList<String> mappedColsList = new ArrayList<String>(mappedCols.keySet());
 				
@@ -202,6 +255,13 @@ public class ImportCandidatesDialog extends QDialog {
 			// For every row, starting from the second one
 			int rows = currentSheet.getRows();
 			for (int i = 1; i < rows; i++) {
+				// Check if there is a first name
+				String fname = currentSheet.getCell(firstNameCol, i).getContents();	
+				
+				if (fname == null || fname.isEmpty())
+					continue;
+				
+				// Proccess the row
 				for (int j = 0; j < mappedColsList.size(); j++) {
 					String value = currentSheet.getCell(
 							mappedCols.get(mappedColsList.get(j)), i).getContents();
@@ -212,6 +272,12 @@ public class ImportCandidatesDialog extends QDialog {
 						stmnt.setObject(j + 1, value);
 				}
 				stmnt.addBatch();
+				
+				// Update progress and count
+				progressBar.setValue(i);
+				count++;
+				
+				QApplication.processEvents();
 			}
 			
 			// 
@@ -229,10 +295,7 @@ public class ImportCandidatesDialog extends QDialog {
 			
 			try { conn.close(); } catch (Exception e) {}
 		}
-	}
-	
-	private int doImportInternal() {
-		return 0;
+		return count;
 	}
 	
 	/*
@@ -323,6 +386,16 @@ class MappingWidget extends QWidget {
         fieldBox.addItems(ImportCandidatesDialog.mappableCols);
         //self.fieldBox.addItems([""] + mappableCols.keys())
         
+        // Translate - put the DB field name into a hidden role, and translate
+        // the display role
+        int k = fieldBox.count();
+        for (int i = 0; i < k; i++) {
+        	String value = fieldBox.itemText(i);
+        	
+        	fieldBox.setItemData(i, value, Qt.ItemDataRole.UserRole);
+        	fieldBox.setItemText(i, DBValuesTranslator.translate(value));
+        }
+        
         QHBoxLayout layout = new QHBoxLayout(this);
         layout.setMargin(0);
         layout.addWidget(new QLabel(xlsLabel));
@@ -330,6 +403,6 @@ class MappingWidget extends QWidget {
 	}
     
     public String selectedDBField() {
-    	return fieldBox.currentText();
+    	return fieldBox.itemData(fieldBox.currentIndex()).toString();
 	}
 }
