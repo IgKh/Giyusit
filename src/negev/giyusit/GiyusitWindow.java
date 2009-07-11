@@ -39,6 +39,7 @@ import negev.giyusit.candidates.AddCandidatesDialog;
 import negev.giyusit.candidates.DeleteCandidateDialog;
 import negev.giyusit.candidates.FindCandidatesDialog;
 import negev.giyusit.candidates.ImportCandidatesDialog;
+import negev.giyusit.config.TableAdminDialog;
 import negev.giyusit.events.AddEventDialog;
 import negev.giyusit.staff.StaffAdminDialog;
 

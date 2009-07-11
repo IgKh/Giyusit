@@ -27,51 +27,60 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package negev.giyusit;
+package negev.giyusit.config;
 
 import com.trolltech.qt.core.*;
 import com.trolltech.qt.gui.*;
 
-import negev.giyusit.candidates.CandidateStatusValuesAdmin;
+import negev.giyusit.util.Row;
 
-/**
- * A dialog that is a container for configuration sheets used to manage
- * various lookup tables
- */
-public class TableAdminDialog extends QDialog {
-
-	// Widgets
-	private QTabWidget tabWidget;
-
-	public TableAdminDialog(QWidget parent) {
+public abstract class GenericAdminItemDialog extends QDialog {
+	
+	private QFormLayout mainLayout;
+	
+	public GenericAdminItemDialog(QWidget parent) {
 		super(parent);
 		
 		initUI();
-		
-		// Register configuration sheets
-		tabWidget.addTab(new CandidateStatusValuesAdmin(this), tr("Candidate Statuses"));
+	}
+	
+	public abstract boolean validate();
+	
+	public abstract Row toRow();
+	
+	public abstract void fromRow(Row row);
+	
+	protected void addField(String title, QWidget widget) {
+		mainLayout.addRow(title, widget);
 	}
 	
 	private void initUI() {
-		setWindowTitle(tr("Table Admin"));
-		
 		//
 		// Widgets
 		//
-		tabWidget = new QTabWidget();
+		QPushButton okButton = new QPushButton(tr("OK"));
+		okButton.clicked.connect(this, "doOk()");
 		
-		QPushButton closeButton = new QPushButton(tr("Close"));
-		closeButton.clicked.connect(this, "close()");
+		QPushButton cancelButton = new QPushButton(tr("Cancel"));
+		cancelButton.clicked.connect(this, "reject()");
 		
 		//
 		// Layout
 		//
 		QHBoxLayout buttonLayout = new QHBoxLayout();
 		buttonLayout.addStretch(1);
-		buttonLayout.addWidget(closeButton);
+		buttonLayout.addWidget(okButton);
+		buttonLayout.addWidget(cancelButton);
+		
+		mainLayout = new QFormLayout();
 		
 		QVBoxLayout layout = new QVBoxLayout(this);
-		layout.addWidget(tabWidget, 1);
+		layout.addLayout(mainLayout, 1);
 		layout.addLayout(buttonLayout);
+	}
+	
+	private void doOk() {
+		if (validate())
+			accept();
 	}
 }
