@@ -51,7 +51,8 @@ public class StaffAdminDialog extends QDialog {
 
 	// Rulers for reports
 	private static final String RULER = "ID,FirstName,LastName,Gender,Status," + 
-										"Address,City,ZipCode,HomePhone,CellPhone,EMail";
+										"Address,City,ZipCode,HomePhone,CellPhone," + 
+										"EMail,Notes";
 	
 	private static final String TREE_RULER = RULER + ",Owner";
 
@@ -482,7 +483,7 @@ public class StaffAdminDialog extends QDialog {
     		
     		// Export to a temporary PDF file
     		PdfExporter exporter = new PdfExporter();
-			exporter.setOrientation(Qt.Orientation.Horizontal);
+			exporter.setOrientation(QPrinter.Orientation.Landscape);
 			
 			String fileName = File.createTempFile("giyusit_", ".pdf").getAbsolutePath();
 			

@@ -30,12 +30,13 @@
 package negev.giyusit.exporters;
 
 import com.trolltech.qt.core.*;
+import com.trolltech.qt.gui.*;
 import com.trolltech.qt.*;
 
 public abstract class AbstractExporter extends QtJambiObject {
 
 	private String outputTitle;
-	private Qt.Orientation orientation;
+	private QPrinter.Orientation orientation;
 	private int[] exportedColumns;
 	
 	public String getOutputTitle() {
@@ -46,11 +47,11 @@ public abstract class AbstractExporter extends QtJambiObject {
 		this.outputTitle = outputTitle;
 	}
 	
-	public Qt.Orientation getOrientation() {
+	public QPrinter.Orientation getOrientation() {
 		return orientation;
 	}
 	
-	public void setOrientation(Qt.Orientation orientation) {
+	public void setOrientation(QPrinter.Orientation orientation) {
 		this.orientation = orientation;
 	}
 	

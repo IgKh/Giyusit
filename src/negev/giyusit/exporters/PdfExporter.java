@@ -107,13 +107,10 @@ public class PdfExporter extends AbstractExporter {
 		printer.setOutputFileName(fileName);
 		
 		// Orientation
-		if (getOrientation() != null)
-			setOrientation(Qt.Orientation.Vertical);
+		if (getOrientation() == null)
+			setOrientation(QPrinter.Orientation.Portrait);
 		
-		if (getOrientation() == Qt.Orientation.Vertical)
-			printer.setOrientation(QPrinter.Orientation.Portrait);
-		else
-			printer.setOrientation(QPrinter.Orientation.Landscape);
+		printer.setOrientation(getOrientation());
 		
 		// Update variables
 		setupPage();
@@ -143,13 +140,10 @@ public class PdfExporter extends AbstractExporter {
 		printer.setOutputFileName(fileName);
 		
 		// Orientation
-		if (getOrientation() != null)
-			setOrientation(Qt.Orientation.Vertical);
+		if (getOrientation() == null)
+			setOrientation(QPrinter.Orientation.Portrait);
 		
-		if (getOrientation() == Qt.Orientation.Vertical)
-			printer.setOrientation(QPrinter.Orientation.Portrait);
-		else
-			printer.setOrientation(QPrinter.Orientation.Landscape);
+		printer.setOrientation(getOrientation());
 		
 		// Start the painter
 		QPainter painter = new QPainter(printer);
@@ -190,6 +184,7 @@ public class PdfExporter extends AbstractExporter {
 		// Calculate number of pages
 		int rowCount = model.rowCount();
 		
+		rowCount = rowCount + 3; // Reserve space for the summery line
 		pages = rowCount / linesPerPage;
 		
 		if (rowCount % linesPerPage != 0)
@@ -314,7 +309,8 @@ public class PdfExporter extends AbstractExporter {
 		painter.setFont(font);
 		painter.setBrush(new QBrush(QColor.lightGray));
 		
-		for (int i = 0; i < linesPerPage; i++) {
+		int i;
+		for (i = 0; i < linesPerPage; i++) {
 			rowY = HEADER_HEIGHT + (rowHeight * 2) + (rowHeight * i);
 			colOffset = 0;
 			
@@ -359,6 +355,22 @@ public class PdfExporter extends AbstractExporter {
 					colOffset += colSize;
 			}
 		}
+		
+		// Draw the summery line, if we are in the last page
+		if (i < linesPerPage) {
+			String summery = tr("%n record(s) in printout", "", rowCount);
+			
+			int w = painter.fontMetrics().width(summery);
+			
+			int sumY = HEADER_HEIGHT + (rowHeight * 2) + (rowHeight * (i + 2));
+			int sumX = 0;
+			
+			if (RTL)
+				sumX = printer.pageRect().width() - w;
+			
+			painter.drawText(sumX, sumY, w, rowHeight, 0, summery);
+		}
+		
 		
 		painter.setPen(new QPen(QColor.black, 1.0));
 		
