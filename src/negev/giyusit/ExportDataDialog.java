@@ -36,6 +36,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 import negev.giyusit.exporters.AbstractExporter;
+import negev.giyusit.exporters.CsvExporter;
 import negev.giyusit.exporters.ExcelExporter;
 import negev.giyusit.exporters.PdfExporter;
 import negev.giyusit.util.MessageDialog;
@@ -120,6 +121,7 @@ public class ExportDataDialog extends QDialog {
 		StringBuilder filters = new StringBuilder();
 		
 		filters.append(tr("Excel Workbook (*.xls)"));
+		filters.append(";;").append(tr("CSV file (*.csv)"));
 		filters.append(";;").append(tr("PDF Document (*.pdf)"));
 		
 		// Show file dialog
@@ -135,6 +137,9 @@ public class ExportDataDialog extends QDialog {
 		
 		if (ext.equalsIgnoreCase("XLS")) {
 			exporter = new ExcelExporter();
+		}
+		else if (ext.equalsIgnoreCase("CSV")) {
+			exporter = new CsvExporter();
 		}
 		else if (ext.equalsIgnoreCase("PDF")) {
 			exporter = new PdfExporter();
