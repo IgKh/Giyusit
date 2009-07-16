@@ -61,7 +61,7 @@ public class LookupTableModel extends RowSetModel {
 		sql.append(" from ").append(table);
 		
 		if (whereClause != null && !whereClause.isEmpty())
-			sql.append("where ").append(whereClause);
+			sql.append(" where ").append(whereClause);
 		
 		sql.append(" order by ").append(keyCol);
 		

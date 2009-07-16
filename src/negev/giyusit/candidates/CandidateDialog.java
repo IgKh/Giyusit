@@ -313,7 +313,7 @@ public class CandidateDialog extends QDialog {
 	
 	private void initComboModelsAndCompleters() {
 		// Lookup models
-		staffModel = new LookupTableModel("Staff");
+		staffModel = new LookupTableModel("Staff", "ID", "Name", "RealInd = 'true'");
 		
 		owner.setModel(staffModel);
 		owner.setModelColumn(LookupTableModel.VALUE_COLUMN);
@@ -491,7 +491,7 @@ class CandidateStatusesDialog extends QDialog {
 		
 		// Models
 		model = new RowSetModel(new String[] {"StartDate", "StatusName"});
-		statusesModel = new LookupTableModel("CandidateStatusValues");
+		statusesModel = new LookupTableModel("CandidateStatusValues", "ID", "Name", "EndDate isnull");
 		
 		DBValuesTranslator.translateModelHeaders(model);
 		
