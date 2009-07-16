@@ -171,26 +171,26 @@ public class DataTable extends QWidget {
 			if (statusBar != null)
 				statusBar.showMessage(tr("Working..."));
 			
-			// Get the model from the data view 
-			QAbstractItemModel model = null;
+			QApplication.processEvents();
 			
 			try {
-				model = currentDataView.getModel();
+				// Get the model from the data view 
+				QAbstractItemModel model = currentDataView.getModel();;
+				
+				// Set the model
+				setModelInternal(model);
 			}
 			catch (Exception e) {
 				MessageDialog.showException(window(), e);
-				return;
 			}
-			
-			//
-			setModelInternal(model);
-			
-			// Restore everything
-			setEnabled(true);
-			QApplication.restoreOverrideCursor();
-			
-			if (statusBar != null)
-				statusBar.clearMessage();
+			finally {
+				// Restore everything
+				setEnabled(true);
+				QApplication.restoreOverrideCursor();
+				
+				if (statusBar != null)
+					statusBar.clearMessage();
+			}
 		}
 	}
 	
