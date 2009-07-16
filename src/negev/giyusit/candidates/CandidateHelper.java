@@ -90,4 +90,10 @@ public class CandidateHelper extends GenericHelper {
 		
 		getQueryWrapper().execute(sql, new Object[] {candidateId, candidateId});
 	}
+	
+	public RowSet getCandidateEvents(int candidateId) {
+		String sql = "select * from CandidateEventsView where CandidateID = ?";
+		
+		return getQueryWrapper().queryForRowSet(sql, candidateId);
+	}
 }

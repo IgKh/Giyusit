@@ -168,7 +168,9 @@ END;
 CREATE TABLE EventTypes
 (
 	ID		INTEGER PRIMARY KEY,
-	Name	VARCHAR
+	Name	VARCHAR,
+	
+	EndDate		TIMESTAMP
 );
 
 INSERT INTO EventTypes (Name) VALUES ('שבת פתוחה');
@@ -312,5 +314,21 @@ CREATE VIEW EventCandidatesView AS SELECT
 	LEFT OUTER JOIN Candidates C ON EA.CandidateID = C.ID
 	LEFT OUTER JOIN AttendanceTypes AT ON EA.AttTypeID = AT.ID
 	LEFT OUTER JOIN BooleanValues BV ON AT.ActiveInd = BV.Key;
-	
+
+CREATE VIEW CandidateEventsView AS SELECT
+		EA.EventID AS ID,
+		EA.CandidateID,
+		EA.Notes,
+		E.Name,
+		strftime('%d/%m/%Y', E.StartDate) AS StartDate,
+		strftime('%d/%m/%Y', E.EndDate) AS EndDate,
+		ET.Name AS Type,
+		AT.Name AS AttType,
+		AT.ActiveInd,
+		BV.Value AS Active
+	FROM EventAttendance EA
+	LEFT OUTER JOIN Events E ON EA.EventID = E.ID
+	LEFT OUTER JOIN AttendanceTypes AT ON EA.AttTypeID = AT.ID
+	LEFT OUTER JOIN EventTypes ET ON E.TypeID = ET.ID
+	LEFT OUTER JOIN BooleanValues BV ON AT.ActiveInd = BV.Key;
 

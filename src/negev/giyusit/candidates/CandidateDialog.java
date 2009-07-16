@@ -46,6 +46,7 @@ import negev.giyusit.util.Row;
 import negev.giyusit.widgets.DataGrid;
 import negev.giyusit.widgets.DatePicker;
 import negev.giyusit.widgets.DialogField;
+import negev.giyusit.DataTable;
 
 public class CandidateDialog extends QDialog {
 	
@@ -74,6 +75,7 @@ public class CandidateDialog extends QDialog {
 		
 	// Buttons
 	private QPushButton candidateStatusesButton;
+	private QPushButton candidateEventsButton;
 	
 	private QPushButton saveButton;
 	private QPushButton resetButton;
@@ -202,6 +204,9 @@ public class CandidateDialog extends QDialog {
 		
 		candidateStatusesButton = new QPushButton(tr("Candidate Statuses"));
 		candidateStatusesButton.clicked.connect(this, "candidateStatuses()");
+		
+		candidateEventsButton = new QPushButton(tr("Candidate Events"));
+		candidateEventsButton.clicked.connect(this, "candidateEvents()");
 			
 		saveButton = new QPushButton(tr("Save"));
 		saveButton.setEnabled(false);
@@ -280,6 +285,7 @@ public class CandidateDialog extends QDialog {
 		giyusBottomLayout.addWidget(new DialogField(tr("Status: "), status));
 		giyusBottomLayout.addStretch(1);
 		giyusBottomLayout.addWidget(candidateStatusesButton);
+		giyusBottomLayout.addWidget(candidateEventsButton);
 		
 		giyusDataLayout.addLayout(giyusBottomLayout, 3, 1, 1, 3);
 		
@@ -451,6 +457,13 @@ public class CandidateDialog extends QDialog {
 			updateCandidateStatus();
 		}
 	}
+	
+	private void candidateEvents() {
+		CandidateEventsDialog dlg = new CandidateEventsDialog(this, candidateId);
+		
+		dlg.resize((int) (dlg.width() * 1.25), dlg.height());
+		dlg.exec();
+	}
 }
 
 class CandidateStatusesDialog extends QDialog {
@@ -620,6 +633,85 @@ class CandidateStatusesDialog extends QDialog {
 			// Refresh window
 			dbModified = true;
 			loadData();
+		}
+		catch (Exception e) {
+			MessageDialog.showException(this, e);
+		}
+		finally {
+			helper.close();
+		}
+	}
+}
+
+class CandidateEventsDialog extends QDialog {
+
+	// Widgets
+	private DataTable dataTable;
+	
+	// Properties
+	private RowSetModel model;
+	
+	private int candidateId;
+
+	public CandidateEventsDialog(QWidget parent, int candidateId) {
+		super(parent);
+		
+		this.candidateId = candidateId;
+		
+		// Models
+		model = new RowSetModel(new String[] 
+			{"ID", "Name", "Type", "StartDate", "EndDate", "AttType", "Notes"});
+		
+		DBValuesTranslator.translateModelHeaders(model);
+		
+		initUI();
+		updateTitle();
+		loadData();
+	}
+	
+	private void initUI() {
+		// Widgets
+		dataTable = new DataTable();
+		dataTable.setFilterEnabled(false);
+		dataTable.setModel(model);
+		
+		QPushButton closeButton = new QPushButton(tr("Close"));
+		closeButton.setIcon(new QIcon("classpath:/icons/close.png"));
+		closeButton.clicked.connect(this, "close()");
+		
+		// Layout
+		QHBoxLayout buttonLayout = new QHBoxLayout();
+		buttonLayout.addStretch(1);
+		buttonLayout.addWidget(closeButton);
+		
+		QVBoxLayout layout = new QVBoxLayout(this);
+		layout.addWidget(dataTable, 1);
+		layout.addLayout(buttonLayout);
+	}
+	
+	private void loadData() {
+		CandidateHelper helper = new CandidateHelper();
+		
+		try {
+			model.setData(helper.getCandidateEvents(candidateId));
+			dataTable.setModel(model);
+		}
+		catch (Exception e) {
+			MessageDialog.showException(this, e);
+		}
+		finally {
+			helper.close();
+		}
+	}
+	
+	private void updateTitle() {
+		CandidateHelper helper = new CandidateHelper();
+		
+		try {
+			String title = tr("Events for candidate {0}");
+			
+			setWindowTitle(MessageFormat.format(title, 
+									helper.candidateFullName(candidateId)));
 		}
 		catch (Exception e) {
 			MessageDialog.showException(this, e);

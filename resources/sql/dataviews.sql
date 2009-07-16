@@ -34,35 +34,53 @@ INSERT INTO DataViews(CategoryID, Title, Query, Ruler) VALUES
 INSERT INTO DataViews(CategoryID, Title, Query, Ruler) VALUES
 (
 		1, 'בעלי פרטים שגויים', 
-	'select * from AllCandidates where WrongDetailsInd = "true"', 
+	'select * from AllCandidates where ActiveInd = "true" and WrongDetailsInd = "true"', 
 	'@StdCandidatesRuler'
 );
 
 INSERT INTO DataViews(CategoryID, Title, Query, Ruler) VALUES
 (
 	1, 'ללא פרטי קשר', 
-	'select * from AllCandidates where HomePhone isnull and CellPhone isnull and EMail isnull', 
+	'select * from AllCandidates where ActiveInd = "true" and HomePhone isnull and CellPhone isnull and EMail isnull', 
 	'@StdCandidatesRuler'
 );
 
 INSERT INTO DataViews(CategoryID, Title, Query, Ruler) VALUES
 (
 	1, 'ללא אחראי', 
-	'select * from AllCandidates where OwnerID isnull', 
+	'select * from AllCandidates where ActiveInd = "true" and OwnerID isnull', 
 	'@StdCandidatesRuler'
 );
 
 INSERT INTO DataViews(CategoryID, Title, Query, Ruler) VALUES
 (
 	1, 'חתומי דח"ש', 
-	'select * from AllCandidates where SignedDahashInd = "true" and CanceledDahashInd <> "true"', 
+	'select * from AllCandidates where ActiveInd = "true" and SignedDahashInd = "true" and CanceledDahashInd <> "true"', 
 	'@StdCandidatesRuler'
 );
 
 INSERT INTO DataViews(CategoryID, Title, Query, Ruler) VALUES
 (
 	1, 'ביטלו דח"ש', 
-	'select * from AllCandidates where CanceledDahashInd = "true"', 
+	'select * from AllCandidates where ActiveInd = "true" and CanceledDahashInd = "true"', 
+	'@StdCandidatesRuler'
+);
+
+INSERT INTO DataViews(CategoryID, Title, Query, Ruler) VALUES
+(
+	1, 'היו בשבת פתוחה', 
+	'select * from AllCandidates AC where
+	 	(select count(*) from EventAttendance EA, Events E
+	 	 where EA.EventID = E.ID and E.TypeID = 1 and EA.AttTypeID = 4 and EA.CandidateID = AC.ID)', 
+	'@StdCandidatesRuler'
+);
+
+INSERT INTO DataViews(CategoryID, Title, Query, Ruler) VALUES
+(
+	1, 'היו באורחות', 
+	'select * from AllCandidates AC where
+	 	(select count(*) from EventAttendance EA, Events E
+	 	 where EA.EventID = E.ID and E.TypeID = 2 and EA.AttTypeID = 4 and EA.CandidateID = AC.ID)', 
 	'@StdCandidatesRuler'
 );
 
