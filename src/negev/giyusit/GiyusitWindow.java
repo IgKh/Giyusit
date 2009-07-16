@@ -347,6 +347,9 @@ public class GiyusitWindow extends QMainWindow {
 			MessageDialog.showException(this, e);
 		}
 		
+		//
+		currentFileName = fileName;
+		
 		// Save this database as the last one
 		settings.setValue("lastDatabase", fileName);
 		
@@ -356,9 +359,6 @@ public class GiyusitWindow extends QMainWindow {
 		
 		//
 		restoreViewListState(settings);
-		
-		//
-		currentFileName = fileName;
 		
 		updateWindowTitle();
 		setUIEnabled(true);
