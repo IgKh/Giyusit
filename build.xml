@@ -45,7 +45,7 @@
 	<target name="resources" depends="generate-version-file">
 		<mkdir dir="${jar.dir}" />
 		
-		<jar destfile="${jar.dir}/resources.jar" basedir="${resource.dir}" />
+		<jar destfile="${jar.dir}/resources.jar" basedir="${resource.dir}" excludes="**/*.ts" />
 	</target>
 	
 	<target name="run" depends="compile,resources">

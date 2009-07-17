@@ -1,6 +1,6 @@
 build/*
+*.exe
 
 giyusit.properties
 *.gdp
 *.jar
-*.qm
