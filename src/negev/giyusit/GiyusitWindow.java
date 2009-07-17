@@ -111,6 +111,8 @@ public class GiyusitWindow extends QMainWindow {
 	}
 		
 	private void initUI() {
+		setWindowIcon(new QIcon("classpath:/icons/camel.png"));
+		
 		dataTable = new DataTable(null);
 		dataViewList = new DataViewList(null);
 		
@@ -210,7 +212,6 @@ public class GiyusitWindow extends QMainWindow {
 			
 		QMenu helpMenu = menuBar().addMenu(tr("&Help"));
 		helpMenu.addAction(aboutGiyusitAct);
-		helpMenu.addAction(aboutQtAct);
 	}
 		
 	private void initToolBar() {
