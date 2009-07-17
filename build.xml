@@ -4,13 +4,18 @@
 	<property name="src.dir" value="src" />
 	<property name="lib.dir" value="lib" />
 	<property name="resource.dir" value="resources" />
+	<property name="dist.dir" value="dist" />
 	
 	<property name="build.dir" value="build" />
 	<property name="jar.dir" value="${build.dir}/jar" />
 	<property name="classes.dir" value="${build.dir}/classes" />
+	<property name="out.dir" value="${dist.dir}/classes" />
 	
 	<property name="version-file" value="${resource.dir}/giyusit.properties" />
 	<property name="main-class" value="negev.giyusit.GiyusitApplication" />
+	
+	<!-- Change this to point to where Launch4j is installed -->
+	<property name="launch4j.dir" value="/launch4j" />
 	
 	<path id="classpath">
 		<fileset dir="${lib.dir}" includes="**/*.jar" />
@@ -18,6 +23,10 @@
 	
 	<target name="clean">
 		<delete dir="${build.dir}" />
+	</target>
+	
+	<target name="distclean" depends="clean">
+		<delete dir="${out.dir}" />
 	</target>
 	
 	<target name="compile">
@@ -34,20 +43,61 @@
 		 </copy>
 	</target>
 	
+	<target name="jar" depends="compile">
+		<mkdir dir="${jar.dir}" />
+		<jar destfile="${jar.dir}/giyusit.jar" basedir="${classes.dir}" />
+	</target>
+	
 	<condition property="version-file-available">
 		<available file="${version-file}" />
 	</condition>
 	
-	<target name="generate-version-file" unless="version-file-available">
+	<target name="-generate-version-file" unless="version-file-available">
 		<echo message="version = ${app.version}" file="${version-file}" />
 	</target>
 	
-	<target name="resources" depends="generate-version-file">
+	<target name="resources" depends="-generate-version-file">
 		<mkdir dir="${jar.dir}" />
-		
 		<jar destfile="${jar.dir}/resources.jar" basedir="${resource.dir}" excludes="**/*.ts" />
 	</target>
 	
+	<!--
+	   Create stand-alone EXE file
+	  -->
+	<target name="-uber-jar" depends="jar,resources">
+		<!-- Merge the application, resource and library jars into a single one -->
+		<jar destfile="${jar.dir}/giyusit-uber.jar">
+			<zipfileset src="${jar.dir}/giyusit.jar" />
+			<zipfileset src="${jar.dir}/resources.jar" />
+			<zipgroupfileset dir="${lib.dir}" includes="*.jar" />
+			
+			<manifest>
+				<attribute name="Main-Class" value="${main-class}" />
+			</manifest>
+		</jar>
+	</target>
+	
+	<target name="exe" depends="-uber-jar">
+		<taskdef name="launch4j" 
+				classname="net.sf.launch4j.ant.Launch4jTask" 
+				classpath="${launch4j.dir}/launch4j.jar:${launch4j.dir}/lib/xstream.jar" />
+		
+		<launch4j configFile="${dist.dir}/launch4j.xml" 
+				jar="${jar.dir}/giyusit-uber.jar"
+				outfile="${out.dir}/Giyusit.exe" />
+	</target>
+	
+	<target name="installer" depends="exe">
+		<taskdef name="nsis" classname="net.sf.nsisant.Task" />
+		
+		<nsis script="${dist.dir}/installer.nsi">
+			<define name="VERSION" value="${app.version}" />
+		</nsis>
+	</target>
+	
+	<!-- 
+	   Run in Ant sandbox 
+	  -->
 	<target name="run" depends="compile,resources">
 		<java fork="true" classname="${main-class}">
 			<classpath>
