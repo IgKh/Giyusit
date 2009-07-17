@@ -396,7 +396,7 @@ public class StaffAdminDialog extends QDialog {
     		DataTableDialog dlg = new DataTableDialog(this);
     		
     		dlg.setWindowTitle(MessageFormat.format(tr("Candidates owned by {0}"), name));
-    		dlg.resize((int) (dlg.width() * 1.25), dlg.height());
+    		dlg.resize((int) (dlg.width() * 1.1), dlg.height());
     		
     		RowSetModel model = new RowSetModel(RULER.split(","));
     		model.setData(candidates);
@@ -434,7 +434,7 @@ public class StaffAdminDialog extends QDialog {
     		DataTableDialog dlg = new DataTableDialog(this);
     		
     		dlg.setWindowTitle(MessageFormat.format(tr("Candidates tree owned by {0}"), name));
-    		dlg.resize((int) (dlg.width() * 1.25), dlg.height());
+    		dlg.resize((int) (dlg.width() * 1.1), dlg.height());
     		
     		RowSetModel model = new RowSetModel(TREE_RULER.split(","));
     		model.setData(candidates);

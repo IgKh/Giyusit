@@ -87,6 +87,8 @@ public class AddCandidatesDialog extends QDialog {
 	private QPushButton cancelButton;
 	
 	public AddCandidatesDialog(QWidget parent) {
+		super(parent);
+		
 		initUI();
 		
 		// Setup the table columns

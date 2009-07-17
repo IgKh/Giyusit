@@ -172,7 +172,7 @@
     <message>
         <location filename="../../src/negev/giyusit/GiyusitWindow.java" line="178"/>
         <source>About &amp;Giyusit...</source>
-        <translation>אודות &amp;גיוסיות...</translation>
+        <translation>אודות &amp;גיוסית...</translation>
     </message>
     <message>
         <location filename="../../src/negev/giyusit/GiyusitWindow.java" line="181"/>
@@ -269,32 +269,32 @@
 <context>
     <name>negev.giyusit.candidates.AddCandidatesDialog</name>
     <message>
-        <location filename="../../src/negev/giyusit/candidates/AddCandidatesDialog.java" line="117"/>
+        <location filename="../../src/negev/giyusit/candidates/AddCandidatesDialog.java" line="119"/>
         <source>Add Candidates</source>
         <translation>הוספת מועמדים</translation>
     </message>
     <message>
-        <location filename="../../src/negev/giyusit/candidates/AddCandidatesDialog.java" line="126"/>
+        <location filename="../../src/negev/giyusit/candidates/AddCandidatesDialog.java" line="128"/>
         <source>Add</source>
         <translation>הוסף</translation>
     </message>
     <message>
-        <location filename="../../src/negev/giyusit/candidates/AddCandidatesDialog.java" line="130"/>
+        <location filename="../../src/negev/giyusit/candidates/AddCandidatesDialog.java" line="132"/>
         <source>Cancel</source>
         <translation>בטל</translation>
     </message>
     <message>
-        <location filename="../../src/negev/giyusit/candidates/AddCandidatesDialog.java" line="136"/>
+        <location filename="../../src/negev/giyusit/candidates/AddCandidatesDialog.java" line="138"/>
         <source>Group Data</source>
         <translation>נתונים קבוצתיים</translation>
     </message>
     <message>
-        <location filename="../../src/negev/giyusit/candidates/AddCandidatesDialog.java" line="139"/>
+        <location filename="../../src/negev/giyusit/candidates/AddCandidatesDialog.java" line="141"/>
         <source>Origin: </source>
         <translation>מקור: </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/negev/giyusit/candidates/AddCandidatesDialog.java" line="156"/>
+        <location filename="../../src/negev/giyusit/candidates/AddCandidatesDialog.java" line="158"/>
         <source>%n candidate(s) added succesfully</source>
         <translation>
             <numerusform>מועמד אחד נוסף בהצלחה</numerusform>
@@ -541,62 +541,72 @@
 <context>
     <name>negev.giyusit.candidates.CandidateSearchPane</name>
     <message>
-        <location filename="../../src/negev/giyusit/candidates/FindCandidatesDialog.java" line="222"/>
+        <location filename="../../src/negev/giyusit/candidates/FindCandidatesDialog.java" line="207"/>
+        <source>M</source>
+        <translation>ז</translation>
+    </message>
+    <message>
+        <location filename="../../src/negev/giyusit/candidates/FindCandidatesDialog.java" line="207"/>
+        <source>F</source>
+        <translation>נ</translation>
+    </message>
+    <message>
+        <location filename="../../src/negev/giyusit/candidates/FindCandidatesDialog.java" line="224"/>
         <source>Active Candidates Only</source>
         <translation>מועמדים פעילים בלבד</translation>
     </message>
     <message>
-        <location filename="../../src/negev/giyusit/candidates/FindCandidatesDialog.java" line="244"/>
+        <location filename="../../src/negev/giyusit/candidates/FindCandidatesDialog.java" line="246"/>
         <source>ID: </source>
         <translation>קןד: </translation>
     </message>
     <message>
-        <location filename="../../src/negev/giyusit/candidates/FindCandidatesDialog.java" line="246"/>
+        <location filename="../../src/negev/giyusit/candidates/FindCandidatesDialog.java" line="248"/>
         <source>National ID: </source>
         <translation>ת&quot;ז: </translation>
     </message>
     <message>
-        <location filename="../../src/negev/giyusit/candidates/FindCandidatesDialog.java" line="248"/>
+        <location filename="../../src/negev/giyusit/candidates/FindCandidatesDialog.java" line="250"/>
         <source>First Name: </source>
         <translation>שם פרטי: </translation>
     </message>
     <message>
-        <location filename="../../src/negev/giyusit/candidates/FindCandidatesDialog.java" line="250"/>
+        <location filename="../../src/negev/giyusit/candidates/FindCandidatesDialog.java" line="252"/>
         <source>Last Name: </source>
         <translation>שם משפחה: </translation>
     </message>
     <message>
-        <location filename="../../src/negev/giyusit/candidates/FindCandidatesDialog.java" line="252"/>
+        <location filename="../../src/negev/giyusit/candidates/FindCandidatesDialog.java" line="254"/>
         <source>Gender: </source>
         <translation>מין: </translation>
     </message>
     <message>
-        <location filename="../../src/negev/giyusit/candidates/FindCandidatesDialog.java" line="254"/>
+        <location filename="../../src/negev/giyusit/candidates/FindCandidatesDialog.java" line="256"/>
         <source>Status: </source>
         <translation>סטטוס: </translation>
     </message>
     <message>
-        <location filename="../../src/negev/giyusit/candidates/FindCandidatesDialog.java" line="257"/>
+        <location filename="../../src/negev/giyusit/candidates/FindCandidatesDialog.java" line="259"/>
         <source>City: </source>
         <translation>ישוב: </translation>
     </message>
     <message>
-        <location filename="../../src/negev/giyusit/candidates/FindCandidatesDialog.java" line="259"/>
+        <location filename="../../src/negev/giyusit/candidates/FindCandidatesDialog.java" line="261"/>
         <source>Origin: </source>
         <translation>מקור: </translation>
     </message>
     <message>
-        <location filename="../../src/negev/giyusit/candidates/FindCandidatesDialog.java" line="261"/>
+        <location filename="../../src/negev/giyusit/candidates/FindCandidatesDialog.java" line="263"/>
         <source>School: </source>
         <translation>בית ספר: </translation>
     </message>
     <message>
-        <location filename="../../src/negev/giyusit/candidates/FindCandidatesDialog.java" line="263"/>
+        <location filename="../../src/negev/giyusit/candidates/FindCandidatesDialog.java" line="265"/>
         <source>Owner: </source>
         <translation>אחראי: </translation>
     </message>
     <message>
-        <location filename="../../src/negev/giyusit/candidates/FindCandidatesDialog.java" line="265"/>
+        <location filename="../../src/negev/giyusit/candidates/FindCandidatesDialog.java" line="267"/>
         <source>Recruiter: </source>
         <translation>מגייס: </translation>
     </message>
@@ -691,42 +701,42 @@
 <context>
     <name>negev.giyusit.candidates.FindCandidatesDialog</name>
     <message>
-        <location filename="../../src/negev/giyusit/candidates/FindCandidatesDialog.java" line="83"/>
+        <location filename="../../src/negev/giyusit/candidates/FindCandidatesDialog.java" line="85"/>
         <source>Find Candidates</source>
         <translation>איתור מועמדים</translation>
     </message>
     <message>
-        <location filename="../../src/negev/giyusit/candidates/FindCandidatesDialog.java" line="100"/>
+        <location filename="../../src/negev/giyusit/candidates/FindCandidatesDialog.java" line="102"/>
         <source>Find</source>
         <translation>אתר</translation>
     </message>
     <message>
-        <location filename="../../src/negev/giyusit/candidates/FindCandidatesDialog.java" line="103"/>
+        <location filename="../../src/negev/giyusit/candidates/FindCandidatesDialog.java" line="105"/>
         <source>Clear</source>
         <translation>נקה</translation>
     </message>
     <message>
-        <location filename="../../src/negev/giyusit/candidates/FindCandidatesDialog.java" line="106"/>
+        <location filename="../../src/negev/giyusit/candidates/FindCandidatesDialog.java" line="108"/>
         <source>Export Data...</source>
         <translation>יצוא נתונים...</translation>
     </message>
     <message>
-        <location filename="../../src/negev/giyusit/candidates/FindCandidatesDialog.java" line="111"/>
+        <location filename="../../src/negev/giyusit/candidates/FindCandidatesDialog.java" line="113"/>
         <source>Select</source>
         <translation>בחר</translation>
     </message>
     <message>
-        <location filename="../../src/negev/giyusit/candidates/FindCandidatesDialog.java" line="115"/>
+        <location filename="../../src/negev/giyusit/candidates/FindCandidatesDialog.java" line="117"/>
         <source>Cancel</source>
         <translation>בטל</translation>
     </message>
     <message>
-        <location filename="../../src/negev/giyusit/candidates/FindCandidatesDialog.java" line="118"/>
+        <location filename="../../src/negev/giyusit/candidates/FindCandidatesDialog.java" line="120"/>
         <source>Close</source>
         <translation>סגור</translation>
     </message>
     <message>
-        <location filename="../../src/negev/giyusit/candidates/FindCandidatesDialog.java" line="124"/>
+        <location filename="../../src/negev/giyusit/candidates/FindCandidatesDialog.java" line="126"/>
         <source>Search Parameters</source>
         <translation>פרמטרים לאיתור</translation>
     </message>
@@ -885,22 +895,22 @@
 <context>
     <name>negev.giyusit.events.AddEventDialog</name>
     <message>
-        <location filename="../../src/negev/giyusit/events/AddEventDialog.java" line="51"/>
+        <location filename="../../src/negev/giyusit/events/AddEventDialog.java" line="53"/>
         <source>Add Event</source>
         <translation>הוספת אירוע</translation>
     </message>
     <message>
-        <location filename="../../src/negev/giyusit/events/AddEventDialog.java" line="58"/>
+        <location filename="../../src/negev/giyusit/events/AddEventDialog.java" line="60"/>
         <source>&lt;new&gt;</source>
         <translation>&lt;חדש&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/negev/giyusit/events/AddEventDialog.java" line="60"/>
+        <location filename="../../src/negev/giyusit/events/AddEventDialog.java" line="62"/>
         <source>Add</source>
         <translation>הוסף</translation>
     </message>
     <message>
-        <location filename="../../src/negev/giyusit/events/AddEventDialog.java" line="64"/>
+        <location filename="../../src/negev/giyusit/events/AddEventDialog.java" line="66"/>
         <source>Cancel</source>
         <translation>בטל</translation>
     </message>
@@ -908,27 +918,27 @@
 <context>
     <name>negev.giyusit.events.AttendanceItemDialog</name>
     <message>
-        <location filename="../../src/negev/giyusit/events/EventDialog.java" line="364"/>
+        <location filename="../../src/negev/giyusit/events/EventDialog.java" line="366"/>
         <source>Giyusit</source>
         <translation>גיוסית</translation>
     </message>
     <message>
-        <location filename="../../src/negev/giyusit/events/EventDialog.java" line="374"/>
+        <location filename="../../src/negev/giyusit/events/EventDialog.java" line="376"/>
         <source>OK</source>
         <translation>אישור</translation>
     </message>
     <message>
-        <location filename="../../src/negev/giyusit/events/EventDialog.java" line="377"/>
+        <location filename="../../src/negev/giyusit/events/EventDialog.java" line="379"/>
         <source>Cancel</source>
         <translation>ביטול</translation>
     </message>
     <message>
-        <location filename="../../src/negev/giyusit/events/EventDialog.java" line="387"/>
+        <location filename="../../src/negev/giyusit/events/EventDialog.java" line="389"/>
         <source>Attendance Type: </source>
         <translation>סוג השתתפות: </translation>
     </message>
     <message>
-        <location filename="../../src/negev/giyusit/events/EventDialog.java" line="388"/>
+        <location filename="../../src/negev/giyusit/events/EventDialog.java" line="390"/>
         <source>Notes: </source>
         <translation>הערות: </translation>
     </message>
@@ -994,47 +1004,47 @@
 <context>
     <name>negev.giyusit.events.EventDialog</name>
     <message>
-        <location filename="../../src/negev/giyusit/events/EventDialog.java" line="100"/>
+        <location filename="../../src/negev/giyusit/events/EventDialog.java" line="102"/>
         <source>Show active attendants only</source>
         <translation>הצג משתתפים פעילים בלבד</translation>
     </message>
     <message>
-        <location filename="../../src/negev/giyusit/events/EventDialog.java" line="103"/>
+        <location filename="../../src/negev/giyusit/events/EventDialog.java" line="105"/>
         <source>Save</source>
         <translation>שמור</translation>
     </message>
     <message>
-        <location filename="../../src/negev/giyusit/events/EventDialog.java" line="107"/>
+        <location filename="../../src/negev/giyusit/events/EventDialog.java" line="109"/>
         <source>Reset</source>
         <translation>אפס</translation>
     </message>
     <message>
-        <location filename="../../src/negev/giyusit/events/EventDialog.java" line="111"/>
+        <location filename="../../src/negev/giyusit/events/EventDialog.java" line="113"/>
         <source>Export Data...</source>
         <translation>יצוא נתונים...</translation>
     </message>
     <message>
-        <location filename="../../src/negev/giyusit/events/EventDialog.java" line="115"/>
+        <location filename="../../src/negev/giyusit/events/EventDialog.java" line="117"/>
         <source>Add Candidates...</source>
         <translation>הוסף מועמדים...</translation>
     </message>
     <message>
-        <location filename="../../src/negev/giyusit/events/EventDialog.java" line="118"/>
+        <location filename="../../src/negev/giyusit/events/EventDialog.java" line="120"/>
         <source>Delete Candidate</source>
         <translation>מחק מועמד</translation>
     </message>
     <message>
-        <location filename="../../src/negev/giyusit/events/EventDialog.java" line="122"/>
+        <location filename="../../src/negev/giyusit/events/EventDialog.java" line="124"/>
         <source>Close</source>
         <translation>סגור</translation>
     </message>
     <message>
-        <location filename="../../src/negev/giyusit/events/EventDialog.java" line="129"/>
+        <location filename="../../src/negev/giyusit/events/EventDialog.java" line="131"/>
         <source>Event Details</source>
         <translation>פרטי אירוע</translation>
     </message>
     <message>
-        <location filename="../../src/negev/giyusit/events/EventDialog.java" line="140"/>
+        <location filename="../../src/negev/giyusit/events/EventDialog.java" line="142"/>
         <source>Event Attendance</source>
         <translation>משתתפים באירוע</translation>
     </message>
@@ -1162,12 +1172,12 @@
 <context>
     <name>negev.giyusit.util.DataTableDialog</name>
     <message>
-        <location filename="../../src/negev/giyusit/util/DataTableDialog.java" line="56"/>
+        <location filename="../../src/negev/giyusit/util/DataTableDialog.java" line="58"/>
         <source>Export Data...</source>
         <translation>יצוא נתונים...</translation>
     </message>
     <message>
-        <location filename="../../src/negev/giyusit/util/DataTableDialog.java" line="60"/>
+        <location filename="../../src/negev/giyusit/util/DataTableDialog.java" line="62"/>
         <source>Close</source>
         <translation>סגור</translation>
     </message>

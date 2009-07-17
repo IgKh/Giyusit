@@ -44,6 +44,8 @@ public class AddEventDialog extends QDialog {
 	private QPushButton cancelButton;
 	
 	public AddEventDialog(QWidget parent) {
+		super(parent);
+		
 		initUI();
 	}
 	

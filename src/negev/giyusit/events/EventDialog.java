@@ -69,6 +69,8 @@ public class EventDialog extends QDialog {
 	private EventDialogDataView dataView;
 	
 	public EventDialog(QWidget parent, int eventId) {
+		super(parent);
+		
 		this.eventId = eventId;
 		
 		dataView = new EventDialogDataView(eventId);

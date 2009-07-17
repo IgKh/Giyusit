@@ -62,6 +62,8 @@ public class FindCandidatesDialog extends QDialog {
 	private QPushButton closeButton;
 	
 	public FindCandidatesDialog(QWidget parent, Mode mode) {
+		super(parent);
+		
 		this.mode = mode;
 		
 		initUI();
@@ -202,7 +204,7 @@ class CandidateSearchPane extends QWidget {
 		
 		gender = new QComboBox();
 		gender.setMaximumWidth(35);
-		gender.addItems(Arrays.asList("", "ז", "נ"));
+		gender.addItems(Arrays.asList("", tr("M"), tr("F")));
 		
 		status = new QComboBox();
 		

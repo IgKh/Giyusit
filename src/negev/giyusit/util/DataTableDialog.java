@@ -39,6 +39,8 @@ public class DataTableDialog extends QDialog {
 	private DataTable dataTable;
 	
 	public DataTableDialog(QWidget parent) {
+		super(parent);
+		
 		initUI();
 	}
 	

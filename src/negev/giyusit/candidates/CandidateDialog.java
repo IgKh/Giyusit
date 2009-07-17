@@ -461,7 +461,7 @@ public class CandidateDialog extends QDialog {
 	private void candidateEvents() {
 		CandidateEventsDialog dlg = new CandidateEventsDialog(this, candidateId);
 		
-		dlg.resize((int) (dlg.width() * 1.25), dlg.height());
+		dlg.resize((int) (dlg.width() * 1.1), dlg.height());
 		dlg.exec();
 	}
 }

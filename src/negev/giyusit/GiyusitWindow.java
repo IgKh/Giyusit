@@ -248,14 +248,14 @@ public class GiyusitWindow extends QMainWindow {
 	}
 	
 	private void saveViewListState(QSettings settings) {
-		String f = currentFileName.replace(File.separatorChar, '@');
+		String f = currentFileName.replace('/', '@');
 		String key = "viewList/" + f;
 			
 		settings.setValue(key, dataViewList.saveState());
 	}
 	
 	private void restoreViewListState(QSettings settings) {
-		String f = currentFileName.replace(File.separatorChar, '@');
+		String f = currentFileName.replace('/', '@');
 		String key = "viewList/" + f;
 		
 		dataViewList.restoreState(settings.value(key, "").toString());
