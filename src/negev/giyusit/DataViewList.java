@@ -42,16 +42,27 @@ public class DataViewList extends QToolBox {
 	}
 	
 	public void restoreState(String state) {
-		if (state == null)
-			return;
+		// Try restoring
+		boolean ok = restoreStatePrivate(state);
 		
-		boolean stateRestored = false;
+		// Couldn't restore, so just show the first data view
+		if (!ok) {
+			setCurrentIndex(0);
+			((QListWidget) currentWidget()).setCurrentRow(0);
+		}
+	}
+	
+	// A helper method that tries to restore the DataViewLists's state
+	// from a string and returns a boolean indicating success
+	private boolean restoreStatePrivate(String state) {
+		if (state == null)
+			return false;
 		
 		// Run a regexp here to make sure the state string is valid
 		QRegExp regexp = new QRegExp("^\\d+;\\d+$");
 		
 		if (!regexp.exactMatch(state))
-			return;
+			return false;
 		
 		// Parse state string
 		String[] parts = state.split(";");
@@ -60,7 +71,7 @@ public class DataViewList extends QToolBox {
 		int index = Integer.parseInt(parts[0]);
 		
 		if (index < 0 || index > count())
-			return;
+			return false;
 		
 		setCurrentIndex(index);
 		
@@ -72,6 +83,7 @@ public class DataViewList extends QToolBox {
 		//	return;
 		
 		currentList.setCurrentRow(row);
+		return true;
 	}
 	
 	public void clear() {

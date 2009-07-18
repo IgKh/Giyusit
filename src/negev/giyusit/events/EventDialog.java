@@ -328,7 +328,7 @@ class EventDialogDataView extends DataView {
 		
 		model = new RowSetModel(new String[] {"ID", "FirstName", "LastName", 
 												"Gender", "Address", "City", 
-												"ZipCode", "AttType", "Notes"});
+												"ZipCode", "EMail", "AttType", "Notes"});
 		
 		DBValuesTranslator.translateModelHeaders(model);
 	}

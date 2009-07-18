@@ -162,6 +162,7 @@ public class GiyusitWindow extends QMainWindow {
 			
 		findCandidatesAct = new QAction(tr("&Find Candidates..."), this);
 		findCandidatesAct.setIcon(new QIcon("classpath:/icons/find-candidates.png"));
+		findCandidatesAct.setShortcut(new QKeySequence(QKeySequence.StandardKey.Find));
 		findCandidatesAct.triggered.connect(this, "findCandidates()");
 		
 		deleteCandidateAct = new QAction(tr("&Delete Candidate..."), this);

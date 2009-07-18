@@ -9,7 +9,7 @@
 	<property name="build.dir" value="build" />
 	<property name="jar.dir" value="${build.dir}/jar" />
 	<property name="classes.dir" value="${build.dir}/classes" />
-	<property name="out.dir" value="${dist.dir}/classes" />
+	<property name="out.dir" value="${dist.dir}/out" />
 	
 	<property name="version-file" value="${resource.dir}/giyusit.properties" />
 	<property name="main-class" value="negev.giyusit.GiyusitApplication" />
@@ -81,6 +81,8 @@
 		<taskdef name="launch4j" 
 				classname="net.sf.launch4j.ant.Launch4jTask" 
 				classpath="${launch4j.dir}/launch4j.jar:${launch4j.dir}/lib/xstream.jar" />
+		
+		<mkdir dir="${out.dir}" />
 		
 		<launch4j configFile="${dist.dir}/launch4j.xml" 
 				jar="${jar.dir}/giyusit-uber.jar"

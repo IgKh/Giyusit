@@ -77,9 +77,13 @@ public class CandidateDialog extends QDialog {
 	private QPushButton candidateStatusesButton;
 	private QPushButton candidateEventsButton;
 	
-	private QPushButton saveButton;
-	private QPushButton resetButton;
+	private QToolButton saveButton;
+	private QToolButton resetButton;
 	private QPushButton closeButton;
+	
+	// Actions
+	private QAction saveAct;
+	private QAction resetAct;
 	
 	// Properties
 	private int candidateId;
@@ -98,6 +102,7 @@ public class CandidateDialog extends QDialog {
 		watcher = new DirtyStateWatcher(this);
 		watcher.dirtyChanged.connect(this, "dirtyChanged(Boolean)");
 		
+		initActions();
 		initUI();
 		initComboModelsAndCompleters();
 		
@@ -137,6 +142,20 @@ public class CandidateDialog extends QDialog {
 		}
 		else
 			e.accept();
+	}
+	
+	private void initActions() {
+		saveAct = new QAction(tr("&Save"), this);
+		saveAct.setEnabled(false);
+		saveAct.setIcon(new QIcon("classpath:/icons/save.png"));
+		saveAct.setShortcut(new QKeySequence(QKeySequence.StandardKey.Save));
+		saveAct.triggered.connect(this, "saveCandidateData()");
+		
+		resetAct = new QAction(tr("&Reset"), this);
+		resetAct.setEnabled(false);
+		resetAct.setIcon(new QIcon("classpath:/icons/revert.png"));
+		resetAct.setShortcut(new QKeySequence("Ctrl+R"));
+		resetAct.triggered.connect(this, "loadCandidateData()");
 	}
 		
 	private void initUI() {
@@ -208,15 +227,13 @@ public class CandidateDialog extends QDialog {
 		candidateEventsButton = new QPushButton(tr("Candidate Events"));
 		candidateEventsButton.clicked.connect(this, "candidateEvents()");
 			
-		saveButton = new QPushButton(tr("Save"));
-		saveButton.setEnabled(false);
-		saveButton.setIcon(new QIcon("classpath:/icons/save.png"));
-		saveButton.clicked.connect(this, "saveCandidateData()");
+		saveButton = new QToolButton();
+		saveButton.setDefaultAction(saveAct);
+		saveButton.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon);
 			
-		resetButton = new QPushButton(tr("Reset"));
-		resetButton.setEnabled(false);
-		resetButton.setIcon(new QIcon("classpath:/icons/revert.png"));
-		resetButton.clicked.connect(this, "loadCandidateData()");
+		resetButton = new QToolButton();
+		resetButton.setDefaultAction(resetAct);
+		resetButton.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon);
 			
 		closeButton = new QPushButton(tr("Close"));
 		closeButton.setIcon(new QIcon("classpath:/icons/close.png"));
@@ -377,6 +394,13 @@ public class CandidateDialog extends QDialog {
 	}
 	
 	private void saveCandidateData() {
+		// Check to see if the user didn't try to delete the fist name
+		if (firstName.text().trim().isEmpty()) {
+			MessageDialog.showUserError(this, tr("First name can't be empty"));
+			firstName.setFocus();
+			return;
+		}
+		
 		CandidateHelper helper = new CandidateHelper();
 		
 		try {
@@ -429,8 +453,8 @@ public class CandidateDialog extends QDialog {
 		updateWindowTitle();
 		setWindowModified(dirty);
 		
-		saveButton.setEnabled(dirty);
-		resetButton.setEnabled(dirty);
+		saveAct.setEnabled(dirty);
+		resetAct.setEnabled(dirty);
 	}
 	
 	private void updateCandidateStatus() {
