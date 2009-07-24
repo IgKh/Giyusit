@@ -145,6 +145,10 @@ public class DataTable extends QWidget {
 	}
 	
 	public void setDataView(DataView dataView) {
+		// Dismiss previous view
+		if (currentDataView != null)
+			currentDataView.viewDismissed();
+		
 		currentDataView = dataView;
 		
 		refresh();

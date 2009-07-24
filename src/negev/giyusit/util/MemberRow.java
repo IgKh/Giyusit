@@ -27,33 +27,51 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package negev.giyusit;
+package negev.giyusit.util;
 
-import com.trolltech.qt.core.*;
-import com.trolltech.qt.gui.*;
+import java.util.Set;
 
-public abstract class DataView {
+public class MemberRow extends Row {
+
+	private RowFields fields;
+	private Object[] data;
 	
-	public abstract String getName();
-	
-	public QIcon getIcon() {
-		return new QIcon();
+	public MemberRow(RowFields fields) {
+		if (fields == null)
+			throw new NullPointerException("fields is null");
+		
+		this.fields = fields;
+		
+		// Allocate data array
+		this.data = new Object[fields.size()];
 	}
 	
-	public abstract QAbstractItemModel getModel();
-	
-	/**
-	 * This method is called by the {@link DataTable} when this data view
-	 * is no longer visible to the user, so expensive resources could be
-	 * disposed.
-	 * 
-	 * The base implementation does nothing.
-	 */
-	public void viewDismissed() {
-		// Do nothing
+	@Override
+	public Set<String> keySet() {
+		return fields.toSet();
 	}
 	
-	public boolean showItemDialog(QWidget parent, QModelIndex index) {
-		return false;
+	@Override
+	public Object get(String key) {
+		if (key == null)
+			throw new NullPointerException("Null keys are not allowed");
+		
+		int pos = fields.getFieldPos(key);
+		if (pos < 0)
+			throw new IllegalArgumentException("Key \"" + key + "\" not in row");
+		
+		return data[pos];
+	}
+
+	@Override
+	public void put(String key, Object value) {
+		if (key == null)
+			throw new NullPointerException("Null keys are not allowed");
+		
+		int pos = fields.getFieldPos(key);
+		if (pos < 0)
+			throw new IllegalArgumentException("Key \"" + key + "\" not in row");
+		
+		data[pos] = value;
 	}
 }

@@ -35,6 +35,9 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
+import negev.giyusit.util.FieldDef;
+import negev.giyusit.util.MemberRow;
+import negev.giyusit.util.RowFields;
 import negev.giyusit.util.RowSet;
 import negev.giyusit.util.Row;
 
@@ -159,9 +162,12 @@ public class QueryWrapper {
 			// Execute the statement
 			ResultSet rs = stmnt.executeQuery();
 			
+			// Extract meta data
+			RowFields fields = extractMetaData(rs);
+			
 			// Extract the row set
 			if (rs.next())
-				result = extractRow(rs);
+				result = extractRow(rs, fields);
 			
 			return result;
 		}
@@ -189,9 +195,12 @@ public class QueryWrapper {
 			// Execute the statement
 			ResultSet rs = stmnt.executeQuery();
 			
+			// Extract meta data
+			RowFields fields = extractMetaData(rs);
+			
 			// Extract the row set
 			while (rs.next())
-				result.addRow(extractRow(rs));
+				result.addRow(extractRow(rs, fields));
 			
 			return result;
 		}
@@ -205,13 +214,25 @@ public class QueryWrapper {
 		}
 	}
 	
-	private Row extractRow(ResultSet rs) throws SQLException {
-		Row row = new Row();
+	private RowFields extractMetaData(ResultSet rs) throws SQLException {
+		RowFields fields = new RowFields();
 		ResultSetMetaData metaData = rs.getMetaData();
-	
+		
 		int k = metaData.getColumnCount();
 		for (int i = 0; i < k; i++) {
-			row.put(metaData.getColumnLabel(i + 1), rs.getObject(i + 1));
+			FieldDef field = new FieldDef(metaData.getColumnLabel(i + 1));
+			
+			fields.add(field);
+		}
+		return fields;
+	}
+	
+	private Row extractRow(ResultSet rs, RowFields fields) throws SQLException {
+		Row row = new MemberRow(fields);
+	
+		int k = fields.size();
+		for (int i = 0; i < k; i++) {
+			row.put(fields.get(i).getName(), rs.getObject(i + 1));
 		}
 		
 		return row;

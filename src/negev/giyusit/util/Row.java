@@ -33,42 +33,20 @@ import com.trolltech.qt.core.QDate;
 import com.trolltech.qt.core.Qt;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
-public class Row {
+public abstract class Row {
 	
-	private HashMap<String, Object> innerMap;
-	
-	public Row() {
-		innerMap = new HashMap<String, Object>();
-	}
-	
-	public Row(Row other) {
-		innerMap = new HashMap<String, Object>(other.innerMap);
-	}
-	
-	@Override
-	public String toString() {
-		return innerMap.toString();
-	}
-	
-	public Set<String> keySet() {
-		return innerMap.keySet();
-	}
+	public abstract Set<String> keySet();
 	
 	public List<String> keyList() {
-		return new ArrayList<String>(innerMap.keySet());
+		return new ArrayList<String>(keySet());
 	}
 	
-	public Object get(String key) {
-		if (!innerMap.containsKey(key))
-			throw new IllegalArgumentException("Key \"" + key + "\" not in row");
-		
-		return innerMap.get(key);
-	}
+	public abstract Object get(String key);
+	
+	public abstract void put(String key, Object value);
 	
 	/**
 	 * Returns a certain value as a string. Converts NULL values into
@@ -100,13 +78,6 @@ public class Row {
 		String str = getString(key);
 		
 		return QDate.fromString(str, Qt.DateFormat.ISODate);
-	}
-	
-	public void put(String key, Object value) {
-		if (key == null)
-			throw new NullPointerException("Null keys are not allowed");
-		
-		innerMap.put(key, value);
 	}
 	
 	public void put(String key, String value) {

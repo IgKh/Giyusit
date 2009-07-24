@@ -34,6 +34,7 @@ import com.trolltech.qt.gui.*;
 
 import negev.giyusit.config.GenericAdminHelper;
 import negev.giyusit.config.GenericAdminItemDialog;
+import negev.giyusit.util.BasicRow;
 import negev.giyusit.util.MessageDialog;
 import negev.giyusit.util.RowSet;
 import negev.giyusit.util.Row;
@@ -102,7 +103,7 @@ class CSVItemDialog extends GenericAdminItemDialog {
 	}
 	
 	public Row toRow() {
-		Row row = new Row();
+		Row row = new BasicRow();
 		
 		row.put("Name", name.text());
 		row.put("ActiveInd", isActive.isChecked());

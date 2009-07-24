@@ -27,33 +27,55 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package negev.giyusit;
+package negev.giyusit.util;
 
-import com.trolltech.qt.core.*;
-import com.trolltech.qt.gui.*;
+import java.util.HashMap;
+import java.util.Set;
 
-public abstract class DataView {
+public class BasicRow extends Row {
 	
-	public abstract String getName();
+	private HashMap<String, Object> innerMap;
 	
-	public QIcon getIcon() {
-		return new QIcon();
+	public BasicRow() {
+		innerMap = new HashMap<String, Object>();
 	}
 	
-	public abstract QAbstractItemModel getModel();
-	
-	/**
-	 * This method is called by the {@link DataTable} when this data view
-	 * is no longer visible to the user, so expensive resources could be
-	 * disposed.
-	 * 
-	 * The base implementation does nothing.
-	 */
-	public void viewDismissed() {
-		// Do nothing
+	public BasicRow(Row other) {
+		if (other instanceof BasicRow) {
+			BasicRow bs = (BasicRow) other;
+			innerMap = new HashMap<String, Object>(bs.innerMap);
+		}
+		else {
+			innerMap = new HashMap<String, Object>();
+			
+			for (String key : other.keySet())
+				put(key, other.get(key));
+		}
 	}
 	
-	public boolean showItemDialog(QWidget parent, QModelIndex index) {
-		return false;
+	@Override
+	public String toString() {
+		return innerMap.toString();
+	}
+	
+	@Override
+	public Set<String> keySet() {
+		return innerMap.keySet();
+	}
+	
+	@Override
+	public Object get(String key) {
+		if (!innerMap.containsKey(key))
+			throw new IllegalArgumentException("Key \"" + key + "\" not in row");
+			
+		return innerMap.get(key);
+	}
+	
+	@Override
+	public void put(String key, Object value) {
+		if (key == null)
+			throw new NullPointerException("Null keys are not allowed");
+		
+		innerMap.put(key, value);
 	}
 }

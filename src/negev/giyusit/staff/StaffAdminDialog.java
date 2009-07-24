@@ -37,6 +37,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 
 import negev.giyusit.exporters.PdfExporter;
+import negev.giyusit.util.BasicRow;
 import negev.giyusit.util.DataTableDialog;
 import negev.giyusit.util.DBValuesTranslator;
 import negev.giyusit.util.MessageDialog;
@@ -278,7 +279,7 @@ public class StaffAdminDialog extends QDialog {
     	
     	try {
     		int id = Integer.parseInt(item.data(0, ID_ROLE).toString());
-    		Row member = new Row();
+    		Row member = new BasicRow();
     		
     		member.put("Name", name.text());
     		member.put("Role", role.text());
@@ -314,7 +315,7 @@ public class StaffAdminDialog extends QDialog {
 			parentId = currentItem.data(0, ID_ROLE);
 			
 		// Prepare the row
-		Row row = new Row();
+		Row row = new BasicRow();
 		row.put("Name", name);
 		row.put("ParentID", parentId);
 		

@@ -91,4 +91,10 @@ public class GenericDataView extends DataView {
 			try { conn.close(); } catch (Exception e) {}
 		}
 	}
+	
+	@Override
+	public void viewDismissed() {
+		if (model != null)
+			model.setData(null);
+	}
 }

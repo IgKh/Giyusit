@@ -27,33 +27,21 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package negev.giyusit;
+package negev.giyusit.util;
 
-import com.trolltech.qt.core.*;
-import com.trolltech.qt.gui.*;
+public class FieldDef {
 
-public abstract class DataView {
+	private String name;
 	
-	public abstract String getName();
-	
-	public QIcon getIcon() {
-		return new QIcon();
+	public FieldDef(String name) {
+		this.name = name;
 	}
-	
-	public abstract QAbstractItemModel getModel();
-	
-	/**
-	 * This method is called by the {@link DataTable} when this data view
-	 * is no longer visible to the user, so expensive resources could be
-	 * disposed.
-	 * 
-	 * The base implementation does nothing.
-	 */
-	public void viewDismissed() {
-		// Do nothing
+
+	public String getName() {
+		return name;
 	}
-	
-	public boolean showItemDialog(QWidget parent, QModelIndex index) {
-		return false;
+
+	public void setName(String name) {
+		this.name = name;
 	}
 }

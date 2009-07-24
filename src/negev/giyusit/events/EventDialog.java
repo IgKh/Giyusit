@@ -36,6 +36,7 @@ import java.util.List;
 
 import negev.giyusit.candidates.FindCandidatesDialog;
 import negev.giyusit.db.LookupTableModel;
+import negev.giyusit.util.BasicRow;
 import negev.giyusit.util.DBValuesTranslator;
 import negev.giyusit.util.MessageDialog;
 import negev.giyusit.util.RowSetModel;
@@ -392,7 +393,7 @@ class AttendanceItemDialog extends QDialog {
 	}
 	
 	public Row toRow() {
-		Row row = new Row();
+		Row row = new BasicRow();
 		
 		row.put("Notes", notes.text());
 		row.put("AttTypeID", lookupModel.rowToKey(attendanceType.currentIndex()));

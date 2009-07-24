@@ -35,6 +35,7 @@ import com.trolltech.qt.gui.*;
 import java.text.MessageFormat;
 
 import negev.giyusit.db.LookupTableModel;
+import negev.giyusit.util.BasicRow;
 import negev.giyusit.util.CitiesCompleter;
 import negev.giyusit.util.DBColumnCompleter;
 import negev.giyusit.util.DBValuesTranslator;
@@ -404,7 +405,7 @@ public class CandidateDialog extends QDialog {
 		CandidateHelper helper = new CandidateHelper();
 		
 		try {
-			Row candidate = new Row();
+			Row candidate = new BasicRow();
 			
 			// Text fields
 			candidate.put("NationalID", nationalId.text());

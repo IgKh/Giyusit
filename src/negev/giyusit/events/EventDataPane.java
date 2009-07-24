@@ -33,6 +33,7 @@ import com.trolltech.qt.core.*;
 import com.trolltech.qt.gui.*;
 
 import negev.giyusit.db.LookupTableModel;
+import negev.giyusit.util.BasicRow;
 import negev.giyusit.util.MessageDialog;
 import negev.giyusit.util.Row;
 
@@ -63,7 +64,7 @@ public class EventDataPane extends QWidget {
 	}
 	
 	public Row toRow() {
-		Row row = new Row();
+		Row row = new BasicRow();
 		
 		row.put("Name", name.text());
 		row.put("StartDate", startDate.date());

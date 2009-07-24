@@ -27,33 +27,51 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package negev.giyusit;
+package negev.giyusit.util;
 
-import com.trolltech.qt.core.*;
-import com.trolltech.qt.gui.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
-public abstract class DataView {
+@SuppressWarnings("serial")
+public class RowFields extends ArrayList<FieldDef> {
 	
-	public abstract String getName();
-	
-	public QIcon getIcon() {
-		return new QIcon();
+	public RowFields() {
 	}
 	
-	public abstract QAbstractItemModel getModel();
-	
-	/**
-	 * This method is called by the {@link DataTable} when this data view
-	 * is no longer visible to the user, so expensive resources could be
-	 * disposed.
-	 * 
-	 * The base implementation does nothing.
-	 */
-	public void viewDismissed() {
-		// Do nothing
+	public Set<String> toSet() {
+		HashSet<String> set = new HashSet<String>();
+		
+		for (FieldDef field : this)
+			set.add(field.getName());
+		
+		return set;
 	}
 	
-	public boolean showItemDialog(QWidget parent, QModelIndex index) {
-		return false;
+	public int getFieldPos(String name) {
+		boolean found = false;
+		int i = 0;
+		
+		// Linear search for the field
+		while (i < size() && !found) {
+			if (get(i).getName().equals(name))
+				found = true;
+			else
+				i++;
+		}
+		return (found) ? i : -1;
+	}
+	
+	public FieldDef fieldByName(String name) {
+		int pos = getFieldPos(name);
+		
+		if (pos >= 0)
+			return get(pos);
+		else
+			return null;
+	}
+	
+	public boolean hasField(String name) {
+		return (getFieldPos(name) >= 0);
 	}
 }
