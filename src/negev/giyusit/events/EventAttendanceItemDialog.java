@@ -27,32 +27,66 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package negev.giyusit.candidates;
+package negev.giyusit.events;
 
-import com.trolltech.qt.core.*;
 import com.trolltech.qt.gui.*;
 
-import negev.giyusit.db.GenericDataView;
+import negev.giyusit.db.LookupTableModel;
+import negev.giyusit.util.BasicRow;
+import negev.giyusit.util.GenericItemDialog;
+import negev.giyusit.util.Row;
 
-public class CandidateDataView extends GenericDataView {
+/**
+ * A dialog for modifying attendance items
+ */
+public class EventAttendanceItemDialog extends GenericItemDialog {
+
+	private QComboBox attendanceType;
+	private QLineEdit notes;
 	
-	public CandidateDataView(String name, String query, String ruler) {
-		super(name, query, ruler);
-	}
+	private LookupTableModel lookupModel;
 	
-	public QIcon getIcon() {
-		return new QIcon("classpath:/icons/candidates.png");
+	public EventAttendanceItemDialog(QWidget parent) {
+		super(parent);
+		
+		lookupModel = new LookupTableModel("AttendanceTypes");
+		
+		setWindowTitle(tr("Giyusit"));
+		
+		// Widgets
+		attendanceType = new QComboBox();
+		attendanceType.setModel(lookupModel);
+		attendanceType.setModelColumn(LookupTableModel.VALUE_COLUMN);
+		attendanceType.setCurrentIndex(-1);
+		
+		notes = new QLineEdit();
+		
+		// Layout
+		addField(tr("Attendance Type: "), attendanceType);
+		addField(tr("Notes: "), notes);
 	}
 	
 	@Override
-	public boolean showItemDialog(QWidget parent, QModelIndex index) {
-		// Extract candidate id
-		int id = Integer.parseInt(index.model().data(index.row(), 0).toString());
+	public void fromRow(Row row) {
+		if (row == null)
+			throw new NullPointerException("Null row");
 		
-		// Show dialog
-		CandidateDialog dlg = new CandidateDialog(parent, id);
-		dlg.show();
+		notes.setText(row.getString("Notes"));
+		attendanceType.setCurrentIndex(lookupModel.keyToRow(row.getString("AttTypeID")));
+	}
+
+	@Override
+	public Row toRow() {
+		Row row = new BasicRow();
 		
-		return dlg.isDbModified();
+		row.put("Notes", notes.text());
+		row.put("AttTypeID", lookupModel.rowToKey(attendanceType.currentIndex()));
+		
+		return row;
+	}
+
+	@Override
+	public boolean validate() {
+		return true;
 	}
 }

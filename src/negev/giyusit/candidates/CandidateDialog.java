@@ -42,14 +42,12 @@ import negev.giyusit.util.DBValuesTranslator;
 import negev.giyusit.util.DirtyStateWatcher;
 import negev.giyusit.util.MessageDialog;
 import negev.giyusit.util.RowSetModel;
-import negev.giyusit.util.RowSet;
 import negev.giyusit.util.Row;
 import negev.giyusit.widgets.DataGrid;
 import negev.giyusit.widgets.DatePicker;
 import negev.giyusit.widgets.DialogField;
-import negev.giyusit.DataTable;
 
-public class CandidateDialog extends QDialog {
+public class CandidateDialog extends QWidget {
 	
 	// Dialog Widgets
 	private QLabel id;
@@ -145,6 +143,15 @@ public class CandidateDialog extends QDialog {
 			e.accept();
 	}
 	
+	@Override
+	protected void keyPressEvent(QKeyEvent e) {
+		super.keyPressEvent(e);
+		
+		// Close the dialog when the escape key is pressed
+		if (e.key() == Qt.Key.Key_Escape.value())
+			close();
+	}
+	
 	private void initActions() {
 		saveAct = new QAction(tr("&Save"), this);
 		saveAct.setEnabled(false);
@@ -160,6 +167,12 @@ public class CandidateDialog extends QDialog {
 	}
 		
 	private void initUI() {
+		setWindowFlags(Qt.WindowType.Dialog);
+		setWindowModality(Qt.WindowModality.ApplicationModal);
+		
+		//
+		// Widgets
+		//
 		id = new QLabel();
 			
 		nationalId = new QLineEdit();
@@ -239,6 +252,7 @@ public class CandidateDialog extends QDialog {
 		closeButton = new QPushButton(tr("Close"));
 		closeButton.setIcon(new QIcon("classpath:/icons/close.png"));
 		closeButton.clicked.connect(this, "close()");
+		
 			
 		//
 		// Layout
@@ -658,85 +672,6 @@ class CandidateStatusesDialog extends QDialog {
 			// Refresh window
 			dbModified = true;
 			loadData();
-		}
-		catch (Exception e) {
-			MessageDialog.showException(this, e);
-		}
-		finally {
-			helper.close();
-		}
-	}
-}
-
-class CandidateEventsDialog extends QDialog {
-
-	// Widgets
-	private DataTable dataTable;
-	
-	// Properties
-	private RowSetModel model;
-	
-	private int candidateId;
-
-	public CandidateEventsDialog(QWidget parent, int candidateId) {
-		super(parent);
-		
-		this.candidateId = candidateId;
-		
-		// Models
-		model = new RowSetModel(new String[] 
-			{"ID", "Name", "Type", "StartDate", "EndDate", "AttType", "Notes"});
-		
-		DBValuesTranslator.translateModelHeaders(model);
-		
-		initUI();
-		updateTitle();
-		loadData();
-	}
-	
-	private void initUI() {
-		// Widgets
-		dataTable = new DataTable();
-		dataTable.setFilterEnabled(false);
-		dataTable.setModel(model);
-		
-		QPushButton closeButton = new QPushButton(tr("Close"));
-		closeButton.setIcon(new QIcon("classpath:/icons/close.png"));
-		closeButton.clicked.connect(this, "close()");
-		
-		// Layout
-		QHBoxLayout buttonLayout = new QHBoxLayout();
-		buttonLayout.addStretch(1);
-		buttonLayout.addWidget(closeButton);
-		
-		QVBoxLayout layout = new QVBoxLayout(this);
-		layout.addWidget(dataTable, 1);
-		layout.addLayout(buttonLayout);
-	}
-	
-	private void loadData() {
-		CandidateHelper helper = new CandidateHelper();
-		
-		try {
-			model.setData(helper.getCandidateEvents(candidateId));
-			dataTable.setModel(model);
-		}
-		catch (Exception e) {
-			MessageDialog.showException(this, e);
-		}
-		finally {
-			helper.close();
-		}
-	}
-	
-	private void updateTitle() {
-		CandidateHelper helper = new CandidateHelper();
-		
-		try {
-			String title = tr("Events for candidate {0}");
-			
-			setWindowTitle(MessageFormat.format(title, 
-									helper.candidateFullName(candidateId)));
 		}
 		catch (Exception e) {
 			MessageDialog.showException(this, e);

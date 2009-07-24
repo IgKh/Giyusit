@@ -35,14 +35,10 @@ import com.trolltech.qt.gui.*;
 import java.util.List;
 
 import negev.giyusit.candidates.FindCandidatesDialog;
-import negev.giyusit.db.LookupTableModel;
-import negev.giyusit.util.BasicRow;
 import negev.giyusit.util.DBValuesTranslator;
-import negev.giyusit.util.GenericItemDialog;
 import negev.giyusit.util.MessageDialog;
 import negev.giyusit.util.RowSetModel;
 import negev.giyusit.util.RowSet;
-import negev.giyusit.util.Row;
 import negev.giyusit.DataTable;
 import negev.giyusit.DataView;
 
@@ -294,7 +290,7 @@ public class EventDialog extends QDialog {
 		int candidateId = Integer.parseInt(index.model().data(index.row(), 0).toString());
 		
 		// Show dialog
-		AttendanceItemDialog dlg = new AttendanceItemDialog(this);
+		EventAttendanceItemDialog dlg = new EventAttendanceItemDialog(this);
 		EventHelper helper = new EventHelper();
 		
 		try {
@@ -344,60 +340,5 @@ class EventDialogDataView extends DataView {
 	@Override
 	public QAbstractItemModel getModel() {
 		return model;
-	}
-}
-
-/**
- * A dialog for modifying attendance items
- */
-class AttendanceItemDialog extends GenericItemDialog {
-	
-	private QComboBox attendanceType;
-	private QLineEdit notes;
-	
-	private LookupTableModel lookupModel;
-	
-	public AttendanceItemDialog(QWidget parent) {
-		super(parent);
-		
-		lookupModel = new LookupTableModel("AttendanceTypes");
-		
-		setWindowTitle(tr("Giyusit"));
-		
-		// Widgets
-		attendanceType = new QComboBox();
-		attendanceType.setModel(lookupModel);
-		attendanceType.setModelColumn(LookupTableModel.VALUE_COLUMN);
-		attendanceType.setCurrentIndex(-1);
-		
-		notes = new QLineEdit();
-		
-		// Layout
-		addField(tr("Attendance Type: "), attendanceType);
-		addField(tr("Notes: "), notes);
-	}
-	
-	@Override
-	public Row toRow() {
-		Row row = new BasicRow();
-		
-		row.put("Notes", notes.text());
-		row.put("AttTypeID", lookupModel.rowToKey(attendanceType.currentIndex()));
-		
-		return row;
-	}
-	
-	@Override
-	public void fromRow(Row row) {
-		if (row == null)
-			throw new NullPointerException("Null row");
-		
-		notes.setText(row.getString("Notes"));
-		attendanceType.setCurrentIndex(lookupModel.keyToRow(row.getString("AttTypeID")));
-	}
-
-	@Override
-	public boolean validate() {
-		return true;
 	}
 }
