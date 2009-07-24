@@ -35,6 +35,7 @@ import com.trolltech.qt.gui.*;
 import java.util.ArrayList;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.text.MessageFormat;
 
 import negev.giyusit.db.ConnectionProvider;
 import negev.giyusit.util.CitiesCompleter;
@@ -62,7 +63,10 @@ class DataColumn {
 
 public class AddCandidatesDialog extends QDialog {
 	
-	private static final QRegExp genderPattern = new QRegExp("[זנ]");
+	private final static String SNAPSHOT_PATH = QDir.homePath() + "/.giyusit_snapshot";
+	private final static String NULL_STRING = new String(new char[] {'\0'});
+	
+	private final QRegExp genderPattern = new QRegExp(tr("[MF]", "Gender Regexp"));
 	
 	final DataColumn[] columns = {
 		new DataColumn("FirstName", false, null, null),
@@ -80,15 +84,99 @@ public class AddCandidatesDialog extends QDialog {
 	// Widgets
 	private QTableWidget tableWidget;
 	private QLineEdit origin;
+	private QLabel statusLabel;
 	
 	// Buttons
 	private QPushButton addButton;
 	private QPushButton cancelButton;
 	
+	// Properties
+	private QTimer persistTimer;
+	
 	public AddCandidatesDialog(QWidget parent) {
 		super(parent);
 		
 		initUI();
+		initTable();
+		restoreWindowState();
+		
+		// Setup table delegate
+		tableWidget.setItemDelegate(new ExTableDelegate(this));
+		
+		// 15 is a nice default, but ideally this should be Excel-like 
+		// inifinite rows
+		tableWidget.setRowCount(15);
+		
+		// Other completers
+		origin.setCompleter(new DBColumnCompleter("Candidates", "Origin"));
+		
+		// Create the persist timer. By default, persist every minute
+		persistTimer = new QTimer(this);
+		persistTimer.setInterval(60 * 1000);
+		persistTimer.timeout.connect(this, "persistDataSlot()");
+		persistTimer.start();
+		
+		// Try to restore
+		tryRestore();
+	}
+	
+	protected void closeEvent(QCloseEvent e) {
+		saveWindowState();	
+		
+		super.closeEvent(e);
+	}
+	
+	private void initUI() {
+		setWindowTitle(tr("Add Candidates"));
+		
+		//
+		// Widgets
+		//
+		tableWidget = new ExTableWidget();
+		
+		origin = new QLineEdit();
+		
+		statusLabel = new QLabel();
+		
+		QPushButton clearButton = new QPushButton();
+		clearButton.setToolTip(tr("Clear data"));
+		clearButton.setIcon(new QIcon("classpath:/icons/clear.png"));
+		clearButton.clicked.connect(this, "initTable()");
+		
+		addButton = new QPushButton(tr("Add"));
+		addButton.setIcon(new QIcon("classpath:/icons/add.png"));
+		addButton.clicked.connect(this, "add()");
+		
+		cancelButton = new QPushButton(tr("Cancel"));
+		cancelButton.clicked.connect(this, "reject()");
+		
+		this.rejected.connect(this, "close()");
+		this.accepted.connect(this, "close()");
+		
+		//
+		// Layout
+		//
+		QGroupBox groupData = new QGroupBox(tr("Group Data"));
+		
+		QHBoxLayout groupDataLayout = new QHBoxLayout(groupData);
+		groupDataLayout.addWidget(new DialogField(tr("Origin: "), origin), 1);
+		groupDataLayout.addStretch(3);
+		
+		QHBoxLayout buttonLayout = new QHBoxLayout();
+		buttonLayout.addWidget(clearButton);
+		buttonLayout.addWidget(statusLabel);
+		buttonLayout.addStretch(1);
+		buttonLayout.addWidget(addButton);
+		buttonLayout.addWidget(cancelButton);
+		
+		QVBoxLayout layout = new QVBoxLayout(this);
+		layout.addWidget(groupData);
+		layout.addWidget(tableWidget, 1);
+		layout.addLayout(buttonLayout);
+	}
+	
+	private void initTable() {
+		tableWidget.clear();
 		
 		// Setup the table columns
 		tableWidget.setColumnCount(columns.length);
@@ -103,64 +191,153 @@ public class AddCandidatesDialog extends QDialog {
 		
 		DBValuesTranslator.translateModelHeaders(tableWidget.model());
 		
-		// Setup table delegate
-		tableWidget.setItemDelegate(new ExTableDelegate(this));
-		
-		// 15 is a nice default, but ideally this should be Excel-like 
-		// inifinite rows
-		tableWidget.setRowCount(15);
-		
-		// Other completers
-		origin.setCompleter(new DBColumnCompleter("Candidates", "Origin"));
+		// Clear group data
+		origin.setText("");
 	}
 	
-	private void initUI() {
-		setWindowTitle(tr("Add Candidates"));
+	private void saveWindowState() {
+		QSettings settings = new QSettings();
 		
-		//
-		// Widgets
-		//
-		tableWidget = new ExTableWidget();
+		settings.setValue("addCandidatesDialog/geometry", saveGeometry());
+	}
+	
+	private void restoreWindowState() {
+		QSettings settings = new QSettings();
 		
-		origin = new QLineEdit();
+		restoreGeometry((QByteArray) settings.value("addCandidatesDialog/geometry"));
+	}
+	
+	/**
+	 * Writes a binary snapshot of the dialog's current contents into
+	 * a file, so if the dialog will be abruptly terminated the user's data
+	 * can be restored.
+	 */
+	private void persistData() {
+		// Open a file for writing, overriding any existing one
+		QFile file = new QFile(SNAPSHOT_PATH);
 		
-		addButton = new QPushButton(tr("Add"));
-		addButton.setIcon(new QIcon("classpath:/icons/add.png"));
-		addButton.clicked.connect(this, "add()");
+		QIODevice.OpenMode mode = new QIODevice.OpenMode();
+		mode.set(QIODevice.OpenModeFlag.WriteOnly);
+		mode.set(QIODevice.OpenModeFlag.Truncate);
 		
-		cancelButton = new QPushButton(tr("Cancel"));
-		cancelButton.clicked.connect(this, "reject()");
+		if (!file.open(mode))
+			return;
+				
+		QDataStream stream = new QDataStream(file);
+		stream.setVersion(QDataStream.Version.Qt_4_0.value());
 		
-		//
-		// Layout
-		//
-		QGroupBox groupData = new QGroupBox(tr("Group Data"));
+		// First, the table. Write the number of rows and columns
+		QAbstractItemModel model = tableWidget.model();
 		
-		QHBoxLayout groupDataLayout = new QHBoxLayout(groupData);
-		groupDataLayout.addWidget(new DialogField(tr("Origin: "), origin), 1);
-		groupDataLayout.addStretch(3);
+		stream.writeInt(model.rowCount());
+		stream.writeInt(model.columnCount());
 		
-		QHBoxLayout buttonLayout = new QHBoxLayout();
-		buttonLayout.addStretch(1);
-		buttonLayout.addWidget(addButton);
-		buttonLayout.addWidget(cancelButton);
+		// Now write each row. Values are persisted as strings
+		for (int i = 0; i < model.rowCount(); i++) {
+			for (int j = 0; j < model.columnCount(); j++) {
+				Object data = model.data(i, j);
+				
+				// If there is no data in a table cell, put a placeholder
+				// string consisting of the null char
+				if (data != null)
+					stream.writeString(data.toString());
+				else
+					stream.writeString(NULL_STRING);
+			}
+		}
 		
-		QVBoxLayout layout = new QVBoxLayout(this);
-		layout.addWidget(groupData);
-		layout.addWidget(tableWidget, 1);
-		layout.addLayout(buttonLayout);
+		// Write group data
+		stream.writeString(origin.text());
+		
+		// Close file
+		file.close();
+	}
+	
+	/**
+	 * Restores the dialog's contents from a previously saved binary snapshot
+	 * file.
+	 */
+	private void restoreData() {
+		// Open a file for reading
+		QFile file = new QFile(SNAPSHOT_PATH);
+		
+		QIODevice.OpenMode mode = new QIODevice.OpenMode();
+		mode.set(QIODevice.OpenModeFlag.ReadOnly);
+		
+		if (!file.open(mode))
+			return;
+				
+		QDataStream stream = new QDataStream(file);
+		stream.setVersion(QDataStream.Version.Qt_4_0.value());
+		
+		// Read the number of rows and columns
+		int rows = stream.readInt();
+		int cols = stream.readInt();
+		
+		tableWidget.setRowCount(rows);
+		tableWidget.setColumnCount(cols);
+		
+		// Now read the table contents
+		for (int i = 0; i < rows; i++) {
+			for (int j = 0; j < cols; j++) {
+				String data = stream.readString();
+				
+				if (!data.equals(NULL_STRING)) {
+					QTableWidgetItem item = new QTableWidgetItem(data);
+					
+					tableWidget.setItem(i, j, item);
+				}
+			}
+		}
+		
+		// Read group data
+		origin.setText(stream.readString());
+		
+		// Close file
+		file.close();
+	}
+	
+	/**
+	 * Checks if there is a snapshot file, and tries to restore from it.
+	 */
+	private void tryRestore() {
+		if (QFile.exists(SNAPSHOT_PATH))
+			restoreData();
+	}
+	
+	/**
+	 * The slot that is called by the timer. Persists the dialog's data and
+	 * updates the informative label
+	 */
+	private void persistDataSlot() {
+		persistData();
+		
+		statusLabel.setText(MessageFormat.format(tr("Data autosaved at {0}"), 
+			QTime.currentTime().toString()));
 	}
 	
 	private void add() {
 		try {
-			int count = doAdd();
-			String msg = tr("%n candidate(s) added succesfully", "", count);
+			// Stop the timer
+			persistTimer.stop();
 			
+			int count = doAdd();
+			
+			// Show success message
+			String msg = tr("%n candidate(s) added succesfully", "", count);
 			MessageDialog.showSuccess(this, msg); 
+			
+			// Delete snapshot file and close the dialog
+			if (QFile.exists(SNAPSHOT_PATH))
+				QFile.remove(SNAPSHOT_PATH);
+			
 			accept();
 		}
 		catch (Exception e) {
 			MessageDialog.showException(this, e); 
+			
+			// Restart the timer
+			persistTimer.start();
 		}
 	}
 	

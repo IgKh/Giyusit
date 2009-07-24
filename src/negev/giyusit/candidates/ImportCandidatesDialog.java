@@ -172,11 +172,8 @@ public class ImportCandidatesDialog extends QDialog {
        	int k = currentSheet.getColumns();
        	for (int i = 0; i < k; i++) {
        			String colHeader = currentSheet.getCell(i, 0).getContents();
-       			String label = MessageFormat.format("{0} ({1}):", 
-       										columnNumberToLetters(i + 1),
-       										colHeader);
-       			
-       			mappingsList.addMapping(label);
+				       			
+       			mappingsList.addMapping(colHeader, i + 1);
        	}
 	}
 	
@@ -296,31 +293,6 @@ public class ImportCandidatesDialog extends QDialog {
 		}
 		return count;
 	}
-	
-	/*
-	 * Coverts a column number to the equivelent Excel letter designation
-	 * (i.e. 5 -> E)
-	 */
-	private String columnNumberToLetters(int colNum) {
-		// From: http://stackoverflow.com/questions/181596
-		String chars = "0ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-		String colStr = "";
-		
-		while (colNum > 26) {
-			int nChar = colNum % 26;
-			
-			if (nChar == 0)
-				nChar = 26;
-			
-			colNum = (colNum - nChar) / 26;
-			colStr = chars.charAt(nChar) + colStr;
-		}
-		
-		if (colNum != 0)
-			colStr = chars.charAt(colNum) + colStr;
-		
-		return colStr;
-	}
 }
 
 /**
@@ -347,8 +319,8 @@ class MappingList extends QScrollArea {
 		setWidget(innerWidget);
 	}
 	
-	public void addMapping(String sourceColumnLabel) {
-        MappingWidget widget = new MappingWidget(sourceColumnLabel);
+	public void addMapping(String columnLabel, int columnNo) {
+        MappingWidget widget = new MappingWidget(columnLabel, columnNo);
         
         innerLayout.addWidget(widget);
         mappings.add(widget);
@@ -380,10 +352,9 @@ class MappingWidget extends QWidget {
 	
 	private QComboBox fieldBox;
 	
-	public MappingWidget(String xlsLabel) {
+	public MappingWidget(String xlsLabel, int xlsColNo) {
         fieldBox = new QComboBox();
         fieldBox.addItems(ImportCandidatesDialog.mappableCols);
-        //self.fieldBox.addItems([""] + mappableCols.keys())
         
         // Translate - put the DB field name into a hidden role, and translate
         // the display role
@@ -395,13 +366,48 @@ class MappingWidget extends QWidget {
         	fieldBox.setItemText(i, DBValuesTranslator.translate(value));
         }
         
+        // Try finding a match for the excel label in the mappable columns
+        int matchPos = fieldBox.findText(xlsLabel);
+        if (matchPos != -1)
+        	fieldBox.setCurrentIndex(matchPos);
+        
+		// Generate the display label
+		String label = MessageFormat.format("{0} ({1}):", 
+						columnNumberToLetters(xlsColNo), xlsLabel);
+        
+        // Layout
         QHBoxLayout layout = new QHBoxLayout(this);
         layout.setMargin(0);
-        layout.addWidget(new QLabel(xlsLabel));
+        layout.addWidget(new QLabel(label));
         layout.addWidget(fieldBox);
 	}
     
     public String selectedDBField() {
     	return fieldBox.itemData(fieldBox.currentIndex()).toString();
+	}
+	
+	/*
+	 * Coverts a column number to the equivelent Excel letter designation
+	 * (i.e. 5 -> E)
+	 */
+	private String columnNumberToLetters(int colNum) {
+		// From: http://stackoverflow.com/questions/181596
+		String chars = "0ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+		String colStr = "";
+		
+		while (colNum > 26) {
+			int nChar = colNum % 26;
+			
+			if (nChar == 0)
+				nChar = 26;
+			
+			colNum = (colNum - nChar) / 26;
+			colStr = chars.charAt(nChar) + colStr;
+		}
+		
+		if (colNum != 0)
+			colStr = chars.charAt(colNum) + colStr;
+		
+		return colStr;
 	}
 }
