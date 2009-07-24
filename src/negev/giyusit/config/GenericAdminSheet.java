@@ -35,6 +35,7 @@ import com.trolltech.qt.gui.*;
 import java.util.List;
 
 import negev.giyusit.util.DBValuesTranslator;
+import negev.giyusit.util.GenericItemDialog;
 import negev.giyusit.util.MessageDialog;
 import negev.giyusit.util.RowSetModel;
 import negev.giyusit.widgets.DataGrid;
@@ -112,7 +113,7 @@ public class GenericAdminSheet extends QWidget {
 	}
 	
 	private void add() {
-		GenericAdminItemDialog dlg = helper.createItemDialog(window());
+		GenericItemDialog dlg = helper.createItemDialog(window());
 		
 		dlg.setWindowTitle(tr("New Item"));
 		
@@ -158,7 +159,7 @@ public class GenericAdminSheet extends QWidget {
 		int id = Integer.parseInt(index.model().data(index.row(), 0).toString());
 		
 		// Show dialog
-		GenericAdminItemDialog dlg = helper.createItemDialog(window());
+		GenericItemDialog dlg = helper.createItemDialog(window());
 		
 		dlg.setWindowTitle(tr("Edit Item"));
 		

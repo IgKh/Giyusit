@@ -32,6 +32,7 @@ package negev.giyusit.config;
 import com.trolltech.qt.gui.QWidget;
 
 import negev.giyusit.db.GenericHelper;
+import negev.giyusit.util.GenericItemDialog;
 import negev.giyusit.util.RowSet;
 
 /**
@@ -45,7 +46,7 @@ public abstract class GenericAdminHelper extends GenericHelper {
 	
 	public abstract String[] getRuler();
 	
-	public abstract GenericAdminItemDialog createItemDialog(QWidget parent);
+	public abstract GenericItemDialog createItemDialog(QWidget parent);
 	
 	public abstract RowSet getValues();
 	

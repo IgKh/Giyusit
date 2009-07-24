@@ -38,6 +38,7 @@ import negev.giyusit.candidates.FindCandidatesDialog;
 import negev.giyusit.db.LookupTableModel;
 import negev.giyusit.util.BasicRow;
 import negev.giyusit.util.DBValuesTranslator;
+import negev.giyusit.util.GenericItemDialog;
 import negev.giyusit.util.MessageDialog;
 import negev.giyusit.util.RowSetModel;
 import negev.giyusit.util.RowSet;
@@ -322,11 +323,8 @@ public class EventDialog extends QDialog {
 class EventDialogDataView extends DataView {
 	
 	private RowSetModel model;
-	private int eventId;
 	
 	public EventDialogDataView(int eventId) {
-		this.eventId = eventId;
-		
 		model = new RowSetModel(new String[] {"ID", "FirstName", "LastName", 
 												"Gender", "Address", "City", 
 												"ZipCode", "EMail", "AttType", "Notes"});
@@ -352,7 +350,7 @@ class EventDialogDataView extends DataView {
 /**
  * A dialog for modifying attendance items
  */
-class AttendanceItemDialog extends QDialog {
+class AttendanceItemDialog extends GenericItemDialog {
 	
 	private QComboBox attendanceType;
 	private QLineEdit notes;
@@ -366,7 +364,7 @@ class AttendanceItemDialog extends QDialog {
 		
 		setWindowTitle(tr("Giyusit"));
 		
-		//
+		// Widgets
 		attendanceType = new QComboBox();
 		attendanceType.setModel(lookupModel);
 		attendanceType.setModelColumn(LookupTableModel.VALUE_COLUMN);
@@ -374,24 +372,12 @@ class AttendanceItemDialog extends QDialog {
 		
 		notes = new QLineEdit();
 		
-		QPushButton okButton = new QPushButton(tr("OK"));
-		okButton.clicked.connect(this, "accept()");
-		
-		QPushButton cancelButton = new QPushButton(tr("Cancel"));
-		cancelButton.clicked.connect(this, "reject()");
-		
-		//
-		QHBoxLayout buttonLayout = new QHBoxLayout();
-		buttonLayout.addStretch(1);
-		buttonLayout.addWidget(okButton);
-		buttonLayout.addWidget(cancelButton);
-		
-		QFormLayout layout = new QFormLayout(this);
-		layout.addRow(tr("Attendance Type: "), attendanceType);
-		layout.addRow(tr("Notes: "), notes);
-		layout.addRow(buttonLayout);
+		// Layout
+		addField(tr("Attendance Type: "), attendanceType);
+		addField(tr("Notes: "), notes);
 	}
 	
+	@Override
 	public Row toRow() {
 		Row row = new BasicRow();
 		
@@ -401,11 +387,17 @@ class AttendanceItemDialog extends QDialog {
 		return row;
 	}
 	
+	@Override
 	public void fromRow(Row row) {
 		if (row == null)
 			throw new NullPointerException("Null row");
 		
 		notes.setText(row.getString("Notes"));
 		attendanceType.setCurrentIndex(lookupModel.keyToRow(row.getString("AttTypeID")));
+	}
+
+	@Override
+	public boolean validate() {
+		return true;
 	}
 }

@@ -27,18 +27,15 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package negev.giyusit.config;
+package negev.giyusit.util;
 
-import com.trolltech.qt.core.*;
 import com.trolltech.qt.gui.*;
 
-import negev.giyusit.util.Row;
-
-public abstract class GenericAdminItemDialog extends QDialog {
+public abstract class GenericItemDialog extends QDialog {
 	
 	private QFormLayout mainLayout;
 	
-	public GenericAdminItemDialog(QWidget parent) {
+	public GenericItemDialog(QWidget parent) {
 		super(parent);
 		
 		initUI();

@@ -33,8 +33,8 @@ import com.trolltech.qt.core.*;
 import com.trolltech.qt.gui.*;
 
 import negev.giyusit.config.GenericAdminHelper;
-import negev.giyusit.config.GenericAdminItemDialog;
 import negev.giyusit.util.BasicRow;
+import negev.giyusit.util.GenericItemDialog;
 import negev.giyusit.util.MessageDialog;
 import negev.giyusit.util.RowSet;
 import negev.giyusit.util.Row;
@@ -49,7 +49,7 @@ public class CandidateStatusesAdminHelper extends GenericAdminHelper {
 		return new String[] {"ID","Name","Active"};
 	}
 	
-	public GenericAdminItemDialog createItemDialog(QWidget parent) {
+	public GenericItemDialog createItemDialog(QWidget parent) {
 		return new CSVItemDialog(parent);
 	}
 	
@@ -71,7 +71,7 @@ public class CandidateStatusesAdminHelper extends GenericAdminHelper {
 	}
 }
 
-class CSVItemDialog extends GenericAdminItemDialog {
+class CSVItemDialog extends GenericItemDialog {
 	
 	private QLineEdit name;
 	private QCheckBox isActive;
