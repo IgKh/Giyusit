@@ -283,7 +283,6 @@ public class GiyusitWindow extends QMainWindow {
 		toolBar.setEnabled(enabled);
 	}
 	
-	@SuppressWarnings("unused")
 	private void loadDatabase() {
 		loadDatabase("", false);
 	}
@@ -321,7 +320,13 @@ public class GiyusitWindow extends QMainWindow {
 		File file = new File(fileName);
 		
 		if (initialize && file.exists()) {
-			file.delete();
+			boolean ok = file.delete();
+			if (!ok) {
+				Exception e = new Exception("Couldn't delete file " + fileName);
+				
+				MessageDialog.showException(this, e);
+				return;
+			}
 		}
 		
 		//
@@ -347,6 +352,7 @@ public class GiyusitWindow extends QMainWindow {
 		}
 		catch (DatabaseException e) {
 			MessageDialog.showException(this, e);
+			return;
 		}
 		
 		//
@@ -366,7 +372,6 @@ public class GiyusitWindow extends QMainWindow {
 		setUIEnabled(true);
 	}
 	
-	@SuppressWarnings("unused")
 	private void newFile() {
 		String fileName = MessageDialog.getSaveFileName(this, tr("New File"),
 				tr("Giyusit Data Profile (*.gdp)"));
@@ -375,7 +380,6 @@ public class GiyusitWindow extends QMainWindow {
 			loadDatabase(fileName, true);
 	}
 	
-	@SuppressWarnings("unused")
 	private void loadFile() {
 		String fileName = MessageDialog.getOpenFileName(this, tr("Load File"), 
 				tr("Giyusit Data Profile (*.gdp)"));
@@ -384,7 +388,6 @@ public class GiyusitWindow extends QMainWindow {
 			loadDatabase(fileName, false);
 	}
 	
-	@SuppressWarnings("unused")
 	private void addCandidates() {
 		AddCandidatesDialog dlg = new AddCandidatesDialog(this);
 		
@@ -393,7 +396,6 @@ public class GiyusitWindow extends QMainWindow {
 			dataTable.refresh();
 	}
 	
-	@SuppressWarnings("unused")
 	private void importCandidates() {
 		ImportCandidatesDialog dlg = new ImportCandidatesDialog(this);
 			
@@ -402,7 +404,6 @@ public class GiyusitWindow extends QMainWindow {
 			dataTable.refresh();
 	}
 	
-	@SuppressWarnings("unused")
 	private void findCandidates() {
 		FindCandidatesDialog dlg = new FindCandidatesDialog(this, 
 											FindCandidatesDialog.Mode.FindOnly);
@@ -418,7 +419,6 @@ public class GiyusitWindow extends QMainWindow {
 			dataTable.refresh();
 	}
 	
-	@SuppressWarnings("unused")
 	private void addEvent() {
 		AddEventDialog dlg = new AddEventDialog(this);
 			
@@ -427,7 +427,6 @@ public class GiyusitWindow extends QMainWindow {
 			dataTable.refresh();
 	}
 		
-	@SuppressWarnings("unused")
 	private void staffAdmin() {
 		StaffAdminDialog dlg = new StaffAdminDialog(this);
 			

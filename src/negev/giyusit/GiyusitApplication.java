@@ -38,11 +38,11 @@ public class GiyusitApplication {
 	
 	private static String getVersion() {
 		// The build system places a file called giyusit.properties on the 
-		// classpath. The file contains an entry called "version" which is
+		// class path. The file contains an entry called "version" which is
 		// the application's version
 		try {
 			Properties props = new Properties();
-			Class clazz = GiyusitApplication.class;
+			Class<?> clazz = GiyusitApplication.class;
 			
 			props.load(clazz.getResourceAsStream("/giyusit.properties"));
 			

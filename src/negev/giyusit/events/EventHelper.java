@@ -29,8 +29,6 @@
  */
 package negev.giyusit.events;
 
-import com.trolltech.qt.core.*;
-
 import java.util.ArrayList;
 
 import negev.giyusit.db.GenericHelper;

@@ -322,7 +322,7 @@ public class PdfExporter extends AbstractExporter {
 				break;
 			
 			// Draw "Zebra Stripe" under odd rows
-			if (i % 2 == 1) {
+			if (i % 2 != 0) {
 				painter.fillRect(
 							new QRect(0, rowY, printer.pageRect().width(), rowHeight), 
 							painter.brush());

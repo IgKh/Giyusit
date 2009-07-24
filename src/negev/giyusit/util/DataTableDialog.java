@@ -29,7 +29,6 @@
  */
 package negev.giyusit.util;
 
-import com.trolltech.qt.core.*;
 import com.trolltech.qt.gui.*;
 
 import negev.giyusit.DataTable;

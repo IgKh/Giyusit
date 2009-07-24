@@ -29,7 +29,6 @@
  */
 package negev.giyusit.candidates;
 
-import com.trolltech.qt.core.*;
 import com.trolltech.qt.gui.*;
 
 import negev.giyusit.config.GenericAdminHelper;

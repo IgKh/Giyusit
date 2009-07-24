@@ -28,7 +28,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 package negev.giyusit.db;
- 
+
+@SuppressWarnings("serial")
 public class DatabaseException extends RuntimeException {
 
 	public DatabaseException(Throwable th) {

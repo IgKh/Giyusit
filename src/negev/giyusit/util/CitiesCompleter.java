@@ -29,7 +29,6 @@
  */
 package negev.giyusit.util;
 
-import com.trolltech.qt.core.*;
 import com.trolltech.qt.gui.*;
 
 import java.util.ArrayList;
@@ -43,7 +42,7 @@ public class CitiesCompleter extends QCompleter {
 		citiesList = new ArrayList<String>();
 		
 		// Load from file
-		Class clazz = CitiesCompleter.class;
+		Class<?> clazz = CitiesCompleter.class;
 		
 		Scanner scanner = new Scanner(
 						clazz.getResourceAsStream("/israel_cities.txt"), "UTF-8");

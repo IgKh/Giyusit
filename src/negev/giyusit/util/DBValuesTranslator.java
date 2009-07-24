@@ -39,7 +39,7 @@ public class DBValuesTranslator {
 	private static HashMap<String, String> translationMap;
 	
 	static {
-		Class clazz = DBValuesTranslator.class;
+		Class<?> clazz = DBValuesTranslator.class;
 		
 		Scanner scanner = new Scanner(
 					clazz.getResourceAsStream("/lang/dbvalues_he.txt"), "UTF-8");

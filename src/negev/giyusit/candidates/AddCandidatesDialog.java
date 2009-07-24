@@ -35,7 +35,6 @@ import com.trolltech.qt.gui.*;
 import java.util.ArrayList;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.text.MessageFormat;
 
 import negev.giyusit.db.ConnectionProvider;
 import negev.giyusit.util.CitiesCompleter;

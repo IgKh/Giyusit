@@ -72,7 +72,7 @@ public class LookupTableModel extends RowSetModel {
 			setData(new QueryWrapper(conn).queryForRowSet(sql.toString()));
 		}
 		finally {
-			try { conn.close(); } catch (Exception e) {}
+			try { conn.close(); } catch (Exception e) { e.printStackTrace(); }
 		}
 	}
 	

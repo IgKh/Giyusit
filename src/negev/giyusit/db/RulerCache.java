@@ -62,7 +62,7 @@ public class RulerCache {
 			}
 		}
 		finally {
-			try { conn.close(); } catch (Exception e) {}
+			try { conn.close(); } catch (Exception e) { e.printStackTrace(); }
 		}
 	}
 }

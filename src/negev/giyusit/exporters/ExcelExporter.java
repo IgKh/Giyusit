@@ -33,7 +33,6 @@ import com.trolltech.qt.core.*;
 
 import java.io.File;
 
-import jxl.format.*;
 import jxl.write.*;
 import jxl.*;
 

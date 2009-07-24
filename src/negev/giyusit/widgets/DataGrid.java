@@ -32,8 +32,6 @@ package negev.giyusit.widgets;
 import com.trolltech.qt.core.*;
 import com.trolltech.qt.gui.*;
 
-import negev.giyusit.util.*;
-
 public class DataGrid extends QTreeView {
 		
 	public DataGrid() {

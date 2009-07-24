@@ -37,7 +37,6 @@ import java.util.List;
 
 import negev.giyusit.db.LookupTableModel;
 import negev.giyusit.util.DBColumnCompleter;
-import negev.giyusit.widgets.DialogField;
 import negev.giyusit.DataTable;
 
 public class FindCandidatesDialog extends QDialog {

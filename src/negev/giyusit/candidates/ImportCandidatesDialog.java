@@ -39,7 +39,6 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 import jxl.Sheet;
@@ -51,7 +50,7 @@ import negev.giyusit.util.MessageDialog;
 
 public class ImportCandidatesDialog extends QDialog {
 	
-	// Columns in Candidates table updatable via this dialog
+	// Columns in Candidates table updateable via this dialog
 	static List<String> mappableCols = Arrays.asList(
                         "", "NationalID", "FirstName", "LastName",
                         "Gender", "HomePhone", "CellPhone",

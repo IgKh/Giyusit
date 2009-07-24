@@ -30,7 +30,6 @@
 package negev.giyusit.db;
 
 import com.trolltech.qt.core.*;
-import com.trolltech.qt.gui.*;
 
 import java.sql.Connection;
 
@@ -88,7 +87,7 @@ public class GenericDataView extends DataView {
 			return model;
 		}
 		finally {
-			try { conn.close(); } catch (Exception e) {}
+			try { conn.close(); } catch (Exception e) { e.printStackTrace(); }
 		}
 	}
 	

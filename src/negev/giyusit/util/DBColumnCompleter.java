@@ -55,7 +55,7 @@ public class DBColumnCompleter extends QCompleter {
 			setCompletionRole(Qt.ItemDataRole.DisplayRole);
 		}
 		finally {
-			try { conn.close(); } catch (Exception e) {}
+			try { conn.close(); } catch (Exception e) { e.printStackTrace(); }
 		}
 	}	
 }
