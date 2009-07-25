@@ -53,6 +53,10 @@ public class CandidateDataView extends GenericDataView {
 		CandidateDialog dlg = new CandidateDialog(parent, id);
 		dlg.show();
 		
+		// Block until the dialog is closed
+		while (dlg.isVisible())
+			QApplication.processEvents();
+		
 		return dlg.isDbModified();
 	}
 }

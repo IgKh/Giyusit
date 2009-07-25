@@ -285,6 +285,7 @@ class EventPickerDialog extends QDialog {
 		startDate = new QLabel();
 		
 		okButton = new QPushButton(tr("OK"));
+		okButton.setEnabled(false);
 		okButton.clicked.connect(this, "accept()");
 		
 		QPushButton cancelButton = new QPushButton(tr("Cancel"));
