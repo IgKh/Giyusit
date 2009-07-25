@@ -34,12 +34,17 @@ import com.trolltech.qt.gui.*;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.text.MessageFormat;
 
 /**
  * A convinience class for displaying various types of messages to the user.
  * This class is used via one of its static methods.
  */
 public class MessageDialog extends QMessageBox {
+
+	public enum UserResponse {
+		Yes, No, Save, Discard, Cancel
+	}
 
 	private static final QSize ICON_SIZE = new QSize(48, 48);
 	
@@ -110,6 +115,78 @@ public class MessageDialog extends QMessageBox {
 		
 		// Display the dialog
 		dlg.exec();
+	}
+	
+	/**
+	 * Warns the user about unsaved data in the current dialog, and asks
+	 * him how to procced.
+	 *
+	 * If the <i>firstEdit</i> argument is a non-null, valid date/time object,
+	 * the message box will contain a human-friendly duration since the first
+	 * edit in the dialog
+	 *
+	 * Possible return values are:
+	 *  - Save    (if the user chose to save all data and close the dialog)
+	 *  - Discard (if the user chose not to save, but still close the dialog)
+	 *  - Cancel  (if the user chose to stay in the dialog and not close it)
+	 */
+	public static UserResponse warnDirty(QWidget parent, QDateTime firstEdit) {
+		MessageDialog dlg = new MessageDialog(parent);
+		
+		dlg.setIconPixmap(new QPixmap("classpath:/icons/warning.png").scaled(ICON_SIZE));
+		dlg.setText(dlg.tr("<b>Save changes in the dialog before closing?</b>"));
+		
+		if (firstEdit != null && firstEdit.isValid()) {
+			int secDiff = firstEdit.secsTo(QDateTime.currentDateTime());
+			
+			// Format diff string
+			String diffStr;
+			int diff;
+			
+			if (secDiff < 60) { // Under one minute
+				diff = secDiff;
+				diffStr = dlg.tr("the last %n second(s)", "", diff);
+			}
+			else if (secDiff < 3600) { // Under one hour
+				diff = secDiff / 60;
+				diffStr = dlg.tr("the last %n minute(s)", "", diff);
+			}
+			else if (secDiff < 86400) { // Under 24 hours (one day)
+				diff = secDiff / 3600;
+				diffStr = dlg.tr("the last %n hour(s)", "", diff);
+			}
+			else { // Over one day
+				diff = secDiff / 86400;
+				diffStr = dlg.tr("the last %n day(s)", "", diff);
+			}
+			
+			// Format final message text
+			String text = MessageFormat.format(
+				dlg.tr("If you don''t save, all changes from {0} will be lost"),
+				diffStr);
+			
+			dlg.setInformativeText(text);
+		}
+		else
+			dlg.setInformativeText(dlg.tr("If you don't save, all changes will be lost"));
+		
+		// Buttons
+		QPushButton save = dlg.addButton(dlg.tr("&Save"), QMessageBox.ButtonRole.AcceptRole);
+		QPushButton discard = dlg.addButton(QMessageBox.StandardButton.Discard);
+		QPushButton cancel = dlg.addButton(QMessageBox.StandardButton.Cancel);
+		
+		save.setIcon(new QIcon("classpath:/icons/save.png"));
+		cancel.setIcon(new QIcon("classpath:/icons/cancel.png"));
+		
+        dlg.exec();
+		
+        // Extract result
+		if (dlg.clickedButton() == save)
+			return UserResponse.Save;
+		else if (dlg.clickedButton() == discard)
+			return UserResponse.Discard;
+		else
+			return UserResponse.Cancel;
 	}
 	
 	/**

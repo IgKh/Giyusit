@@ -87,6 +87,7 @@ public class CandidateDialog extends QWidget {
 	// Properties
 	private int candidateId;
 	private boolean dbModified;
+	private QDateTime firstEdit;
 	
 	private LookupTableModel staffModel;
 	
@@ -116,28 +117,21 @@ public class CandidateDialog extends QWidget {
 	@Override
 	protected void closeEvent(QCloseEvent e) {
 		if (watcher.isDirty()) {
-            QMessageBox msgBox = new QMessageBox(this);
-            
-            msgBox.setIcon(QMessageBox.Icon.Warning);
-            msgBox.setWindowTitle(tr("Giyusit"));
-            msgBox.setText(tr("<b>There are unsaved changed in the form</b>"));
-            msgBox.setInformativeText(tr("Would you like to save your cahnges?"));
-            
-            QPushButton save = msgBox.addButton(tr("&Save"), QMessageBox.ButtonRole.AcceptRole);
-            QPushButton discard = msgBox.addButton(QMessageBox.StandardButton.Discard);
-            QPushButton cancel = msgBox.addButton(QMessageBox.StandardButton.Cancel);
-            
-            msgBox.exec();
-            
-            if (msgBox.clickedButton() == save) {
-            	saveCandidateData();
-            	e.accept();
-            }
-            else if (msgBox.clickedButton() == cancel) {
-                e.ignore();
-            }
-            else
-            	e.accept();
+			MessageDialog.UserResponse result = MessageDialog.warnDirty(this, firstEdit);
+			
+			switch (result) {
+				case Save:
+					saveCandidateData();
+					e.accept();
+					break;
+				
+				case Discard:
+					e.accept();
+					break;
+				
+				default:
+					e.ignore();
+			}
 		}
 		else
 			e.accept();
@@ -470,6 +464,11 @@ public class CandidateDialog extends QWidget {
 		
 		saveAct.setEnabled(dirty);
 		resetAct.setEnabled(dirty);
+		
+		if (dirty && firstEdit == null)
+			firstEdit = QDateTime.currentDateTime();
+		else if (!dirty)
+			firstEdit = null;
 	}
 	
 	private void updateCandidateStatus() {

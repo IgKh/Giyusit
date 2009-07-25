@@ -343,23 +343,19 @@
 <context>
     <name>negev.giyusit.candidates.CandidateDialog</name>
     <message>
-        <location filename="../../src/negev/giyusit/candidates/CandidateDialog.java" line="+122"/>
         <source>Giyusit</source>
-        <translation>גיוסית</translation>
+        <translation type="obsolete">גיוסית</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>&lt;b&gt;There are unsaved changed in the form&lt;/b&gt;</source>
-        <translation>&lt;b&gt;ישנם שינויים שלא נשמרו על גבי הטופס&lt;/b&gt;</translation>
+        <translation type="obsolete">&lt;b&gt;ישנם שינויים שלא נשמרו על גבי הטופס&lt;/b&gt;</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>Would you like to save your cahnges?</source>
-        <translation>האם ברצונך לשמור את השינויים?</translation>
+        <translation type="obsolete">האם ברצונך לשמור את השינויים?</translation>
     </message>
     <message>
-        <location line="+2"/>
-        <location line="+30"/>
+        <location filename="../../src/negev/giyusit/candidates/CandidateDialog.java" line="+150"/>
         <source>&amp;Save</source>
         <translation>&amp;שמור</translation>
     </message>
@@ -660,7 +656,7 @@
 <context>
     <name>negev.giyusit.candidates.CandidateStatusesDialog</name>
     <message>
-        <location filename="../../src/negev/giyusit/candidates/CandidateDialog.java" line="+147"/>
+        <location filename="../../src/negev/giyusit/candidates/CandidateDialog.java" line="+152"/>
         <source>Update</source>
         <translation>עדכן</translation>
     </message>
@@ -1277,7 +1273,7 @@
 <context>
     <name>negev.giyusit.util.MessageDialog</name>
     <message>
-        <location filename="../../src/negev/giyusit/util/MessageDialog.java" line="+51"/>
+        <location filename="../../src/negev/giyusit/util/MessageDialog.java" line="+56"/>
         <source>Giyusit</source>
         <translation>גיוסית</translation>
     </message>
@@ -1290,6 +1286,58 @@
         <location line="+2"/>
         <source>More details about the error are available by clicking the &quot;Show Details&quot; button</source>
         <translation>ניתן לקבל פרטים נוספים על מהות השגיאה ע&quot;י לחיצה על כפתור &quot;הצג פרטים&quot;</translation>
+    </message>
+    <message>
+        <location line="+30"/>
+        <source>&lt;b&gt;Save changes in the dialog before closing?&lt;/b&gt;</source>
+        <translation>&lt;b&gt;האם ברצונך לשמור את השינויים במסך?&lt;/b&gt;</translation>
+    </message>
+    <message numerus="yes">
+        <location line="+11"/>
+        <source>the last %n second(s)</source>
+        <translation>
+            <numerusform>בשנייה האחרונה</numerusform>
+            <numerusform>ב-%n השניות האחרונות</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location line="+4"/>
+        <source>the last %n minute(s)</source>
+        <translation>
+            <numerusform>בדקה האחרונה</numerusform>
+            <numerusform>ב-%n הדקות האחרונות</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location line="+4"/>
+        <source>the last %n hour(s)</source>
+        <translation>
+            <numerusform>בשעה האחרונה</numerusform>
+            <numerusform>ב-%n השעות האחרונות</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location line="+4"/>
+        <source>the last %n day(s)</source>
+        <translation>
+            <numerusform>ביום האחרון</numerusform>
+            <numerusform>ב-%n הימים האחרונים</numerusform>
+        </translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>If you don&apos;&apos;t save, all changes from {0} will be lost</source>
+        <translation>אם לא תבוצע שמירה, כל השינויים שנעשו {0} יאבדו</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>If you don&apos;t save, all changes will be lost</source>
+        <translation>אם לא תבוצע שמירה, כל השינויים שנעשו יאבדו</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>&amp;Save</source>
+        <translation>&amp;שמור</translation>
     </message>
 </context>
 </TS>
