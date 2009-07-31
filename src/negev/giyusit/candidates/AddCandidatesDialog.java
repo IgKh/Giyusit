@@ -67,17 +67,27 @@ public class AddCandidatesDialog extends QDialog {
 	private final static String NULL_STRING = new String(new char[] {'\0'});
 	
 	private final QRegExp genderPattern = new QRegExp(tr("[MF]", "Gender Regexp"));
+	private final QRegExp zipCodePattern = new QRegExp("\\d{5}");
+	private final QRegExp phonePattern = new QRegExp("0\\d{1,2}(\\-)?\\d{7}");
+	private final QRegExp emailPattern = new QRegExp("\\S+@\\S+\\.\\S+");
 	
+	// Validators
+	private final QValidator genderValidator = new QRegExpValidator(genderPattern, this);
+	private final QValidator zipCodeValidator = new QRegExpValidator(zipCodePattern, this);
+	private final QValidator phoneValidator = new QRegExpValidator(phonePattern, this);
+	private final QValidator emailValidator = new QRegExpValidator(emailPattern, this);
+	
+	// Table columns
 	final DataColumn[] columns = {
 		new DataColumn("FirstName", false, null, null),
 		new DataColumn("LastName", false, null, null),
-		new DataColumn("Gender", true, null, new QRegExpValidator(genderPattern, this)),
+		new DataColumn("Gender", true, null, genderValidator),
 		new DataColumn("Address", false, null, null),
 		new DataColumn("City", false, new CitiesCompleter(), null),
-		new DataColumn("ZipCode", true, null, new QIntValidator(this)),
-		new DataColumn("HomePhone", false, null, null),
-		new DataColumn("CellPhone", false, null, null),
-		new DataColumn("EMail", false, null, null),
+		new DataColumn("ZipCode", true, null, zipCodeValidator),
+		new DataColumn("HomePhone", false, null, phoneValidator),
+		new DataColumn("CellPhone", false, null, phoneValidator),
+		new DataColumn("EMail", false, null, emailValidator),
 		new DataColumn("School", false, new DBColumnCompleter("Candidates", "School"), null)
 	};
 	
@@ -441,10 +451,32 @@ class ExTableDelegate extends QItemDelegate {
 	}
 	
 	@Override
+	public void paint(QPainter painter, QStyleOptionViewItem option, QModelIndex index) {
+		// If the current cell is invalid, paint it with a light-red background
+		DataColumn col = dialog.columns[index.column()];
+		
+		if (col.validator != null) {
+			Object data = index.data();
+			
+			if (data != null && !data.toString().isEmpty()) {
+				QValidator.State state = col.validator.validate(
+						new QValidator.QValidationData(data.toString(), 0));
+				
+				if (state != QValidator.State.Acceptable) {
+					// Draw background
+					painter.fillRect(option.rect(), new QBrush(new QColor("lightcoral")));
+				}
+			}
+		}
+		
+		super.paint(painter, option, index);
+	}
+	
+	@Override
 	public QWidget createEditor(QWidget parent, QStyleOptionViewItem option, QModelIndex index) {
 		QLineEdit editor = new QLineEdit(parent);
 		
-		// Set completer and validator, if neccessary
+		// Set completer, if neccessary
 		DataColumn col = dialog.columns[index.column()];
 		
 		if (col.completer != null) {
@@ -453,9 +485,6 @@ class ExTableDelegate extends QItemDelegate {
 			
 			editor.setCompleter(col.completer);
 		}
-		
-		if (col.validator != null)
-			editor.setValidator(col.validator);
 		
 		return editor;
 	}
