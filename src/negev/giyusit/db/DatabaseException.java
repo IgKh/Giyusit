@@ -32,6 +32,14 @@ package negev.giyusit.db;
 @SuppressWarnings("serial")
 public class DatabaseException extends RuntimeException {
 
+	public DatabaseException(String msg, Throwable th) {
+		super(msg, th);
+	}
+	
+	public DatabaseException(String msg) {
+		super(msg);
+	}
+
 	public DatabaseException(Throwable th) {
 		super(th);
 	}

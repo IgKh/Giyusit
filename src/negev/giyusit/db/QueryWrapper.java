@@ -80,7 +80,7 @@ public class QueryWrapper {
 			return stmnt.getUpdateCount();
 		}
 		catch (SQLException e) {
-			throw new DatabaseException(e);
+			throw new DatabaseException("Error executing statement: " + sql, e);
 		}
 		finally {
 			if (stmnt != null) {
@@ -139,7 +139,7 @@ public class QueryWrapper {
 				return null;
 		}
 		catch (SQLException e) {
-			throw new DatabaseException(e);
+			throw new DatabaseException("Error executing statement: " + sql, e);
 		}
 		finally {
 			if (stmnt != null) {
@@ -172,7 +172,7 @@ public class QueryWrapper {
 			return result;
 		}
 		catch (SQLException e) {
-			throw new DatabaseException(e);
+			throw new DatabaseException("Error executing statement: " + sql, e);
 		}
 		finally {
 			if (stmnt != null) {
@@ -205,7 +205,7 @@ public class QueryWrapper {
 			return result;
 		}
 		catch (SQLException e) {
-			throw new DatabaseException(e);
+			throw new DatabaseException("Error executing statement: " + sql, e);
 		}
 		finally {
 			if (stmnt != null) {

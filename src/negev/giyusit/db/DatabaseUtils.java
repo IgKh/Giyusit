@@ -29,6 +29,8 @@
  */
 package negev.giyusit.db;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.Statement;
@@ -112,9 +114,11 @@ public class DatabaseUtils {
 						continue;
 						
 					// Trigger entrace/exit control
-					if (line.startsWith("CREATE TRIGGER"))
+					String upper = line.toUpperCase();
+					
+					if (upper.startsWith("CREATE TRIGGER"))
 						inTrigger = true;
-					else if (line.startsWith("END"))
+					else if (upper.startsWith("END"))
 						inTrigger = false;
 					
 					buffer.append(line).append(' ');
@@ -125,9 +129,14 @@ public class DatabaseUtils {
 							stmnt.executeUpdate(buffer.toString());
 						}
 						catch (SQLException e) {
-							System.err.println("On line " + lineNo);
-							System.err.println("Statement " + buffer.toString());
-							throw e;
+							// Abort
+							conn.rollback();
+							
+							// Wrap exception with context information
+							String err = "Error executing statement in line " + 
+											lineNo + ": " + buffer.toString();
+							
+							throw new DatabaseException(err, e);
 						}
 						
 						// Clear buffer
