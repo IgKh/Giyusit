@@ -336,18 +336,17 @@ public class GiyusitWindow extends QMainWindow {
 		try {
 			if (!initialize) {
 				int schemaRev = DatabaseUtils.getFileSchemaRevision();
+				int appRev = DatabaseUtils.APPLICATIVE_SCHEMA_REVISION;
 				
-				if (schemaRev > DatabaseUtils.APPLICATIVE_SCHEMA_REVISION) {
-					System.out.println("WRONG!");
-					return;
+				if (schemaRev < appRev) {
+					// The file's schema revision is older than the one 
+					// expected by the application, so upgrade it
+					DatabaseUtils.upgradeDatabaseSchema(schemaRev, appRev);
 				}
 			}
 			else {
-				DatabaseUtils.runSqlScript(
-					getClass().getResourceAsStream("/sql/schema.sql"));
-					
-				DatabaseUtils.runSqlScript(
-					getClass().getResourceAsStream("/sql/dataviews.sql"));
+				// Initialize
+				DatabaseUtils.initializeDatabase();
 			}
 		}
 		catch (DatabaseException e) {

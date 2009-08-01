@@ -1,7 +1,5 @@
 --
--- schema.sql - Database schema for Giyusit
---
--- Revision 3
+-- base-schema.sql - The baseline database schema for Giyusit (revision 3)
 --
 PRAGMA encoding = 'UTF-8';
 

@@ -39,10 +39,21 @@ import java.util.Scanner;
 
 import negev.giyusit.db.ConnectionProvider;
 
+/**
+ * This is a utility class containing various, mostly urelated, database
+ * values and operations
+ */
 public class DatabaseUtils {
 
+	/**
+	 * A value containing the most recent database schema revision this
+	 * version of the application is aware of.
+	 */
 	public static final int APPLICATIVE_SCHEMA_REVISION = 3;
 	
+	/*
+	 *
+	 */
 	public static void setFileParameter(String key, String value) {
 		Connection conn = ConnectionProvider.getConnection();
 		
@@ -59,6 +70,9 @@ public class DatabaseUtils {
 		}
 	}
 	
+	/*
+	 *
+	 */
 	public static String getFileParameter(String key) {
 		Connection conn = ConnectionProvider.getConnection();
 		
@@ -81,11 +95,58 @@ public class DatabaseUtils {
 		return Integer.parseInt(getFileParameter("SchemaRevision"));
 	}
 	
+	/**
+	 *
+	 */
+	public static void upgradeDatabaseSchema(int fromRev, int toRev) {
+		Class<?> clazz = DatabaseUtils.class;
+		
+		// Run all upgrade script in the specified range
+		for (int i = fromRev; i < toRev; i++) {
+			String scriptPath = "/sql/upgrade-" + i + "-" + (i + 1) + ".sql";
+			
+			runSqlScript(clazz.getResourceAsStream(scriptPath));
+		}
+		
+		// Make sure we are OK
+		assert getFileSchemaRevision() == toRev : "Schema revisions don't match after upgrade";
+	}
+	
+	/**
+	 * Initializes the current (presumably blank) database with the baseline
+	 * schema revision, and then upgrades it to the latest revision
+	 */
+	public static void initializeDatabase() {
+		Class<?> clazz = DatabaseUtils.class;
+		
+		// Baseline schema
+		runSqlScript(clazz.getResourceAsStream("/sql/base-schema.sql"));
+		runSqlScript(clazz.getResourceAsStream("/sql/base-dataviews.sql"));
+		
+		// Upgrade
+		upgradeDatabaseSchema(getFileSchemaRevision(), APPLICATIVE_SCHEMA_REVISION);
+	}
 
-	//public static void runSqlScript(String fileName) {
-	//	
-	//}
+	/**
+	 * Executes the SQL statements read from the provided file in the
+	 * current database
+	 */
+	public static void runSqlScript(String fileName) {
+		try {
+			runSqlScript(new FileInputStream(fileName));
+		}
+		catch (FileNotFoundException e) {
+			throw new RuntimeException(e);
+		}
+	}
 
+	/**
+	 * Executes the SQL statements read from the provided stream in the
+	 * current database.
+	 *
+	 * This operation is atomic - either all of the statements are successfuly
+	 * executed, or none are.
+	 */
 	public static void runSqlScript(InputStream stream) {
 		Scanner scanner = new Scanner(stream, "UTF-8");
 		
@@ -133,7 +194,7 @@ public class DatabaseUtils {
 							conn.rollback();
 							
 							// Wrap exception with context information
-							String err = "Error executing statement in line " + 
+							String err = "Error executing statement in line " +
 											lineNo + ": " + buffer.toString();
 							
 							throw new DatabaseException(err, e);
