@@ -75,7 +75,12 @@ public class GiyusitApplication {
 		QApplication.setLayoutDirection(Qt.LayoutDirection.RightToLeft);
 		
 		// Main window
-		GiyusitWindow wnd = new GiyusitWindow();
+		String file = null;
+		
+		if (args.length > 0)
+			file = args[0];
+		
+		GiyusitWindow wnd = new GiyusitWindow(file);
 		wnd.show();
 			
 		QApplication.exec();

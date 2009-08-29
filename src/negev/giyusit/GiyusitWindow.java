@@ -86,8 +86,12 @@ public class GiyusitWindow extends QMainWindow {
 	
 	// Properties
 	private String currentFileName;
-		
+	
 	public GiyusitWindow() {
+		this(null);
+	}
+	
+	public GiyusitWindow(String cmdLineFileName) {
 		initUI();
 		initActions();
 		initMenus();
@@ -100,8 +104,14 @@ public class GiyusitWindow extends QMainWindow {
 		updateWindowTitle();
 		setUIEnabled(false);
 		
-		// Load the last-used file once the event loop starts
-		QTimer.singleShot(0, this, "loadDatabase()");
+		if (cmdLineFileName == null || cmdLineFileName.isEmpty()) {
+			// Load the last-used file once the event loop starts
+			QTimer.singleShot(0, this, "loadDatabase()");
+		}
+		else {
+			// Load the file provided on the command line
+			loadDatabase(cmdLineFileName, false);
+		}
 	}
 	
 	protected void closeEvent(QCloseEvent e) {
@@ -328,6 +338,10 @@ public class GiyusitWindow extends QMainWindow {
 				return;
 			}
 		}
+		
+		// If this is a load operation, and the file does't exist - abort
+		if (!initialize && !file.exists())
+			return;
 		
 		//
 		ConnectionProvider.setJdbcUrl("jdbc:sqlite:" + fileName);
