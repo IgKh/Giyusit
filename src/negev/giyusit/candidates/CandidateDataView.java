@@ -36,6 +36,8 @@ import negev.giyusit.db.GenericDataView;
 
 public class CandidateDataView extends GenericDataView {
 	
+	private CandidateDialog itemDialog = null;
+	
 	public CandidateDataView(String name, String query, String ruler) {
 		super(name, query, ruler);
 	}
@@ -45,18 +47,31 @@ public class CandidateDataView extends GenericDataView {
 	}
 	
 	@Override
+	public void viewDismissed() {
+		super.viewDismissed();
+		
+		// Mark the cached item dialog for garbage collection when the user
+		// leaves this data view
+		itemDialog = null;
+	}
+	
+	@Override
 	public boolean showItemDialog(QWidget parent, QModelIndex index) {
 		// Extract candidate id
 		int id = Integer.parseInt(index.model().data(index.row(), 0).toString());
 		
+		// Laziliy create dialog
+		if(itemDialog == null)
+			itemDialog = new CandidateDialog(parent);
+		
 		// Show dialog
-		CandidateDialog dlg = new CandidateDialog(parent, id);
-		dlg.show();
+		itemDialog.showCandidate(id);
+		itemDialog.show();
 		
 		// Block until the dialog is closed
-		while (dlg.isVisible())
+		while (itemDialog.isVisible())
 			QApplication.processEvents();
 		
-		return dlg.isDbModified();
+		return itemDialog.isDbModified();
 	}
 }

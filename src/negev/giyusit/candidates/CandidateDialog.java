@@ -85,18 +85,16 @@ public class CandidateDialog extends QWidget {
 	private QAction resetAct;
 	
 	// Properties
-	private int candidateId;
+	private int candidateId = -1;
 	private boolean dbModified;
 	private QDateTime firstEdit;
 	
 	private LookupTableModel staffModel;
-	
 	private DirtyStateWatcher watcher;
 		
-	public CandidateDialog(QWidget parent, int id) {
+	public CandidateDialog(QWidget parent) {
 		super(parent);
 		
-		this.candidateId = id;
 		this.dbModified = false;
 		
 		watcher = new DirtyStateWatcher(this);
@@ -104,14 +102,19 @@ public class CandidateDialog extends QWidget {
 		
 		initActions();
 		initUI();
-		initComboModelsAndCompleters();
-		
-		updateWindowTitle();
-		loadCandidateData();
 	}
 	
 	public boolean isDbModified() {
 		return dbModified;
+	}
+	
+	public void showCandidate(int id) {
+		this.candidateId = id;
+		
+		initComboModelsAndCompleters();
+		
+		updateWindowTitle();
+		loadCandidateData();
 	}
 	
 	@Override
@@ -339,13 +342,17 @@ public class CandidateDialog extends QWidget {
 	
 	private void initComboModelsAndCompleters() {
 		// Lookup models
-		staffModel = new LookupTableModel("Staff", "ID", "Name", "RealInd = 'true'");
-		
-		owner.setModel(staffModel);
-		owner.setModelColumn(LookupTableModel.VALUE_COLUMN);
-		
-		recruiter.setModel(staffModel);
-		recruiter.setModelColumn(LookupTableModel.VALUE_COLUMN);
+		if (staffModel == null) {
+			staffModel = new LookupTableModel("Staff", "ID", "Name", "RealInd = 'true'");
+			
+			owner.setModel(staffModel);
+			owner.setModelColumn(LookupTableModel.VALUE_COLUMN);
+			
+			recruiter.setModel(staffModel);
+			recruiter.setModelColumn(LookupTableModel.VALUE_COLUMN);
+		}
+		else
+			staffModel.refresh();
 		
 		// Completers
 		city.setCompleter(new CitiesCompleter());

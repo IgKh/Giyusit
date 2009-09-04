@@ -38,6 +38,11 @@ public class LookupTableModel extends RowSetModel {
 	public static final int KEY_COLUMN = 0;
 	public static final int VALUE_COLUMN = 1;
 	
+	private String table;
+	private String keyCol;
+	private String valueCol;
+	private String whereClause;
+	
 	public LookupTableModel(String table) {
 		this(table, "ID", "Name", null);
 	}
@@ -53,6 +58,16 @@ public class LookupTableModel extends RowSetModel {
 		// The ruler
 		super(new String[] {keyCol, valueCol});
 		
+		this.table = table;
+		this.keyCol = keyCol;
+		this.valueCol = valueCol;
+		this.whereClause = whereClause;
+		
+		//
+		refresh();
+	}
+	
+	public void refresh() {	
 		// Build the SQL query
 		StringBuilder sql = new StringBuilder();
 		
