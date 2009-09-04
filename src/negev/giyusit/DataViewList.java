@@ -149,15 +149,17 @@ public class DataViewList extends QToolBox {
 		listWidget.currentItemChanged.connect(this, "itemSelected(QListWidgetItem)");
 		
 		// Get data views in category
-		String sql = "select Title, Query, Ruler from DataViews where CategoryID = ?";
-		String categoryId = categoryRow.getString("ID");
+		String sql = "select Title, Query, Ruler, Description from DataViews " + 
+						"where CategoryID = ? order by SeqNo";
 		
+		String categoryId = categoryRow.getString("ID");
 		RowSet views = wrapper.queryForRowSet(sql, categoryId);
 		
 		for (Row view : views) {
 			String title = view.getString("Title");
 			String query = view.getString("Query");
 			String ruler = view.getString("Ruler");
+			String description = view.getString("Description");
 			
 			// Create DataView object
 			DataView dataView;
@@ -175,6 +177,7 @@ public class DataViewList extends QToolBox {
 			QListWidgetItem item = new QListWidgetItem(listWidget);
 			item.setText(dataView.getName());
 			item.setIcon(dataView.getIcon());
+			item.setToolTip(description);
 			item.setData(ID_ROLE, dataViews.size() - 1);
 		}
 		
