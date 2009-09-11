@@ -3,7 +3,7 @@
 		Build file for Giyusit recruitment software
 	</description>
 
-	<property name="app.version" value="0.5-pre" />
+	<property name="app.version" value="0.5" />
 	<property name="main-class" value="negev.giyusit.GiyusitApplication" />
 	
 	<!-- Input directories -->
