@@ -1,35 +1,70 @@
 <project name="Giyusit" basedir="." default="run">
+	<description>
+		Build file for Giyusit recruitment software
+	</description>
+
 	<property name="app.version" value="0.5-pre" />
+	<property name="main-class" value="negev.giyusit.GiyusitApplication" />
 	
+	<!-- Input directories -->
 	<property name="src.dir" value="src" />
 	<property name="lib.dir" value="lib" />
 	<property name="resource.dir" value="resources" />
 	<property name="dist.dir" value="dist" />
 	
+	<!-- Output directories -->
 	<property name="build.dir" value="build" />
 	<property name="jar.dir" value="${build.dir}/jar" />
 	<property name="classes.dir" value="${build.dir}/classes" />
 	<property name="out.dir" value="${dist.dir}/out" />
+	<property name="jnlp.dir" value="${dist.dir}/jnlp" />
 	
 	<property name="version-file" value="${resource.dir}/giyusit.properties" />
-	<property name="main-class" value="negev.giyusit.GiyusitApplication" />
-	
-	<!-- Change this to point to where Launch4j is installed -->
-	<property name="launch4j.dir" value="/launch4j" />
+		
+	<!--
+	    The build file expects to find a file called build.properties in the
+	    project's root directory. This file defines workstation specific 
+	    properties.
+	    
+	    The possible properties are:
+	    	launch4j.dir	The path where launch4j is installed
+	    	nsisant.jar		The path to the NSIS Ant task JAR file
+	    	
+	    	jnlp.codebase	The URL where the Java Web Start mirror will be deployed
+	    	jnlp.keystore	The key store used for signing JARs for Web Start
+	    	jnlp.alias		The name of the key used for signing JARs for Web Start
+	    	jnlp.storepass	The password for the key store used for signing JARs for Web Start
+	-->
+	<property file="build.properties" />
 	
 	<path id="classpath">
 		<fileset dir="${lib.dir}" includes="**/*.jar" />
 	</path>
 	
-	<target name="clean">
+	<!--
+	   Support targets 
+	  -->
+	<condition property="version-file-available">
+		<available file="${version-file}" />
+	</condition>
+	<target name="-generate-version-file" unless="version-file-available">
+		<echo message="version = ${app.version}" file="${version-file}" />
+		<echo message="Writing version file" />
+	</target>
+	
+	<!--
+	   Core targets 
+	  -->
+	<target name="clean" description="Deletes all intermediate generated artifacts">
 		<delete dir="${build.dir}" />
 	</target>
 	
-	<target name="distclean" depends="clean">
+	<target name="distclean" depends="clean" description="Deletes all generated artifacts">
 		<delete dir="${out.dir}" />
+		<delete dir="${jnlp.dir}" />
 	</target>
 	
-	<target name="compile">
+	<target name="compile" description="Compiles source code">
 		<mkdir dir="${classes.dir}" />
 		
 		<javac srcdir="${src.dir}" 
@@ -43,26 +78,38 @@
 		 </copy>
 	</target>
 	
-	<target name="jar" depends="compile">
+	<target name="jar" depends="compile" description="Creates the application code jar">
 		<mkdir dir="${jar.dir}" />
-		<jar destfile="${jar.dir}/giyusit.jar" basedir="${classes.dir}" />
+		<jar destfile="${jar.dir}/giyusit.jar" basedir="${classes.dir}">
+			<manifest>
+				<attribute name="Main-Class" value="${main-class}" />
+			</manifest>
+		</jar>
 	</target>
 	
-	<condition property="version-file-available">
-		<available file="${version-file}" />
-	</condition>
-	
-	<target name="-generate-version-file" unless="version-file-available">
-		<echo message="version = ${app.version}" file="${version-file}" />
-	</target>
-	
-	<target name="resources" depends="-generate-version-file">
+	<target name="resources" 
+			depends="-generate-version-file" 
+			description="Creates the application resources jar">
+		
 		<mkdir dir="${jar.dir}" />
 		<jar destfile="${jar.dir}/resources.jar" basedir="${resource.dir}" excludes="**/*.ts" />
 	</target>
 	
+	<!-- 
+	   Run in Ant sandbox 
+	  -->
+	<target name="run" depends="compile,resources" description="Runs the application inside Ant">
+		<java fork="true" classname="${main-class}">
+			<classpath>
+				<path refid="classpath" />
+				<path location="${classes.dir}" />
+				<path location="${jar.dir}/resources.jar" />
+			</classpath>
+		</java>
+	</target>
+	
 	<!--
-	   Create stand-alone EXE file
+	   Targets for deploying as a stand-alone EXE file
 	  -->
 	<target name="-uber-jar" depends="jar,resources">
 		<!-- Merge the application, resource and library jars into a single one -->
@@ -77,7 +124,7 @@
 		</jar>
 	</target>
 	
-	<target name="exe" depends="-uber-jar">
+	<target name="exe" depends="-uber-jar" description="Generates a Windows executable">
 		<taskdef name="launch4j" 
 				classname="net.sf.launch4j.ant.Launch4jTask" 
 				classpath="${launch4j.dir}/launch4j.jar:${launch4j.dir}/lib/xstream.jar" />
@@ -89,8 +136,10 @@
 				outfile="${out.dir}/Giyusit.exe" />
 	</target>
 	
-	<target name="installer" depends="exe">
-		<taskdef name="nsis" classname="net.sf.nsisant.Task" />
+	<target name="installer" depends="exe" description="Generates a Windows installer">
+		<taskdef name="nsis" 
+				classname="net.sf.nsisant.Task" 
+				classpath="${nsisant.jar}"/>
 		
 		<nsis script="${dist.dir}/installer.nsi">
 			<define name="VERSION" value="${app.version}" />
@@ -98,15 +147,41 @@
 	</target>
 	
 	<!-- 
-	   Run in Ant sandbox 
+	   Targets for deploying using Java Web Start
 	  -->
-	<target name="run" depends="compile,resources">
-		<java fork="true" classname="${main-class}">
-			<classpath>
-				<path refid="classpath" />
-				<path location="${classes.dir}" />
-				<path location="${jar.dir}/resources.jar" />
-			</classpath>
-		</java>
+	<target name="-lib-jar">
+		<!-- Merges library jars into a single one -->
+		<jar destfile="${jar.dir}/giyusit-libs.jar">
+			<zipgroupfileset dir="${lib.dir}" includes="*.jar" />
+		</jar>
+	</target>
+	
+	<target name="jnlp" depends="jar,resources,-lib-jar" description="Generate Java Web Start site mirror">
+		<mkdir dir="${jnlp.dir}" />
+		
+		<!-- Prepare JNLP file -->
+		<property name="jnlp.file" value="${jnlp.dir}/Giyusit.jnlp" />
+		
+		<copy file="${dist.dir}/Giyusit.jnlp.in" tofile="${jnlp.file}" />
+		<replace file="${jnlp.file}" token="@codebase@" value="${jnlp.codebase}" />
+		<replace file="${jnlp.file}" token="@version@" value="${app.version}" />
+		<replace file="${jnlp.file}" token="@main-class@" value="${main-class}" />
+		
+		<!-- Copy and sign application JARs -->
+		<signjar destDir="${jnlp.dir}" 
+					keystore="${jnlp.keystore}"
+					alias="${jnlp.alias}" 
+					storepass="${jnlp.storepass}">
+			<path>
+				<fileset file="${jar.dir}/giyusit.jar" />
+				<fileset file="${jar.dir}/resources.jar" />
+				<fileset file="${jar.dir}/giyusit-libs.jar" />
+			</path>
+		</signjar>
+		
+		<!-- Copy helper files -->
+		<copy file="${dist.dir}/index.html" todir="${jnlp.dir}" />
+		
+		<echo message="Java Web Start mirror ready in: ${basedir}/${jnlp.dir}" />
 	</target>
 </project>

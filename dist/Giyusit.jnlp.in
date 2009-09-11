@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<jnlp spec="1.0+" codebase="@codebase@" href="Giyusit.jnlp" version="@version@">
+	<information>
+		<title>Giyusit</title>
+		<vendor>The Negev Project</vendor>
+		
+		<offline-allowed />
+	</information>
+	
+	<resources>
+		<jar href="giyusit.jar" main="true" />
+		<jar href="resources.jar" />
+		<jar href="giyusit-libs.jar" />
+		
+		<j2se version="1.5+" href="http://java.sun.com/products/autodl/j2se" />
+	</resources>
+	
+	<application-desc main-class="@main-class@" />
+	
+	<security>
+		<all-permissions />
+	</security>
+</jnlp>

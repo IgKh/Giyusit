@@ -1,6 +1,9 @@
 build/*
+dist/out/*
+dist/jnlp/*
 *.exe
 
+build.properties
 giyusit.properties
 *.gdp
 *.jar
