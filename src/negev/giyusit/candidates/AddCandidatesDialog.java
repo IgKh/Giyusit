@@ -154,6 +154,7 @@ public class AddCandidatesDialog extends QDialog {
 		clearButton.clicked.connect(this, "initTable()");
 		
 		addButton = new QPushButton(tr("Add"));
+		addButton.setDefault(true);
 		addButton.setIcon(new QIcon("classpath:/icons/add.png"));
 		addButton.clicked.connect(this, "add()");
 		
