@@ -42,6 +42,7 @@ import negev.giyusit.candidates.ImportCandidatesDialog;
 import negev.giyusit.config.TableAdminDialog;
 import negev.giyusit.events.AddEventDialog;
 import negev.giyusit.staff.StaffAdminDialog;
+import negev.giyusit.statistics.StatisticsDialog;
 
 import negev.giyusit.db.ConnectionProvider;
 import negev.giyusit.db.DatabaseException;
@@ -69,6 +70,7 @@ public class GiyusitWindow extends QMainWindow {
 	
 	private QAction addEventAct;
 	
+	private QAction statsticsAct;
 	private QAction staffAdminAct;
 	private QAction tableAdminAct;
 	
@@ -155,21 +157,21 @@ public class GiyusitWindow extends QMainWindow {
 		newFileAct = new QAction(tr("&New File..."), this);
 		newFileAct.setIcon(new QIcon("classpath:/icons/new.png"));
 		newFileAct.triggered.connect(this, "newFile()");
-			
+		
 		loadFileAct = new QAction(tr("&Load File..."), this);
 		loadFileAct.setIcon(new QIcon("classpath:/icons/open.png"));
 		loadFileAct.triggered.connect(this, "loadFile()");
-					
+		
 		quitAct = new QAction(tr("&Quit"), this);
 		quitAct.triggered.connect(QApplication.instance(), "quit()");
-			
+		
 		addCandidatesAct = new QAction(tr("&Add Candidates..."), this);
 		addCandidatesAct.setIcon(new QIcon("classpath:/icons/add-candidates.png"));
 		addCandidatesAct.triggered.connect(this, "addCandidates()");
-			
+		
 		importCandidatesAct = new QAction(tr("&Import Candidates..."), this);
 		importCandidatesAct.triggered.connect(this, "importCandidates()");
-			
+		
 		findCandidatesAct = new QAction(tr("&Find Candidates..."), this);
 		findCandidatesAct.setIcon(new QIcon("classpath:/icons/find-candidates.png"));
 		findCandidatesAct.setShortcut(new QKeySequence(QKeySequence.StandardKey.Find));
@@ -181,7 +183,10 @@ public class GiyusitWindow extends QMainWindow {
 		addEventAct = new QAction(tr("&Add Event..."), this);
 		addEventAct.setIcon(new QIcon("classpath:/icons/add-event.png"));
 		addEventAct.triggered.connect(this, "addEvent()");
-			
+		
+		statsticsAct = new QAction(tr("&Statistics..."), this);
+		statsticsAct.triggered.connect(this, "statstics()");
+		
 		staffAdminAct = new QAction(tr("&Staff Admin..."), this);
 		staffAdminAct.triggered.connect(this, "staffAdmin()");
 		
@@ -218,6 +223,8 @@ public class GiyusitWindow extends QMainWindow {
 		eventsMenu.addAction(addEventAct);
 			
 		toolsMenu = menuBar().addMenu(tr("&Tools"));
+		toolsMenu.addAction(statsticsAct);
+		toolsMenu.addSeparator();
 		toolsMenu.addAction(staffAdminAct);
 		toolsMenu.addAction(tableAdminAct);
 			
@@ -434,21 +441,27 @@ public class GiyusitWindow extends QMainWindow {
 	
 	private void addEvent() {
 		AddEventDialog dlg = new AddEventDialog(this);
-			
+		
 		int result = dlg.exec();
 		if (result == QDialog.DialogCode.Accepted.value())
 			dataTable.refresh();
 	}
+	
+	private void statstics() {
+		StatisticsDialog dlg = new StatisticsDialog(this);
 		
+		dlg.exec();
+	}
+	
 	private void staffAdmin() {
 		StaffAdminDialog dlg = new StaffAdminDialog(this);
-			
+		
 		dlg.exec();
 	}
 	
 	private void tableAdmin() {
 		TableAdminDialog dlg = new TableAdminDialog(this);
-			
+		
 		dlg.exec();
 	}
 	

@@ -49,7 +49,7 @@ public class DatabaseUtils {
 	 * A value containing the most recent database schema revision this
 	 * version of the application is aware of.
 	 */
-	public static final int APPLICATIVE_SCHEMA_REVISION = 4;
+	public static final int APPLICATIVE_SCHEMA_REVISION = 5;
 	
 	/*
 	 *
