@@ -107,6 +107,8 @@ public class GenericAdminSheet extends QWidget {
 	private void loadData() {
 		try {
 			model.setData(helper.getValues());
+			
+			dataGrid.shrinkColumns();
 		}
 		catch (Exception e) {
 			MessageDialog.showException(window(), e);

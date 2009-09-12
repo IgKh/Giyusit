@@ -46,6 +46,15 @@ public class DataGrid extends QTreeView {
 		setAlternatingRowColors(true);
 	}
 	
+	public void shrinkColumns() {
+		if (model() == null)
+			return;
+		
+		int k = model().columnCount();
+		for (int i = 0; i < k; i++)
+			resizeColumnToContents(i);
+	}
+	
 	@Override
 	protected void mousePressEvent(QMouseEvent e) {
 		QModelIndex index = this.indexAt(e.pos());

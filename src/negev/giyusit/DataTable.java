@@ -224,9 +224,7 @@ public class DataTable extends QWidget {
 		
 		if (model != null) {
 			// Adjust all columns
-			int k = model.columnCount();
-			for (int i = 0; i < k; i++)
-				dataGrid.resizeColumnToContents(i);
+			dataGrid.shrinkColumns();
 			
 			//
 			updateStatusLabel();

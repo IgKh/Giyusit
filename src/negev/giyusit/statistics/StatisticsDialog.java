@@ -176,6 +176,8 @@ public class StatisticsDialog extends QDialog {
 			
 			// Update data grid and chart viewer
 			dataGrid.setModel(reportObj.getModel());
+			dataGrid.shrinkColumns();
+			
 			chartViewer.setChart(reportObj.getChart());
 		}
 		catch (Exception e) {
