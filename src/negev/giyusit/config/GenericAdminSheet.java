@@ -65,6 +65,11 @@ public class GenericAdminSheet extends QWidget {
 		
 		initUI();
 		loadData();
+		
+		if (!helper.addRemoveAllowed()) {
+			addButton.setVisible(false);
+			removeButton.setVisible(false);
+		}
 	}
 	
 	private void initUI() {

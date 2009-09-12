@@ -36,18 +36,10 @@ import com.trolltech.qt.gui.*;
 import negev.giyusit.widgets.ChartViewer;
 import negev.giyusit.widgets.DataGrid;
 
-import negev.giyusit.db.ConnectionProvider;
-import negev.giyusit.db.QueryWrapper;
 import negev.giyusit.db.GenericHelper;
-import negev.giyusit.util.RowSetModel;
 import negev.giyusit.util.RowSet;
 import negev.giyusit.util.Row;
 import negev.giyusit.util.MessageDialog;
-import java.sql.Connection;
-
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.JFreeChart;
-import org.jfree.data.general.DefaultPieDataset;
 
 public class StatisticsDialog extends QDialog {
 	

@@ -27,35 +27,94 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package negev.giyusit.config;
+package negev.giyusit.statistics;
 
-import com.trolltech.qt.gui.QWidget;
+import com.trolltech.qt.gui.*;
 
-import negev.giyusit.db.GenericHelper;
+import negev.giyusit.config.GenericAdminHelper;
+import negev.giyusit.util.BasicRow;
 import negev.giyusit.util.GenericItemDialog;
+import negev.giyusit.util.MessageDialog;
 import negev.giyusit.util.RowSet;
+import negev.giyusit.util.Row;
 
-/**
- * A specialized DB helper, that represents operations on a lookup table.
- */
-public abstract class GenericAdminHelper extends GenericHelper {
+public class GoalsAdminHelper extends GenericAdminHelper {
 	
-	public GenericAdminHelper(String tableName) {
-		super(tableName);
+	class ItemDialog extends GenericItemDialog {
+		
+		private QLabel name;
+		private QLineEdit planning;
+		
+		public ItemDialog(QWidget parent) {
+			super(parent);
+			
+			initUI();
+		}
+		
+		private void initUI() {
+			name = new QLabel();
+			
+			planning = new QLineEdit();
+			
+			QIntValidator validator = new QIntValidator(this);
+			validator.setBottom(0);
+			planning.setValidator(validator);
+			
+			// Layout
+			addField(tr("Name: "), name);
+			addField(tr("Planning: "), planning);
+		}
+		
+		@Override
+		public boolean validate() {
+			return true;
+		}
+		
+		@Override
+		public Row toRow() {
+			Row row = new BasicRow();
+			
+			row.put("Name", name.text());
+			row.put("Planning", planning.text());
+			
+			return row;
+		}
+		
+		@Override
+		public void fromRow(Row row) {
+			name.setText(row.getString("Name"));
+			planning.setText(row.getString("Planning"));
+		}
 	}
 	
-	public abstract String[] getRuler();
+	//--------------------------------------------------------------------------
 	
-	public abstract GenericItemDialog createItemDialog(QWidget parent);
+	public GoalsAdminHelper() {
+		super("Goals");
+	}
 	
-	public abstract RowSet getValues();
+	@Override
+	public String[] getRuler() {
+		return new String[] {"ID","Name","Planning"};
+	}
 	
-	public abstract void deleteItem(int id);
+	@Override
+	public GenericItemDialog createItemDialog(QWidget parent) {
+		return new ItemDialog(parent);
+	}
 	
-	/**
-	 * Can the user add and remove values from the table?
-	 */
+	@Override
+	public RowSet getValues() {
+		return getQueryWrapper().queryForRowSet("select ID, Name, Planning from Goals");
+	}
+	
+	@Override
+	public void deleteItem(int id) {
+		// Do nothing
+	}
+	
+	@Override
 	public boolean addRemoveAllowed() {
-		return true;
+		return false;
 	}
 }

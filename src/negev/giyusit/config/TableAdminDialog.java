@@ -32,6 +32,7 @@ package negev.giyusit.config;
 import com.trolltech.qt.gui.*;
 
 import negev.giyusit.candidates.CandidateStatusesAdminHelper;
+import negev.giyusit.statistics.GoalsAdminHelper;
 
 /**
  * A dialog that is a container for configuration sheets used to manage
@@ -51,6 +52,10 @@ public class TableAdminDialog extends QDialog {
 		tabWidget.addTab(new GenericAdminSheet(this, 
 									new CandidateStatusesAdminHelper()), 
 									tr("Candidate Statuses"));
+		
+		tabWidget.addTab(new GenericAdminSheet(this, 
+									new GoalsAdminHelper()), 
+									tr("Goals Definition"));
 	}
 	
 	private void initUI() {

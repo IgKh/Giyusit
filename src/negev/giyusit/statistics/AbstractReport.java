@@ -29,11 +29,12 @@
  */
 package negev.giyusit.statistics;
 
+import com.trolltech.qt.QtJambiObject;
 import com.trolltech.qt.core.*;
 
 import org.jfree.chart.JFreeChart;
 
-public abstract class AbstractReport {
+public abstract class AbstractReport extends QtJambiObject {
 
 	private String name;
 	private String query;

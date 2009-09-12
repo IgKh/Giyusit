@@ -5,6 +5,35 @@
 -- Update schema revision
 UPDATE FileParams SET Value = '5' WHERE Key = 'SchemaRevision';
 
+-- Helper view for event attendace
+CREATE VIEW EventAttendanceHelper AS SELECT 
+				EA.*, 
+				E.TypeID AS EventTypeID, 
+				ET.Name AS EventType,
+				AT.Name AS AttType,
+				AT.ActiveInd AS ActiveInd
+			FROM EventAttendance EA
+			JOIN AttendanceTypes AT ON EA.AttTypeID = AT.ID
+			JOIN Events E ON EA.EventID = E.ID
+			JOIN EventTypes ET ON E.TypeID = ET.ID;
+
+-- Create the goals table
+CREATE TABLE Goals
+(
+	ID			INTEGER PRIMARY KEY,
+	Name		VARCHAR NOT NULL,
+	Planning	INTEGER DEFAULT 0,
+	ExecQuery	VARCHAR NOT NULL
+);
+
+INSERT INTO Goals (Name, ExecQuery) VALUES ('סה"כ מועמדים',
+	'select count(*) from Candidates'
+);
+
+INSERT INTO Goals (Name, ExecQuery) VALUES ('מועמדים שהשתתפו בשבת',
+	'select count(*) from EventAttendanceHelper where AttTypeID = 4 and EventTypeID = 1'
+);
+
 -- Create the Statistic Report table
 CREATE TABLE StatisticReports
 (
@@ -15,6 +44,13 @@ CREATE TABLE StatisticReports
 	Query		VARCHAR,
 	Ruler		VARCHAR,
 	CreateDate	VARCHAR DEFAULT CURRENT_DATE
+);
+
+INSERT INTO StatisticReports (Name, Description, Class, Ruler) VALUES (
+	'עמידה ביעדים',
+	'השוואת תכנון מול ביצוע של היעדים שהוגדרו בקובץ',
+	'negev.giyusit.statistics.GoalsReport',
+	'Name,Planning,Execution'
 );
 
 INSERT INTO StatisticReports (Name, Description, Class, Query, Ruler) VALUES (
@@ -53,8 +89,8 @@ INSERT INTO StatisticReports (Name, Description, Class, Query, Ruler) VALUES (
 	'השתתפות באירועים',
 	'סך כל המועמדים שהשתתפו בפועל באירועים מכל סוג',
 	'negev.giyusit.statistics.BarReport',
-	'select ET.Name as Type, count(*) as Total from EventAttendance EA, Events E, EventTypes ET 
-	 where EA.EventID = E.ID and ET.ID = E.TypeID and EA.AttTypeID = 4 group by Type order by ET.ID',
+	'select EAH.EventType as Type, count(*) as Total from EventAttendanceHelper EAH 
+	 where EAH.AttTypeID = 4 group by Type order by EAH.EventTypeID',
 	'Type,Total'
 );
 
@@ -62,8 +98,7 @@ INSERT INTO StatisticReports (Name, Description, Class, Query, Ruler) VALUES (
 	'השתתפות באירועים (כולל צפי)',
 	'סך כל המועמדים שהשתתפו או צפויים להשתתף באירועים מכל סוג',
 	'negev.giyusit.statistics.BarReport',
-	'select ET.Name as Type, count(*) as Total from EventAttendance EA, AttendanceTypes AT, Events E, EventTypes ET 
-	 where EA.EventID = E.ID and AT.ID = EA.AttTypeId and ET.ID = E.TypeID and AT.ActiveInd = "true" 
-	 group by Type order by ET.ID',
+	'select EAH.EventType as Type, count(*) as Total from EventAttendanceHelper EAH 
+	 where EAH.ActiveInd = "true" group by Type order by EAH.EventTypeID',
 	'Type,Total'
 );

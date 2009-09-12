@@ -29,25 +29,34 @@
  */
 package negev.giyusit.statistics;
 
+import com.trolltech.qt.QVariant;
 import com.trolltech.qt.core.*;
 
 import java.sql.Connection;
 
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.category.DefaultCategoryDataset;
+
 import negev.giyusit.db.ConnectionProvider;
 import negev.giyusit.db.QueryWrapper;
+import negev.giyusit.util.BasicRow;
 import negev.giyusit.util.DBValuesTranslator;
 import negev.giyusit.util.RowSetModel;
 import negev.giyusit.util.RowSet;
+import negev.giyusit.util.Row;
 
-public class GenericReport extends AbstractReport {
-
-	protected RowSet rowSet = null;
-
-	public GenericReport() {
+public class GoalsReport extends AbstractReport {
+	
+	private RowSet finalRowSet;
+	
+	public GoalsReport() {
 	}
-
+	
+	@Override
 	public QAbstractItemModel getModel() {
-		if (getQuery() == null || getRuler() == null)
+		if (getRuler() == null)
 			return null;
 		
 		Connection conn = ConnectionProvider.getConnection();
@@ -55,14 +64,32 @@ public class GenericReport extends AbstractReport {
 		try {
 			QueryWrapper wrapper = new QueryWrapper(conn);
 			
-			// Get data and ruler
-			rowSet = wrapper.queryForRowSet(getQuery());
-						
+			// Generate the base row set
+			String sql = "select Name, Planning, ExecQuery from Goals";
+			RowSet rs = wrapper.queryForRowSet(sql);
+			
+			// Calculate the execution property
+			finalRowSet = new RowSet();
+			
+			for (Row row : rs) {
+				String query = row.getString("ExecQuery");
+				Object obj = wrapper.queryForObject(query);
+				
+				if (obj == null)
+					continue;
+				
+				Row newRow = new BasicRow(row);
+				newRow.put("Execution", QVariant.toInt(obj));
+				
+				finalRowSet.addRow(newRow);
+			}
+			
+			// Create the model
 			String[] ruler = getRuler().split(",");
 			
 			// the model
 			RowSetModel model = new RowSetModel(ruler);
-			model.setData(rowSet);
+			model.setData(finalRowSet);
 			
 			DBValuesTranslator.translateModelHeaders(model);
 			
@@ -71,5 +98,26 @@ public class GenericReport extends AbstractReport {
 		finally {
 			try { conn.close(); } catch (Exception e) { }
 		}
+	}
+	
+	@Override
+	public JFreeChart getChart() {
+		if (finalRowSet == null)
+			return null;
+		
+		final String PLAN_CAT = tr("Planning");
+		final String EXEC_CAT = tr("Execution");
+		
+		DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+		
+		for (Row row : finalRowSet) {
+			String goal = row.getString("Name");
+			
+			dataset.addValue(row.getInt("Planning"), PLAN_CAT, goal);
+			dataset.addValue(row.getInt("Execution"), EXEC_CAT, goal);
+		}
+		
+		return ChartFactory.createBarChart(getName(), "", "", dataset, 
+								PlotOrientation.HORIZONTAL, true, true, false);
 	}
 }
