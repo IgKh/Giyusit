@@ -146,7 +146,10 @@ public class ChartViewer extends QWidget {
 				ByteArrayOutputStream stream = new ByteArrayOutputStream();
 				
 				try {
-					ChartUtilities.writeChartAsPNG(stream, chart, width, height);
+					// Clone the chart object (to avoid threading errors)
+					JFreeChart clonedChart = (JFreeChart) chart.clone();
+					
+					ChartUtilities.writeChartAsPNG(stream, clonedChart, width, height);
 				}
 				catch (Exception ex) {
 					ex.printStackTrace();
