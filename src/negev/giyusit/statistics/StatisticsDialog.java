@@ -102,20 +102,26 @@ public class StatisticsDialog extends QDialog {
 		reportResultsLayout.addWidget(dataGrid, 1);
 		reportResultsLayout.addWidget(chartViewer, 3);
 		
-		QVBoxLayout mainLayout = new QVBoxLayout();
+		QWidget mainWidget = new QWidget();
+		
+		QVBoxLayout mainLayout = new QVBoxLayout(mainWidget);
 		mainLayout.addWidget(reportInfoBox);
 		mainLayout.addWidget(reportResultsBox);
+				
+		QSplitter splitter = new QSplitter();
+		splitter.addWidget(reportList);
+		splitter.addWidget(mainWidget);
 		
-		QHBoxLayout topLayout = new QHBoxLayout();
-		topLayout.addWidget(reportList, 1);
-		topLayout.addLayout(mainLayout, 3);
+		splitter.setStretchFactor(0, 1);
+		splitter.setStretchFactor(1, 3);
+		reportList.setMinimumWidth(reportList.sizeHint().width());
 		
 		QHBoxLayout buttonLayout = new QHBoxLayout();
 		buttonLayout.addStretch(1);
 		buttonLayout.addWidget(closeButton);
 		
 		QVBoxLayout layout = new QVBoxLayout(this);
-		layout.addLayout(topLayout);
+		layout.addWidget(splitter);
 		layout.addLayout(buttonLayout);
 	}
 	
