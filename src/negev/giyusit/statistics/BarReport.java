@@ -34,7 +34,7 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
 
-import negev.giyusit.util.Row;
+import negev.giyusit.util.row.Row;
 
 public class BarReport extends GenericReport {
 	

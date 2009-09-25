@@ -37,9 +37,9 @@ import negev.giyusit.widgets.ChartViewer;
 import negev.giyusit.widgets.DataGrid;
 
 import negev.giyusit.db.GenericHelper;
-import negev.giyusit.util.RowSet;
-import negev.giyusit.util.Row;
 import negev.giyusit.util.MessageDialog;
+import negev.giyusit.util.row.Row;
+import negev.giyusit.util.row.RowSet;
 
 public class StatisticsDialog extends QDialog {
 	

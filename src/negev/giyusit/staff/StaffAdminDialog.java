@@ -37,13 +37,13 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 
 import negev.giyusit.exporters.PdfExporter;
-import negev.giyusit.util.BasicRow;
 import negev.giyusit.util.DataTableDialog;
 import negev.giyusit.util.DBValuesTranslator;
 import negev.giyusit.util.MessageDialog;
 import negev.giyusit.util.RowSetModel;
-import negev.giyusit.util.RowSet;
-import negev.giyusit.util.Row;
+import negev.giyusit.util.row.BasicRow;
+import negev.giyusit.util.row.Row;
+import negev.giyusit.util.row.RowSet;
 
 public class StaffAdminDialog extends QDialog {
 

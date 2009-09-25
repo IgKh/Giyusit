@@ -41,11 +41,11 @@ import org.jfree.data.category.DefaultCategoryDataset;
 
 import negev.giyusit.db.ConnectionProvider;
 import negev.giyusit.db.QueryWrapper;
-import negev.giyusit.util.BasicRow;
 import negev.giyusit.util.DBValuesTranslator;
 import negev.giyusit.util.RowSetModel;
-import negev.giyusit.util.RowSet;
-import negev.giyusit.util.Row;
+import negev.giyusit.util.row.BasicRow;
+import negev.giyusit.util.row.Row;
+import negev.giyusit.util.row.RowSet;
 
 public class GoalsReport extends AbstractReport {
 	

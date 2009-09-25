@@ -32,7 +32,7 @@ package negev.giyusit.candidates;
 import com.trolltech.qt.core.*;
 
 import negev.giyusit.db.GenericHelper;
-import negev.giyusit.util.RowSet;
+import negev.giyusit.util.row.RowSet;
 
 public class CandidateHelper extends GenericHelper {
 

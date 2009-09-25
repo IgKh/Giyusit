@@ -32,11 +32,11 @@ package negev.giyusit.statistics;
 import com.trolltech.qt.gui.*;
 
 import negev.giyusit.config.GenericAdminHelper;
-import negev.giyusit.util.BasicRow;
 import negev.giyusit.util.GenericItemDialog;
 import negev.giyusit.util.MessageDialog;
-import negev.giyusit.util.RowSet;
-import negev.giyusit.util.Row;
+import negev.giyusit.util.row.BasicRow;
+import negev.giyusit.util.row.Row;
+import negev.giyusit.util.row.RowSet;
 
 public class GoalsAdminHelper extends GenericAdminHelper {
 	

@@ -33,7 +33,7 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.general.DefaultPieDataset;
 
-import negev.giyusit.util.Row;
+import negev.giyusit.util.row.Row;
 
 public class PieReport extends GenericReport {
 	

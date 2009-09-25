@@ -37,7 +37,7 @@ import negev.giyusit.db.ConnectionProvider;
 import negev.giyusit.db.QueryWrapper;
 import negev.giyusit.util.DBValuesTranslator;
 import negev.giyusit.util.RowSetModel;
-import negev.giyusit.util.RowSet;
+import negev.giyusit.util.row.RowSet;
 
 public class GenericReport extends AbstractReport {
 

@@ -38,7 +38,7 @@ import negev.giyusit.candidates.FindCandidatesDialog;
 import negev.giyusit.util.DBValuesTranslator;
 import negev.giyusit.util.MessageDialog;
 import negev.giyusit.util.RowSetModel;
-import negev.giyusit.util.RowSet;
+import negev.giyusit.util.row.RowSet;
 import negev.giyusit.DataTable;
 import negev.giyusit.DataView;
 

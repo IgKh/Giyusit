@@ -34,12 +34,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
-import negev.giyusit.util.FieldDef;
-import negev.giyusit.util.MemberRow;
-import negev.giyusit.util.RowFields;
-import negev.giyusit.util.RowSet;
-import negev.giyusit.util.Row;
+import negev.giyusit.util.row.MemberRow;
+import negev.giyusit.util.row.Row;
+import negev.giyusit.util.row.RowSet;
 
 public class QueryWrapper {
  	
@@ -163,7 +163,7 @@ public class QueryWrapper {
 			ResultSet rs = stmnt.executeQuery();
 			
 			// Extract meta data
-			RowFields fields = extractMetaData(rs);
+			List<String> fields = extractMetaData(rs);
 			
 			// Extract the row set
 			if (rs.next())
@@ -196,7 +196,7 @@ public class QueryWrapper {
 			ResultSet rs = stmnt.executeQuery();
 			
 			// Extract meta data
-			RowFields fields = extractMetaData(rs);
+			List<String> fields = extractMetaData(rs);
 			
 			// Extract the row set
 			while (rs.next())
@@ -214,26 +214,23 @@ public class QueryWrapper {
 		}
 	}
 	
-	private RowFields extractMetaData(ResultSet rs) throws SQLException {
-		RowFields fields = new RowFields();
+	private List<String> extractMetaData(ResultSet rs) throws SQLException {
+		List<String> fields = new ArrayList<String>();
 		ResultSetMetaData metaData = rs.getMetaData();
 		
 		int k = metaData.getColumnCount();
-		for (int i = 0; i < k; i++) {
-			FieldDef field = new FieldDef(metaData.getColumnLabel(i + 1));
-			
-			fields.add(field);
-		}
+		for (int i = 0; i < k; i++)
+			fields.add(metaData.getColumnLabel(i + 1));
+		
 		return fields;
 	}
 	
-	private Row extractRow(ResultSet rs, RowFields fields) throws SQLException {
+	private Row extractRow(ResultSet rs, List<String> fields) throws SQLException {
 		Row row = new MemberRow(fields);
 	
 		int k = fields.size();
-		for (int i = 0; i < k; i++) {
-			row.put(fields.get(i).getName(), rs.getObject(i + 1));
-		}
+		for (int i = 0; i < k; i++)
+			row.put(fields.get(i), rs.getObject(i + 1));
 		
 		return row;
 	}

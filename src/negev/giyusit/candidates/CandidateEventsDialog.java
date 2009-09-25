@@ -41,8 +41,8 @@ import negev.giyusit.events.EventAttendanceItemDialog;
 import negev.giyusit.events.EventHelper;
 import negev.giyusit.util.DBValuesTranslator;
 import negev.giyusit.util.MessageDialog;
-import negev.giyusit.util.Row;
 import negev.giyusit.util.RowSetModel;
+import negev.giyusit.util.row.Row;
 import negev.giyusit.widgets.DialogField;
 
 public class CandidateEventsDialog extends QDialog {

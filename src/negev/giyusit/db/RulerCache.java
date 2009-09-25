@@ -32,8 +32,8 @@ package negev.giyusit.db;
 import java.util.HashMap;
 import java.sql.Connection;
 
-import negev.giyusit.util.Row;
-import negev.giyusit.util.RowSet;
+import negev.giyusit.util.row.Row;
+import negev.giyusit.util.row.RowSet;
 
 public class RulerCache {
 

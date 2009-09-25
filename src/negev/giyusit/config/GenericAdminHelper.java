@@ -33,7 +33,7 @@ import com.trolltech.qt.gui.QWidget;
 
 import negev.giyusit.db.GenericHelper;
 import negev.giyusit.util.GenericItemDialog;
-import negev.giyusit.util.RowSet;
+import negev.giyusit.util.row.RowSet;
 
 /**
  * A specialized DB helper, that represents operations on a lookup table.

@@ -27,52 +27,22 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package negev.giyusit.util;
+package negev.giyusit.util.row;
 
-import java.util.ArrayList;
-import java.util.Iterator;
+/**
+ * An exception indicating that a key is not found in a row
+ * 
+ * @author Igor Khanin
+ */
+@SuppressWarnings("serial")
+public class MissingKeyException extends RuntimeException {
 
-public class RowSet implements Iterable<Row> {
-	
-	private ArrayList<Row> innerList;
-	
-	public RowSet() {
-		innerList = new ArrayList<Row>();
-	}
-	
-	public RowSet(RowSet other) {
-		innerList = new ArrayList<Row>(other.innerList);
-	}
-	
-	public RowSet(Row row) {
-		this();
-		addRow(row);
-	}
-	
-	public int size() {
-		return innerList.size();
-	}
-	
-	public Row rowAt(int i) {
-		return innerList.get(i);
-	}
-	
-	public void addRow(Row row) {
-		if (row == null)
-			throw new NullPointerException("row is null!");
-		
-		innerList.add(row);
-	}
-	
-	public void addRowSet(RowSet rowSet) {
-		if (rowSet == null)
-			throw new NullPointerException("rowset is null!");
-		
-		for (Row row : rowSet)
-			addRow(row);
-	}
-	
-	public Iterator<Row> iterator() {
-		return innerList.iterator();
+	/**
+	 * Creates a new instance of the exception
+	 * 
+	 * @param key The name of the missing key
+	 */
+	public MissingKeyException(String key) {
+		super(key);
 	}
 }

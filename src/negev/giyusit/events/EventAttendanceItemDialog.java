@@ -32,9 +32,9 @@ package negev.giyusit.events;
 import com.trolltech.qt.gui.*;
 
 import negev.giyusit.db.LookupTableModel;
-import negev.giyusit.util.BasicRow;
 import negev.giyusit.util.GenericItemDialog;
-import negev.giyusit.util.Row;
+import negev.giyusit.util.row.BasicRow;
+import negev.giyusit.util.row.Row;
 
 /**
  * A dialog for modifying attendance items

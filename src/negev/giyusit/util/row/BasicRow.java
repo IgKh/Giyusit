@@ -27,51 +27,77 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package negev.giyusit.util;
+package negev.giyusit.util.row;
 
+import java.util.HashMap;
 import java.util.Set;
 
-public class MemberRow extends Row {
-
-	private RowFields fields;
-	private Object[] data;
+/**
+ * A basic dynamic row implementation that is backed by a hash map.
+ * 
+ * When an empty instance of this class is created, it contains no keys.
+ * As values are put into the row, keys are created if they don't exist
+ * already.
+ * 
+ * @author Igor Khanin
+ */
+public class BasicRow extends Row {
 	
-	public MemberRow(RowFields fields) {
-		if (fields == null)
-			throw new NullPointerException("fields is null");
+	private HashMap<String, Object> innerMap;
+	
+	/**
+	 * Creates a new empty row with no keys and values.
+	 */
+	public BasicRow() {
+		innerMap = new HashMap<String, Object>();
+	}
+	
+	/**
+	 * Creates a new row the same keys and values as the specified existing row.
+	 * 
+	 * @param other - the row to copy
+	 * 
+	 * @throws NullPointerException If the specified existing row is <code>null</code> 
+	 */
+	public BasicRow(Row other) {
+		if (other == null)
+			throw new NullPointerException("null row provided");
 		
-		this.fields = fields;
-		
-		// Allocate data array
-		this.data = new Object[fields.size()];
+		if (other instanceof BasicRow) {
+			BasicRow bs = (BasicRow) other;
+			innerMap = new HashMap<String, Object>(bs.innerMap);
+		}
+		else {
+			innerMap = new HashMap<String, Object>();
+			
+			for (String key : other.keySet())
+				put(key, other.get(key));
+		}
+	}
+	
+	@Override
+	public String toString() {
+		return innerMap.toString();
 	}
 	
 	@Override
 	public Set<String> keySet() {
-		return fields.toSet();
+		return innerMap.keySet();
 	}
 	
 	@Override
 	public Object get(String key) {
-		if (key == null)
-			throw new NullPointerException("Null keys are not allowed");
+		if (!innerMap.containsKey(key))
+			throw new MissingKeyException(key);
 		
-		int pos = fields.getFieldPos(key);
-		if (pos < 0)
-			throw new IllegalArgumentException("Key \"" + key + "\" not in row");
-		
-		return data[pos];
+		return innerMap.get(key);
 	}
-
+	
 	@Override
 	public void put(String key, Object value) {
 		if (key == null)
 			throw new NullPointerException("Null keys are not allowed");
 		
-		int pos = fields.getFieldPos(key);
-		if (pos < 0)
-			throw new IllegalArgumentException("Key \"" + key + "\" not in row");
-		
-		data[pos] = value;
+		innerMap.put(key, value);
 	}
 }

@@ -29,6 +29,8 @@
  */
 package negev.giyusit.util;
 
+import negev.giyusit.util.row.Row;
+
 import com.trolltech.qt.gui.*;
 
 public abstract class GenericItemDialog extends QDialog {

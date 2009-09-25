@@ -35,14 +35,14 @@ import com.trolltech.qt.gui.*;
 import java.text.MessageFormat;
 
 import negev.giyusit.db.LookupTableModel;
-import negev.giyusit.util.BasicRow;
 import negev.giyusit.util.CitiesCompleter;
 import negev.giyusit.util.DBColumnCompleter;
 import negev.giyusit.util.DBValuesTranslator;
 import negev.giyusit.util.DirtyStateWatcher;
 import negev.giyusit.util.MessageDialog;
 import negev.giyusit.util.RowSetModel;
-import negev.giyusit.util.Row;
+import negev.giyusit.util.row.BasicRow;
+import negev.giyusit.util.row.Row;
 import negev.giyusit.widgets.DataGrid;
 import negev.giyusit.widgets.DatePicker;
 import negev.giyusit.widgets.DialogField;

@@ -27,55 +27,72 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package negev.giyusit.util;
+package negev.giyusit.util.row;
 
-import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
-public class BasicRow extends Row {
+/**
+ * A row implementation that uses an external set of keys.
+ * <br><br>
+ * Objects of this class are created with a reference to an existing list of
+ * key names that can't be changed afterwards. Values can't be put in the row
+ * unless the key they associate to appears in list of keys. 
+ * <br><br>
+ * This implementation is very memory efficient, and is meant to be used as
+ * a member of a large {@link RowSet} (hence the name). 
+ * 
+ * @author Igor Khanin
+ */
+public class MemberRow extends Row {
+
+	private List<String> keys;
+	private Object[] data;
 	
-	private HashMap<String, Object> innerMap;
-	
-	public BasicRow() {
-		innerMap = new HashMap<String, Object>();
-	}
-	
-	public BasicRow(Row other) {
-		if (other instanceof BasicRow) {
-			BasicRow bs = (BasicRow) other;
-			innerMap = new HashMap<String, Object>(bs.innerMap);
-		}
-		else {
-			innerMap = new HashMap<String, Object>();
-			
-			for (String key : other.keySet())
-				put(key, other.get(key));
-		}
-	}
-	
-	@Override
-	public String toString() {
-		return innerMap.toString();
+	/**
+	 * Creates new empty row with the specified allowed key list
+	 * 
+	 * @param keys A reference to a list of allowed key names
+	 * 
+	 * @throws NullPointerException If the specified key list is <code>null</code>
+	 */
+	public MemberRow(List<String> keys) {
+		if (keys == null)
+			throw new NullPointerException("keys is null");
+		
+		this.keys = keys;
+		
+		// Allocate data array
+		this.data = new Object[keys.size()];
 	}
 	
 	@Override
 	public Set<String> keySet() {
-		return innerMap.keySet();
+		return new HashSet<String>(keys);
 	}
 	
 	@Override
 	public Object get(String key) {
-		if (!innerMap.containsKey(key))
-			throw new IllegalArgumentException("Key \"" + key + "\" not in row");
-			
-		return innerMap.get(key);
+		if (key == null)
+			throw new NullPointerException("Null keys are not allowed");
+		
+		int pos = keys.indexOf(key);
+		if (pos < 0)
+			throw new MissingKeyException(key);
+		
+		return data[pos];
 	}
-	
+
 	@Override
 	public void put(String key, Object value) {
 		if (key == null)
 			throw new NullPointerException("Null keys are not allowed");
 		
-		innerMap.put(key, value);
+		int pos = keys.indexOf(key);
+		if (pos < 0)
+			throw new MissingKeyException(key);
+		
+		data[pos] = value;
 	}
 }

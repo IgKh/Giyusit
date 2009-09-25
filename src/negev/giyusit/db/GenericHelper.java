@@ -34,8 +34,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Set;
  
-import negev.giyusit.util.RowSet;
-import negev.giyusit.util.Row;
+import negev.giyusit.util.row.Row;
+import negev.giyusit.util.row.RowSet;
  
 public class GenericHelper {
  	

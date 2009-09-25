@@ -29,6 +29,8 @@
  */
 package negev.giyusit.util;
 
+import negev.giyusit.util.row.RowSet;
+
 import com.trolltech.qt.core.*;
 import com.trolltech.qt.gui.*;
 

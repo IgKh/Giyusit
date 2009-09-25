@@ -32,7 +32,7 @@ package negev.giyusit.candidates;
 import com.trolltech.qt.gui.*;
 
 import negev.giyusit.util.MessageDialog;
-import negev.giyusit.util.Row;
+import negev.giyusit.util.row.Row;
 import negev.giyusit.widgets.DialogField;
 
 /**

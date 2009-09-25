@@ -40,8 +40,8 @@ import negev.giyusit.events.EventDataView;
 import negev.giyusit.db.ConnectionProvider;
 import negev.giyusit.db.GenericDataView;
 import negev.giyusit.db.QueryWrapper;
-import negev.giyusit.util.Row;
-import negev.giyusit.util.RowSet;
+import negev.giyusit.util.row.Row;
+import negev.giyusit.util.row.RowSet;
 
 public class DataViewList extends QToolBox {
 
