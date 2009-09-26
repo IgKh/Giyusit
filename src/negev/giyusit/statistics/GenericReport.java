@@ -55,14 +55,12 @@ public class GenericReport extends AbstractReport {
 		try {
 			QueryWrapper wrapper = new QueryWrapper(conn);
 			
-			// Get data and ruler
+			// Get data
 			rowSet = wrapper.queryForRowSet(getQuery());
-						
-			String[] ruler = getRuler().split(",");
 			
 			// the model
-			RowSetModel model = new RowSetModel(ruler);
-			model.setData(rowSet);
+			RowSetModel model = new RowSetModel(getRuler());
+			model.setRowSet(rowSet);
 			
 			DBValuesTranslator.translateModelHeaders(model);
 			

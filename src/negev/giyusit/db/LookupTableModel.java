@@ -56,7 +56,7 @@ public class LookupTableModel extends RowSetModel {
 							String valueCol,
 							String whereClause) {
 		// The ruler
-		super(new String[] {keyCol, valueCol});
+		super(keyCol + "*," + valueCol);
 		
 		this.table = table;
 		this.keyCol = keyCol;
@@ -84,7 +84,7 @@ public class LookupTableModel extends RowSetModel {
 		Connection conn = ConnectionProvider.getConnection();
 		
 		try {
-			setData(new QueryWrapper(conn).queryForRowSet(sql.toString()));
+			setRowSet(new QueryWrapper(conn).queryForRowSet(sql.toString()));
 		}
 		finally {
 			try { conn.close(); } catch (Exception e) { e.printStackTrace(); }

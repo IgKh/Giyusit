@@ -85,11 +85,8 @@ public class GoalsReport extends AbstractReport {
 			}
 			
 			// Create the model
-			String[] ruler = getRuler().split(",");
-			
-			// the model
-			RowSetModel model = new RowSetModel(ruler);
-			model.setData(finalRowSet);
+			RowSetModel model = new RowSetModel(getRuler());
+			model.setRowSet(finalRowSet);
 			
 			DBValuesTranslator.translateModelHeaders(model);
 			

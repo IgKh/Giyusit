@@ -29,6 +29,7 @@
  */
 package negev.giyusit.config;
 
+import com.trolltech.qt.QVariant;
 import com.trolltech.qt.core.*;
 import com.trolltech.qt.gui.*;
 
@@ -60,7 +61,6 @@ public class GenericAdminSheet extends QWidget {
 		
 		// Setup model
 		model = new RowSetModel(helper.getRuler());
-		
 		DBValuesTranslator.translateModelHeaders(model);
 		
 		initUI();
@@ -106,7 +106,7 @@ public class GenericAdminSheet extends QWidget {
 	
 	private void loadData() {
 		try {
-			model.setData(helper.getValues());
+			model.setRowSet(helper.getValues());
 			
 			dataGrid.shrinkColumns();
 		}
@@ -144,7 +144,7 @@ public class GenericAdminSheet extends QWidget {
 			return;
 		
 		QModelIndex index = selection.get(0);
-		int id = Integer.parseInt(index.data().toString());
+		int id = QVariant.toInt(index.data(RowSetModel.ID_ROLE));
 		
 		// Remove this item
 		try {
@@ -163,16 +163,15 @@ public class GenericAdminSheet extends QWidget {
 			return;
 		
 		// Extract record ID
-		int id = Integer.parseInt(index.model().data(index.row(), 0).toString());
+		int id = QVariant.toInt(index.data(RowSetModel.ID_ROLE));
 		
 		// Show dialog
 		GenericItemDialog dlg = helper.createItemDialog(window());
-		
 		dlg.setWindowTitle(tr("Edit Item"));
 		
 		try {
 			dlg.fromRow(helper.fetchById(id));
-				
+			
 			if (dlg.exec() == QDialog.DialogCode.Rejected.value())
 				return;
 			

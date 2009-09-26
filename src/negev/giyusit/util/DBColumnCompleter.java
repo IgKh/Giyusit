@@ -47,9 +47,9 @@ public class DBColumnCompleter extends QCompleter {
 		Connection conn = ConnectionProvider.getConnection();
 		
 		try {
-			RowSetModel model = new RowSetModel(new String[] {column});
+			RowSetModel model = new RowSetModel(column);
 			
-			model.setData(new QueryWrapper(conn).queryForRowSet(sql));
+			model.setRowSet(new QueryWrapper(conn).queryForRowSet(sql));
 			
 			setModel(model);
 			setCompletionRole(Qt.ItemDataRole.DisplayRole);

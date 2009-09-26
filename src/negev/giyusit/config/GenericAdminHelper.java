@@ -44,7 +44,7 @@ public abstract class GenericAdminHelper extends GenericHelper {
 		super(tableName);
 	}
 	
-	public abstract String[] getRuler();
+	public abstract String getRuler();
 	
 	public abstract GenericItemDialog createItemDialog(QWidget parent);
 	

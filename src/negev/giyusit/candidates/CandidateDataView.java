@@ -29,10 +29,12 @@
  */
 package negev.giyusit.candidates;
 
+import com.trolltech.qt.QVariant;
 import com.trolltech.qt.core.*;
 import com.trolltech.qt.gui.*;
 
 import negev.giyusit.db.GenericDataView;
+import negev.giyusit.util.RowSetModel;
 
 public class CandidateDataView extends GenericDataView {
 	
@@ -57,8 +59,8 @@ public class CandidateDataView extends GenericDataView {
 	
 	@Override
 	public boolean showItemDialog(QWidget parent, QModelIndex index) {
-		// Extract candidate id
-		int id = Integer.parseInt(index.model().data(index.row(), 0).toString());
+		// Extract candidate id using the ID role
+		int id = QVariant.toInt(index.data(RowSetModel.ID_ROLE));
 		
 		// Laziliy create dialog
 		if(itemDialog == null)

@@ -29,6 +29,7 @@
  */
 package negev.giyusit.events;
 
+import com.trolltech.qt.QVariant;
 import com.trolltech.qt.core.*;
 import com.trolltech.qt.gui.*;
 
@@ -261,7 +262,7 @@ public class EventDialog extends QDialog {
 			return;
 		
 		QModelIndex index = selection.get(0);
-		int candidateId = Integer.parseInt(index.data().toString());
+		int candidateId = QVariant.toInt(index.data(RowSetModel.ID_ROLE));
 		
 		// Remove this attendance
 		EventHelper helper = new EventHelper();
@@ -287,7 +288,7 @@ public class EventDialog extends QDialog {
 			return;
 		
 		// Extract candidate ID
-		int candidateId = Integer.parseInt(index.model().data(index.row(), 0).toString());
+		int candidateId = QVariant.toInt(index.data(RowSetModel.ID_ROLE));
 		
 		// Show dialog
 		EventAttendanceItemDialog dlg = new EventAttendanceItemDialog(this);
@@ -321,15 +322,14 @@ class EventDialogDataView extends DataView {
 	private RowSetModel model;
 	
 	public EventDialogDataView(int eventId) {
-		model = new RowSetModel(new String[] {"ID", "FirstName", "LastName", 
-												"Gender", "Address", "City", 
-												"ZipCode", "EMail", "AttType", "Notes"});
+		model = new RowSetModel("ID*,FirstName,LastName,Gender,Address,City," + 
+								"ZipCode,EMail,AttType,Notes");
 		
 		DBValuesTranslator.translateModelHeaders(model);
 	}
 	
 	public void setData(RowSet rowSet) {
-		model.setData(rowSet);
+		model.setRowSet(rowSet);
 	}
 	
 	@Override

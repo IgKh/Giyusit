@@ -67,10 +67,7 @@ public class GenericDataView extends DataView {
 					throw new RuntimeException("Ruler " + ruler + " not in library");
 			}
 			
-			// Split the ruler string into an array
-			String[] rulerArray = ruler.split(",");
-			
-			model = new RowSetModel(rulerArray);
+			model = new RowSetModel(ruler);
 			
 			// Translate model
 			DBValuesTranslator.translateModelHeaders(model);
@@ -82,7 +79,7 @@ public class GenericDataView extends DataView {
 		try {
 			QueryWrapper wrapper = new QueryWrapper(conn);
 			
-			model.setData(wrapper.queryForRowSet(query));
+			model.setRowSet(wrapper.queryForRowSet(query));
 			
 			return model;
 		}
@@ -94,6 +91,6 @@ public class GenericDataView extends DataView {
 	@Override
 	public void viewDismissed() {
 		if (model != null)
-			model.setData(null);
+			model.setRowSet(null);
 	}
 }

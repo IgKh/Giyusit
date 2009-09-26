@@ -44,8 +44,8 @@ public class CandidateStatusesAdminHelper extends GenericAdminHelper {
 		super("CandidateStatusValues");
 	}
 	
-	public String[] getRuler() {
-		return new String[] {"ID","Name","Active"};
+	public String getRuler() {
+		return "ID*,Name,Active";
 	}
 	
 	public GenericItemDialog createItemDialog(QWidget parent) {

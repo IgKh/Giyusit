@@ -29,6 +29,7 @@
  */
 package negev.giyusit.candidates;
 
+import com.trolltech.qt.QVariant;
 import com.trolltech.qt.core.*;
 import com.trolltech.qt.gui.*;
 
@@ -65,9 +66,7 @@ public class CandidateEventsDialog extends QDialog {
 		this.candidateId = candidateId;
 		
 		// Models
-		model = new RowSetModel(new String[] 
-			{"ID", "Name", "Type", "StartDate", "EndDate", "AttType", "Notes"});
-		
+		model = new RowSetModel("ID*,Name,Type,StartDate,EndDate,AttType,Notes");
 		DBValuesTranslator.translateModelHeaders(model);
 		
 		initUI();
@@ -123,7 +122,7 @@ public class CandidateEventsDialog extends QDialog {
 		CandidateHelper helper = new CandidateHelper();
 		
 		try {
-			model.setData(helper.getCandidateEvents(candidateId));
+			model.setRowSet(helper.getCandidateEvents(candidateId));
 			dataTable.setModel(model);
 		}
 		catch (Exception e) {
@@ -188,7 +187,7 @@ public class CandidateEventsDialog extends QDialog {
 			return;
 		
 		QModelIndex index = selection.get(0);
-		int eventId = Integer.parseInt(index.data().toString());
+		int eventId = QVariant.toInt(index.data(RowSetModel.ID_ROLE));
 		
 		// Remove this attendance
 		EventHelper helper = new EventHelper();
@@ -212,7 +211,7 @@ public class CandidateEventsDialog extends QDialog {
 			return;
 		
 		// Extract event ID
-		int eventId = Integer.parseInt(index.model().data(index.row(), 0).toString());
+		int eventId = QVariant.toInt(index.data(RowSetModel.ID_ROLE));
 		
 		// Show dialog
 		EventAttendanceItemDialog dlg = new EventAttendanceItemDialog(this);

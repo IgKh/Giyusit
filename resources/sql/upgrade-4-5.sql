@@ -5,7 +5,11 @@
 -- Update schema revision
 UPDATE FileParams SET Value = '5' WHERE Key = 'SchemaRevision';
 
--- Helper view for event attendace
+-- Patch standard rulers with marker characters
+UPDATE RulerLibrary SET Ruler = "ID*,FirstName,LastName,Gender,City,Status,Owner,Notes" WHERE Name = "StdCandidatesRuler";
+UPDATE RulerLibrary SET Ruler = "ID*,Name,Type,StartDate,EndDate,ActiveAttendants,Location,Owner,Notes" WHERE Name = "StdEventsRuler";
+
+-- Helper view for event attendance
 CREATE VIEW EventAttendanceHelper AS SELECT 
 				EA.*, 
 				E.TypeID AS EventTypeID, 

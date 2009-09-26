@@ -29,10 +29,12 @@
  */
 package negev.giyusit.events;
 
+import com.trolltech.qt.QVariant;
 import com.trolltech.qt.core.*;
 import com.trolltech.qt.gui.*;
 
 import negev.giyusit.db.GenericDataView;
+import negev.giyusit.util.RowSetModel;
 
 public class EventDataView extends GenericDataView {
 	
@@ -47,7 +49,7 @@ public class EventDataView extends GenericDataView {
 	@Override
 	public boolean showItemDialog(QWidget parent, QModelIndex index) {
 		// Extract event id
-		int id = Integer.parseInt(index.model().data(index.row(), 0).toString());
+		int id = QVariant.toInt(index.data(RowSetModel.ID_ROLE));
 		
 		// Show dialog
 		EventDialog dlg = new EventDialog(parent, id);

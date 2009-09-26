@@ -51,11 +51,11 @@ public class StaffAdminDialog extends QDialog {
 	private static final int ROOT_TYPE = QTreeWidgetItem.ItemType.UserType.value();
 
 	// Rulers for reports
-	private static final String RULER = "ID,FirstName,LastName,Gender,Status," + 
+	private static final String RULER = "ID*,FirstName,LastName,Gender,Status," + 
 										"Address,City,ZipCode,HomePhone,CellPhone," + 
 										"EMail,Notes";
 	
-	private static final String TREE_RULER = RULER + ",Owner";
+	private static final String TREE_RULER = "Owner," + RULER;
 
 	// Widgets
 	private QTreeWidget staffTree;
@@ -399,8 +399,8 @@ public class StaffAdminDialog extends QDialog {
     		dlg.setWindowTitle(MessageFormat.format(tr("Candidates owned by {0}"), name));
     		dlg.resize((int) (dlg.width() * 1.1), dlg.height());
     		
-    		RowSetModel model = new RowSetModel(RULER.split(","));
-    		model.setData(candidates);
+    		RowSetModel model = new RowSetModel(RULER);
+    		model.setRowSet(candidates);
     		
     		// Translate column headers
     		DBValuesTranslator.translateModelHeaders(model);
@@ -437,8 +437,8 @@ public class StaffAdminDialog extends QDialog {
     		dlg.setWindowTitle(MessageFormat.format(tr("Candidates tree owned by {0}"), name));
     		dlg.resize((int) (dlg.width() * 1.1), dlg.height());
     		
-    		RowSetModel model = new RowSetModel(TREE_RULER.split(","));
-    		model.setData(candidates);
+    		RowSetModel model = new RowSetModel(TREE_RULER);
+    		model.setRowSet(candidates);
     		
     		// Translate column headers
     		DBValuesTranslator.translateModelHeaders(model);
@@ -471,8 +471,8 @@ public class StaffAdminDialog extends QDialog {
     			if (candidates.size() == 0)
     				continue;
     			
-    			RowSetModel model = new RowSetModel(RULER.split(","));
-    			model.setData(candidates);
+    			RowSetModel model = new RowSetModel(RULER);
+    			model.setRowSet(candidates);
     			
     			DBValuesTranslator.translateModelHeaders(model);
     			

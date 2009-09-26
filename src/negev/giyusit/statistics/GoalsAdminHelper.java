@@ -33,7 +33,6 @@ import com.trolltech.qt.gui.*;
 
 import negev.giyusit.config.GenericAdminHelper;
 import negev.giyusit.util.GenericItemDialog;
-import negev.giyusit.util.MessageDialog;
 import negev.giyusit.util.row.BasicRow;
 import negev.giyusit.util.row.Row;
 import negev.giyusit.util.row.RowSet;
@@ -94,8 +93,8 @@ public class GoalsAdminHelper extends GenericAdminHelper {
 	}
 	
 	@Override
-	public String[] getRuler() {
-		return new String[] {"ID","Name","Planning"};
+	public String getRuler() {
+		return "ID*+,Name,Planning";
 	}
 	
 	@Override

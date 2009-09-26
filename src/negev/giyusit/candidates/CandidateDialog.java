@@ -535,7 +535,7 @@ class CandidateStatusesDialog extends QDialog {
 		this.candidateId = candidateId;
 		
 		// Models
-		model = new RowSetModel(new String[] {"StartDate", "StatusName"});
+		model = new RowSetModel("StartDate,StatusName");
 		statusesModel = new LookupTableModel("CandidateStatusValues", "ID", "Name", "EndDate isnull");
 		
 		DBValuesTranslator.translateModelHeaders(model);
@@ -599,7 +599,7 @@ class CandidateStatusesDialog extends QDialog {
 		CandidateHelper helper = new CandidateHelper();
 		
 		try {
-			model.setData(helper.getCandidateStatuses(candidateId));
+			model.setRowSet(helper.getCandidateStatuses(candidateId));
 		}
 		catch (Exception e) {
 			MessageDialog.showException(this, e);
