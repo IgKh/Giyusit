@@ -39,9 +39,7 @@ import negev.giyusit.candidates.FindCandidatesDialog;
 import negev.giyusit.util.DBValuesTranslator;
 import negev.giyusit.util.MessageDialog;
 import negev.giyusit.util.RowSetModel;
-import negev.giyusit.util.row.RowSet;
 import negev.giyusit.DataTable;
-import negev.giyusit.DataView;
 
 public class EventDialog extends QDialog {
 	
@@ -65,14 +63,17 @@ public class EventDialog extends QDialog {
 	private int eventId;
 	private boolean dbModified = false;
 	
-	private EventDialogDataView dataView;
+	private RowSetModel model;
 	
 	public EventDialog(QWidget parent, int eventId) {
 		super(parent);
 		
 		this.eventId = eventId;
 		
-		dataView = new EventDialogDataView(eventId);
+		model = new RowSetModel("ID*,FirstName,LastName,Gender,Address,City," + 
+								"ZipCode,EMail,AttType,Notes");
+		
+		DBValuesTranslator.translateModelHeaders(model);
 		
 		initUI();
 		
@@ -93,7 +94,7 @@ public class EventDialog extends QDialog {
 		dataTable = new DataTable();
 		dataTable.setFilterEnabled(false);
 		dataTable.setStatusEnabled(false);
-		dataTable.setDataView(dataView);
+		dataTable.setModel(model);
 		
 		dataTable.selectionModel().selectionChanged.connect(this, "selectionChanged()");
 		dataTable.internalView().activated.connect(this, "updateCandidate(QModelIndex)");
@@ -212,9 +213,9 @@ public class EventDialog extends QDialog {
 		
 		try {
 			if (activeAttendantsOnly.isChecked())
-				dataView.setData(helper.getActiveEventAttendants(eventId));
+				model.setRowSet(helper.getActiveEventAttendants(eventId));
 			else
-				dataView.setData(helper.getAllEventAttendants(eventId));
+				model.setRowSet(helper.getAllEventAttendants(eventId));
 						
 			dataTable.refresh();
 		}
@@ -311,34 +312,5 @@ public class EventDialog extends QDialog {
 		finally {
 			helper.close();
 		}
-	}
-}
-
-/**
- * A special internal data view that allow modification in the item dialog
- */
-class EventDialogDataView extends DataView {
-	
-	private RowSetModel model;
-	
-	public EventDialogDataView(int eventId) {
-		model = new RowSetModel("ID*,FirstName,LastName,Gender,Address,City," + 
-								"ZipCode,EMail,AttType,Notes");
-		
-		DBValuesTranslator.translateModelHeaders(model);
-	}
-	
-	public void setData(RowSet rowSet) {
-		model.setRowSet(rowSet);
-	}
-	
-	@Override
-	public String getName() {
-		return "";
-	}
-	
-	@Override
-	public QAbstractItemModel getModel() {
-		return model;
 	}
 }

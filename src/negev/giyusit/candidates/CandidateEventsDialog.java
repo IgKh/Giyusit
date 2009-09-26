@@ -37,14 +37,12 @@ import java.text.MessageFormat;
 import java.util.List;
 
 import negev.giyusit.DataTable;
-import negev.giyusit.db.LookupTableModel;
 import negev.giyusit.events.EventAttendanceItemDialog;
 import negev.giyusit.events.EventHelper;
+import negev.giyusit.events.EventPickerDialog;
 import negev.giyusit.util.DBValuesTranslator;
 import negev.giyusit.util.MessageDialog;
 import negev.giyusit.util.RowSetModel;
-import negev.giyusit.util.row.Row;
-import negev.giyusit.widgets.DialogField;
 
 public class CandidateEventsDialog extends QDialog {
 
@@ -226,114 +224,6 @@ public class CandidateEventsDialog extends QDialog {
 			// Update
 			helper.updateAttendanceRow(eventId, candidateId, dlg.toRow());
 			loadData();
-		}
-		catch (Exception e) {
-			MessageDialog.showException(this, e);
-		}
-		finally {
-			helper.close();
-		}
-	}
-}
-
-class EventPickerDialog extends QDialog {
-	
-	// Widgets
-	private QComboBox events;
-	private QLabel type;
-	private QLabel startDate;
-	
-	// Buttons
-	private QPushButton okButton;
-	
-	// Fields
-	private LookupTableModel eventsModel;
-	private LookupTableModel eventTypesModel;
-	private int selectedEventId = -1;
-	
-	public EventPickerDialog(QWidget parent) {
-		super(parent);
-		
-		initUI();
-		
-		// Setup combo
-		eventsModel = new LookupTableModel("Events", "ID", "Name");
-		
-		events.setModel(eventsModel);
-		events.setModelColumn(LookupTableModel.VALUE_COLUMN);
-		events.setCurrentIndex(-1);
-		events.currentIndexChanged.connect(this, "currentEventChanged(int)");
-		
-		//
-		eventTypesModel = new LookupTableModel("EventTypes");
-	}
-	
-	public int getSelectedEventID() {
-		return selectedEventId;
-	}
-	
-	private void initUI() {
-		setWindowTitle(tr("Add to Event"));
-		
-		//
-		// Widgets
-		//
-		events = new QComboBox();
-		
-		type = new QLabel();
-		startDate = new QLabel();
-		
-		okButton = new QPushButton(tr("OK"));
-		okButton.setEnabled(false);
-		okButton.clicked.connect(this, "accept()");
-		
-		QPushButton cancelButton = new QPushButton(tr("Cancel"));
-		cancelButton.clicked.connect(this, "reject()");
-				
-		//
-		// Layout
-		//
-		QHBoxLayout buttonLayout = new QHBoxLayout();
-		buttonLayout.addStretch(1);
-		buttonLayout.addWidget(okButton);
-		buttonLayout.addWidget(cancelButton);
-				
-		QGridLayout layout = new QGridLayout(this);
-		layout.addWidget(new DialogField(tr("<b>Event:</b> "), events), 1, 1, 1, 2);
-		layout.addWidget(new DialogField(tr("<b>Type: </b>"), type), 2, 1);
-		layout.addWidget(new DialogField(tr("<b>Start Date: </b>"), startDate), 2, 2);
-		layout.setRowMinimumHeight(3, 5);
-		layout.addLayout(buttonLayout, 4, 1, 1, 2);
-	}
-	
-	private void currentEventChanged(int index) {
-		if (index == -1) {
-			okButton.setEnabled(false);
-			return;
-		}
-		
-		okButton.setEnabled(true);
-		
-		// Show event details
-		EventHelper helper = new EventHelper();
-		
-		try {
-			int id = Integer.parseInt(eventsModel.rowToKey(index));
-			selectedEventId = id;
-			
-			System.out.println(id);
-			
-			Row eventRow = helper.fetchById(id);
-			
-			// Type
-			String typeId = eventRow.getString("TypeID");
-			type.setText(eventTypesModel.data(
-					eventTypesModel.keyToRow(typeId), 
-					LookupTableModel.VALUE_COLUMN).toString());
-			
-			// Date
-			QDate date = eventRow.getDate("StartDate");
-			startDate.setText(date.toString("dd/MM/yyyy"));
 		}
 		catch (Exception e) {
 			MessageDialog.showException(this, e);
