@@ -61,6 +61,7 @@ public class DataTable extends QWidget {
 		// Widgets
 		//
 		dataGrid = new DataGrid();
+		dataGrid.setSortingEnabled(true);
 		dataGrid.setModel(proxyModel);
 		dataGrid.activated.connect(this, "indexActivated(QModelIndex)");
 			
@@ -271,5 +272,19 @@ class DataTableProxyModel extends QSortFilterProxyModel {
 				return true;
 		}
 		return false;
+	}
+
+	protected boolean lessThan(QModelIndex left, QModelIndex right) {
+		Object leftData = sourceModel().data(left);
+		Object rightData = sourceModel().data(right);
+		
+		// NULL is always larger than anything else
+		if (leftData == null)
+			return false;
+
+		if (rightData == null)
+			return true;
+
+		return super.lessThan(left, right);
 	}
 }
