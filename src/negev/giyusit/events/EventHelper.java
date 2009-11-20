@@ -57,13 +57,13 @@ public class EventHelper extends GenericHelper {
 	public void addEventAttendance(int eventId, int candidateId) {
 		String sql = "insert into EventAttendance (EventID, CandidateID) values (?, ?)";
 		
-		getQueryWrapper().execute(sql, new Object[] {eventId, candidateId});
+		getQueryWrapper().execute(sql, eventId, candidateId);
 	}
 	
 	public void deleteEventAttendance(int eventId, int candidateId) {
 		String sql = "delete from EventAttendance where EventID = ? and CandidateID = ?";
 		
-		getQueryWrapper().execute(sql, new Object[] {eventId, candidateId});
+		getQueryWrapper().execute(sql, eventId, candidateId);
 	}
 	
 	public Row getAttendanceRow(int eventId, int candidateId) {

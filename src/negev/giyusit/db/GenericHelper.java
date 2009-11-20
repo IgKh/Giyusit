@@ -120,7 +120,7 @@ public class GenericHelper {
 	public void deleteRecord(int id) {
 		String sql = "delete from " + tableName + " where ROWID = ?";
 		
-		getQueryWrapper().execute(sql, new Object[] {id});
+		getQueryWrapper().execute(sql, id);
 	}
 	
 	/**

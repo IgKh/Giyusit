@@ -80,15 +80,14 @@ public class CandidateHelper extends GenericHelper {
 		
 		String isoDate = startDate.toString(Qt.DateFormat.ISODate);
 		
-		getQueryWrapper().execute(sql, 
-								new Object[] {candidateId, statusId, isoDate});
+		getQueryWrapper().execute(sql, candidateId, statusId, isoDate);
 	}
 	
 	public void removeLastStatus(int candidateId) {
 		String sql = "delete from CandidateStatuses where CandidateID = ? " + 
 						"and StartTime = (select max(StartTime) from CandidateStatuses where CandidateID= ?)";
 		
-		getQueryWrapper().execute(sql, new Object[] {candidateId, candidateId});
+		getQueryWrapper().execute(sql, candidateId, candidateId);
 	}
 	
 	public RowSet getCandidateEvents(int candidateId) {

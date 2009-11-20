@@ -66,7 +66,7 @@ public class CandidateStatusesAdminHelper extends GenericAdminHelper {
 		String sql = "update CandidateStatusValues set EndDate = (date('now')) " + 
 						"where ID = ?";
 		
-		getQueryWrapper().execute(sql, new Object[] {id});
+		getQueryWrapper().execute(sql, id);
 	}
 }
 

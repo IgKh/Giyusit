@@ -62,7 +62,7 @@ public class QueryWrapper {
 		return conn;
 	}
 	
-	public int execute(String sql, Object[] params) {
+	public int execute(String sql, Object... params) {
 		PreparedStatement stmnt = null;
 		
 		try {
@@ -88,37 +88,6 @@ public class QueryWrapper {
 			}
 		}
 	}
-	
-	/*
-	public int execute(String sql, Object... params) {
-		return execute(sql, params);
-		
-		PreparedStatement stmnt = null;
-		
-		try {
-			stmnt = conn.prepareStatement(sql);
-			
-			// Bind parameters
-			for (int i = 0; i < params.length; i++)
-				stmnt.setObject(i + 1, params[i]);
-			
-			// Execute the statement
-			stmnt.execute();
-			
-			// Return the number of rows affected (or -1 if this is not a
-			// DDL statement)
-			return stmnt.getUpdateCount();
-		}
-		catch (SQLException e) {
-			throw new DatabaseException(e);
-		}
-		finally {
-			if (stmnt != null) {
-				try { stmnt.close(); } catch (SQLException e) {}
-			}
-		}
-	}
-	*/
 	
 	public Object queryForObject(String sql, Object... params) {
 		PreparedStatement stmnt = null;

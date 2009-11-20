@@ -61,7 +61,7 @@ public class DatabaseUtils {
 			QueryWrapper wrapper = new QueryWrapper(conn);
 			String sql = "replace into FileParams set Value = ? where Key = ?";
 			
-			wrapper.execute(sql, new Object[] {value, key});
+			wrapper.execute(sql, value, key);
 		}
 		finally {
 			if (conn != null) {
