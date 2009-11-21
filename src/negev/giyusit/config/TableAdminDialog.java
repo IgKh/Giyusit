@@ -53,9 +53,9 @@ public class TableAdminDialog extends QDialog {
 									new CandidateStatusesAdminHelper()), 
 									tr("Candidate Statuses"));
 		
-		tabWidget.addTab(new GenericAdminSheet(this, 
-									new GoalsAdminHelper()), 
-									tr("Goals Definition"));
+		//tabWidget.addTab(new GenericAdminSheet(this,
+		//							new GoalsAdminHelper()),
+		//							tr("Goals Definition"));
 	}
 	
 	private void initUI() {

@@ -21,23 +21,6 @@ CREATE VIEW EventAttendanceHelper AS SELECT
 			JOIN Events E ON EA.EventID = E.ID
 			JOIN EventTypes ET ON E.TypeID = ET.ID;
 
--- Create the goals table
-CREATE TABLE Goals
-(
-	ID			INTEGER PRIMARY KEY,
-	Name		VARCHAR NOT NULL,
-	Planning	INTEGER DEFAULT 0,
-	ExecQuery	VARCHAR NOT NULL
-);
-
-INSERT INTO Goals (Name, ExecQuery) VALUES ('סה"כ מועמדים',
-	'select count(*) from Candidates'
-);
-
-INSERT INTO Goals (Name, ExecQuery) VALUES ('מועמדים שהשתתפו בשבת',
-	'select count(*) from EventAttendanceHelper where AttTypeID = 4 and EventTypeID = 1'
-);
-
 -- Create the Statistic Report table
 CREATE TABLE StatisticReports
 (
@@ -47,49 +30,43 @@ CREATE TABLE StatisticReports
 	Description	VARCHAR,
 	Query		VARCHAR,
 	Ruler		VARCHAR,
+	SeqNo       INTEGER,
 	CreateDate	VARCHAR DEFAULT CURRENT_DATE
 );
 
-INSERT INTO StatisticReports (Name, Description, Class, Ruler) VALUES (
-	'עמידה ביעדים',
-	'השוואת תכנון מול ביצוע של היעדים שהוגדרו בקובץ',
-	'negev.giyusit.statistics.GoalsReport',
-	'Name,Planning,Execution'
-);
-
-INSERT INTO StatisticReports (Name, Description, Class, Query, Ruler) VALUES (
+INSERT INTO StatisticReports (SeqNo, Name, Description, Class, Query, Ruler) VALUES (10,
 	'מועמדים פעילים לפי ישוב',
 	'מספר המועמדים הפעילים המתגוררים בכל ישוב',
 	'negev.giyusit.statistics.PieReport',
-	'select City, count(*) as Total from AllCandidates where ActiveInd = "true" group by City order by Total desc',
+	'select City, count(*) as Total from AllCandidates where ActiveInd = "true" and City is not null group by City order by Total desc',
 	'City,Total'
 );
 
-INSERT INTO StatisticReports (Name, Description, Class, Query, Ruler) VALUES (
+INSERT INTO StatisticReports (SeqNo, Name, Description, Class, Query, Ruler) VALUES (15,
 	'מועמדים פעילים לפי מקור',
 	'מספר המועמדים הפעילים שגויסו מכל מקור',
 	'negev.giyusit.statistics.PieReport',
-	'select Origin, count(*) as Total from AllCandidates where ActiveInd = "true" group by Origin order by Total desc',
+	'select Origin, count(*) as Total from AllCandidates where ActiveInd = "true" and Origin is not null group by Origin order by Total desc',
 	'Origin,Total'
 );
 
-INSERT INTO StatisticReports (Name, Description, Class, Query, Ruler) VALUES (
+INSERT INTO StatisticReports (SeqNo, Name, Description, Class, Query, Ruler) VALUES (20,
 	'מועמדים לפי ישוב',
 	'מספר המועמדים (ללא קשר לסטטוס) המתגוררים בכל ישוב',
 	'negev.giyusit.statistics.PieReport',
-	'select City, count(*) as Total from Candidates group by City order by Total desc',
+	'select City, count(*) as Total from Candidates where City is not null group by City order by Total desc',
 	'City,Total'
 );
 
-INSERT INTO StatisticReports (Name, Description, Class, Query, Ruler) VALUES (
+INSERT INTO StatisticReports (SeqNo, Name, Description, Class, Query, Ruler) VALUES (25,
 	'מועמדים לפי מקור',
 	'מספר המועמדים (ללא קשר לסטטוס) שגויסו מכל מקור',
 	'negev.giyusit.statistics.PieReport',
-	'select Origin, count(*) as Total from Candidates group by Origin order by Total desc',
+	'select Origin, count(*) as Total from Candidates where Origin is not null group by Origin order by Total desc',
 	'Origin,Total'
 );
 
-INSERT INTO StatisticReports (Name, Description, Class, Query, Ruler) VALUES (
+INSERT INTO StatisticReports (SeqNo, Name, Description, Class, Query, Ruler) VALUES (30,
 	'השתתפות באירועים',
 	'סך כל המועמדים שהשתתפו בפועל באירועים מכל סוג',
 	'negev.giyusit.statistics.BarReport',
@@ -98,7 +75,7 @@ INSERT INTO StatisticReports (Name, Description, Class, Query, Ruler) VALUES (
 	'Type,Total'
 );
 
-INSERT INTO StatisticReports (Name, Description, Class, Query, Ruler) VALUES (
+INSERT INTO StatisticReports (SeqNo, Name, Description, Class, Query, Ruler) VALUES (25,
 	'השתתפות באירועים (כולל צפי)',
 	'סך כל המועמדים שהשתתפו או צפויים להשתתף באירועים מכל סוג',
 	'negev.giyusit.statistics.BarReport',
