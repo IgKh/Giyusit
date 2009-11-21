@@ -186,6 +186,7 @@ public class GiyusitWindow extends QMainWindow {
 		addEventAct.triggered.connect(this, "addEvent()");
 		
 		statisticsAct = new QAction(tr("&Statistics..."), this);
+        statisticsAct.setShortcut(new QKeySequence("F10"));
 		statisticsAct.triggered.connect(this, "statistics()");
 		
 		staffAdminAct = new QAction(tr("&Staff Admin..."), this);

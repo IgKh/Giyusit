@@ -33,9 +33,6 @@ import com.trolltech.qt.QVariant;
 import com.trolltech.qt.core.*;
 import com.trolltech.qt.gui.*;
 
-import negev.giyusit.widgets.ChartViewer;
-import negev.giyusit.widgets.DataGrid;
-
 import negev.giyusit.db.GenericHelper;
 import negev.giyusit.util.MessageDialog;
 import negev.giyusit.util.row.Row;
@@ -48,23 +45,16 @@ public class StatisticsDialog extends QDialog {
 	// Widgets
 	private QListWidget reportList;
 	
-	private QLabel description;
+	private QTextEdit description;
 	private QLabel createDate;
-	private DataGrid dataGrid;
-	private ChartViewer chartViewer;
-	
-	private QGroupBox reportInfoBox;
-	private QGroupBox reportResultsBox;
-	
-	public StatisticsDialog(QWidget parent) {
+
+    private QPushButton runReportButton;
+
+    public StatisticsDialog(QWidget parent) {
 		super(parent);
 		
 		initUI();
 		loadReportsList();
-		
-		// Initialy disable report-related UI
-		reportInfoBox.setEnabled(false);
-		reportResultsBox.setEnabled(false);
 	}
 	
 	private void initUI() {
@@ -75,13 +65,17 @@ public class StatisticsDialog extends QDialog {
 		//
 		reportList = new QListWidget();
 		reportList.itemClicked.connect(this, "reportSelected(QListWidgetItem)");
+        reportList.doubleClicked.connect(this, "runReport()");
 		
-		description = new QLabel();
+		description = new QTextEdit();
+        description.setFrameStyle(QFrame.Shape.NoFrame.value());
+        description.setMaximumHeight(45);
+
 		createDate = new QLabel();
-		
-		dataGrid = new DataGrid();
-		
-		chartViewer = new ChartViewer();
+
+        runReportButton = new QPushButton(tr("Run Report..."));
+        runReportButton.setEnabled(false);
+        runReportButton.clicked.connect(this, "runReport()");
 		
 		QPushButton closeButton = new QPushButton(tr("Close"));
 		closeButton.setIcon(new QIcon("classpath:/icons/close.png"));
@@ -90,38 +84,25 @@ public class StatisticsDialog extends QDialog {
 		//
 		// Layout
 		//
-		reportInfoBox = new QGroupBox(tr("Report Information"));
+        QGroupBox reportListBox = new QGroupBox(tr("Report List"));
+
+        QVBoxLayout reportListLayout = new QVBoxLayout(reportListBox);
+        reportListLayout.addWidget(reportList);
+
+        QGroupBox reportInfoBox = new QGroupBox(tr("Report Information"));
 		
 		QFormLayout reportInfoLayout = new QFormLayout(reportInfoBox);
 		reportInfoLayout.addRow(tr("<b>Description:</b> "), description);
 		reportInfoLayout.addRow(tr("<b>Creation Date:</b> "), createDate);
 		
-		reportResultsBox = new QGroupBox(tr("Report Results"));
-		
-		QHBoxLayout reportResultsLayout = new QHBoxLayout(reportResultsBox);
-		reportResultsLayout.addWidget(dataGrid, 1);
-		reportResultsLayout.addWidget(chartViewer, 3);
-		
-		QWidget mainWidget = new QWidget();
-		
-		QVBoxLayout mainLayout = new QVBoxLayout(mainWidget);
-		mainLayout.addWidget(reportInfoBox);
-		mainLayout.addWidget(reportResultsBox);
-				
-		QSplitter splitter = new QSplitter();
-		splitter.addWidget(reportList);
-		splitter.addWidget(mainWidget);
-		
-		splitter.setStretchFactor(0, 1);
-		splitter.setStretchFactor(1, 3);
-		reportList.setMinimumWidth(reportList.sizeHint().width());
-		
 		QHBoxLayout buttonLayout = new QHBoxLayout();
-		buttonLayout.addStretch(1);
+		buttonLayout.addWidget(runReportButton);
+        buttonLayout.addStretch(1);
 		buttonLayout.addWidget(closeButton);
 		
 		QVBoxLayout layout = new QVBoxLayout(this);
-		layout.addWidget(splitter);
+		layout.addWidget(reportListBox);
+        layout.addWidget(reportInfoBox);
 		layout.addLayout(buttonLayout);
 	}
 	
@@ -132,7 +113,7 @@ public class StatisticsDialog extends QDialog {
 			// Clear list
 			reportList.clear();
 			
-			// Popularte list from DB
+			// Populate list from DB
 			RowSet reports = helper.fetchAll();
 			
 			for (Row report : reports) {
@@ -149,42 +130,22 @@ public class StatisticsDialog extends QDialog {
 			helper.close();
 		}
 	}
-	
+
+    @SuppressWarnings("unused")
 	private void reportSelected(QListWidgetItem item) {
 		if (item == null)
 			return;
-		
-		// Enable report-related UI
-		reportInfoBox.setEnabled(true);
-		reportResultsBox.setEnabled(true);
+
+        runReportButton.setEnabled(true);
 		
 		GenericHelper helper = new GenericHelper("StatisticReports");
 		
 		try {
-			int id = QVariant.toInt(item.data(ID_ROLE));
-			Row report = helper.fetchById(id);
+			Row report = helper.fetchById(QVariant.toInt(item.data(ID_ROLE)));
 			
 			// Update report information
 			description.setText(report.getString("Description"));
 			createDate.setText(report.getDate("CreateDate").toString("dd/MM/yyyy"));
-			
-			// Create the reporting object via reflection
-			Class<?> clazz = Class.forName(report.getString("Class"));
-			
-			if (!AbstractReport.class.isAssignableFrom(clazz))
-				throw new IllegalArgumentException("Class " + clazz.getName() + " is not a report class");
-			
-			AbstractReport reportObj = (AbstractReport) clazz.newInstance();
-			
-			reportObj.setName(report.getString("Name"));
-			reportObj.setQuery(report.getString("Query"));
-			reportObj.setRuler(report.getString("Ruler"));
-			
-			// Update data grid and chart viewer
-			dataGrid.setModel(reportObj.getModel());
-			dataGrid.shrinkColumns();
-			
-			chartViewer.setChart(reportObj.getChart());
 		}
 		catch (Exception e) {
 			MessageDialog.showException(this, e);
@@ -193,4 +154,18 @@ public class StatisticsDialog extends QDialog {
 			helper.close();
 		}
 	}
+
+    @SuppressWarnings("unused")
+    private void runReport() {
+        QListWidgetItem item = reportList.currentItem();
+        if (item == null)
+			return;
+
+		int id = QVariant.toInt(item.data(ID_ROLE));
+
+        StatisticReportResults dlg = new StatisticReportResults(this, id);
+
+        dlg.resize((int) (dlg.width() * 1.1), dlg.height());
+        dlg.exec();
+    }
 }

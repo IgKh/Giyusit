@@ -4,10 +4,10 @@
  * Redistribution and use in source and binary forms, with or without 
  * modification, are permitted provided that the following conditions are met:
  *
- * - Redistributions of source code must retain the above copyright notice, 
+ * - Redistributions of source code must retain the above copyright notice,
  *   this list of conditions and the following disclaimer.
  *
- * - Redistributions in binary form must reproduce the above copyright notice, 
+ * - Redistributions in binary form must reproduce the above copyright notice,
  *   this list of conditions and the following disclaimer in the documentation 
  *   and/or other materials provided with the distribution.
  *
@@ -40,7 +40,7 @@ import org.jfree.chart.JFreeChart;
 import negev.giyusit.util.MessageDialog;
 
 /**
- * A Qt widget used to embbed JFreeChart charts in a Qt-based GUI
+ * A Qt widget used to embed JFreeChart charts in a Qt-based GUI
  */
 public class ChartViewer extends QWidget {
 	
@@ -48,29 +48,85 @@ public class ChartViewer extends QWidget {
 	private static final int DEFAULT_HEIGHT = 300;
 	
 	private JFreeChart chart = null;
-	private QImage chartImage = null;
-	
-	private QMenu popupMenu;
-	
-	public ChartViewer() {
+    private double scaleFactor;
+
+    private QToolBar toolBar;
+    private QLabel chartLabel;
+    private QScrollArea scrollArea;
+
+    private QAction fitToWindowAct;
+    private QAction normalSizeAct;
+    private QAction zoomOutAct;
+    private QAction zoomInAct;
+
+    public ChartViewer() {
 		this(null);
 	}
 	
 	public ChartViewer(QWidget parent) {
 		super(parent);
-		
-		// Actions and pop-up menu
-		QAction copyAction = new QAction(tr("&Copy"), this);
+
+        initUI();
+        initToolBar();
+	}
+
+    private void initUI() {
+        // Widgets
+        toolBar = new QToolBar();
+
+        chartLabel = new QLabel();
+        chartLabel.setScaledContents(true);
+        chartLabel.setBackgroundRole(QPalette.ColorRole.Base);
+        chartLabel.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Ignored);
+
+        scrollArea = new QScrollArea();
+        scrollArea.setBackgroundRole(QPalette.ColorRole.Dark);
+        scrollArea.setWidget(chartLabel);
+
+        // Layout
+        QVBoxLayout layout = new QVBoxLayout(this);
+        layout.setMargin(0);
+        layout.addWidget(toolBar);
+        layout.addWidget(scrollArea, 1);
+    }
+
+    private void initToolBar() {
+        // Actions
+        QAction copyAction = new QAction(tr("&Copy"), this);
 		copyAction.triggered.connect(this, "copy()");
-		
+
 		QAction saveAsAction = new QAction(tr("&Save As..."), this);
 		saveAsAction.setIcon(new QIcon("classpath:/icons/save.png"));
 		saveAsAction.triggered.connect(this, "saveAs()");
-		
-		popupMenu = new QMenu();
-		popupMenu.addAction(copyAction);
-		popupMenu.addAction(saveAsAction);
-	}
+
+        zoomInAct = new QAction(tr("Zoom &In"), this);
+        zoomInAct.setShortcut(tr("Ctrl++"));
+        zoomInAct.setEnabled(false);
+        zoomInAct.triggered.connect(this, "zoomIn()");
+
+        zoomOutAct = new QAction(tr("Zoom &Out"), this);
+        zoomOutAct.setShortcut(tr("Ctrl+-"));
+        zoomOutAct.setEnabled(false);
+        zoomOutAct.triggered.connect(this, "zoomOut()");
+
+        normalSizeAct = new QAction(tr("&Normal Size"), this);
+        normalSizeAct.setEnabled(false);
+        normalSizeAct.triggered.connect(this, "normalSize()");
+
+        fitToWindowAct = new QAction(tr("&Fit to Window"), this);
+        fitToWindowAct.setEnabled(false);
+        fitToWindowAct.setCheckable(true);
+        fitToWindowAct.triggered.connect(this, "fitToWindow()");
+
+        // Tool bar
+		toolBar.addAction(copyAction);
+		toolBar.addAction(saveAsAction);
+        toolBar.addSeparator();
+        toolBar.addAction(zoomInAct);
+        toolBar.addAction(zoomOutAct);
+        toolBar.addAction(normalSizeAct);
+        toolBar.addAction(fitToWindowAct);
+    }
 	
 	public JFreeChart getChart() {
 		return chart;
@@ -78,60 +134,9 @@ public class ChartViewer extends QWidget {
 	
 	public void setChart(JFreeChart chart) {
 		this.chart = chart;
-		this.chartImage = null;
 		
-		renderChart(width(), height());
+		renderChart(DEFAULT_WIDTH, DEFAULT_HEIGHT);
 		update();
-	}
-	
-	@Override
-	public QSize sizeHint() {
-		return new QSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
-	}
-	
-	@Override
-	protected void contextMenuEvent(QContextMenuEvent e) {
-		if (chartImage != null)
-			popupMenu.exec(e.globalPos());
-	}
-	
-	@Override
-	protected void resizeEvent(QResizeEvent e) {
-		super.resizeEvent(e);
-		
-		renderChart(width(), height());
-	}
-	
-	@Override
-	protected void paintEvent(QPaintEvent e) {
-		super.paintEvent(e);
-		
-		QPainter painter = new QPainter(this);
-		
-		if (chart == null) {
-			// Show a message if there is no chart
-			String msg = tr("Chart is not available");
-			
-			int x = (width() - painter.fontMetrics().width(msg)) / 2;
-			int y = height() / 2;
-			
-			painter.drawText(x, y, msg);
-		}
-		else if (chartImage == null) {
-			// Didn't finish rendering the chart yet
-			String msg = tr("Generating chart...");
-			
-			int x = (width() - painter.fontMetrics().width(msg)) / 2;
-			int y = height() / 2;
-			
-			painter.drawText(x, y, msg);
-		}
-		else {
-			// Paint the image buffer to the widget surface
-			painter.drawImage(0, 0, chartImage);
-		}
-		
-		painter.end();
 	}
 	
 	private void renderChart(final int width, final int height) {
@@ -160,42 +165,93 @@ public class ChartViewer extends QWidget {
 				// Signal the main thread
 				QApplication.invokeAndWait(new Runnable() {
 					public void run() {
-						chartImage = img;
-						
-						// Ask for a repaint of the widget
-						update();
+						chartLabel.setPixmap(QPixmap.fromImage(img));
+                        scaleFactor = 1.0;
+
+                        fitToWindowAct.setEnabled(true);
+                        updateActions();
+
+                        if(!fitToWindowAct.isChecked()) {
+                            chartLabel.adjustSize();
+                        }
 					}
 				});
 			}
 		}, "ChartRenderThread").start();
 	}
-	
+
+    private void scaleChart(double factor) {
+        scaleFactor *= factor;
+
+        chartLabel.resize(
+                (int) (scaleFactor * chartLabel.pixmap().width()),
+                (int) (scaleFactor * chartLabel.pixmap().height()));
+
+        adjustScrollBar(scrollArea.horizontalScrollBar(), factor);
+        adjustScrollBar(scrollArea.verticalScrollBar(), factor);
+
+        zoomInAct.setEnabled(scaleFactor < 3.0);
+        zoomOutAct.setEnabled(scaleFactor > 0.333);
+    }
+
+    private void adjustScrollBar(QScrollBar scrollBar, double factor) {
+        scrollBar.setValue((int) (factor * scrollBar.value() + ((factor - 1) * scrollBar.pageStep() / 2)));
+    }
+
+    private void updateActions() {
+        zoomInAct.setEnabled(!fitToWindowAct.isChecked());
+        zoomOutAct.setEnabled(!fitToWindowAct.isChecked());
+        normalSizeAct.setEnabled(!fitToWindowAct.isChecked());
+    }
+
+    @SuppressWarnings("unused")
+    private void zoomIn() {
+        scaleChart(1.25);
+    }
+
+    @SuppressWarnings("unused")
+    private void zoomOut() {
+        scaleChart(0.75);
+    }
+
+    @SuppressWarnings("unused")
+    private void normalSize() {
+        chartLabel.adjustSize();
+
+        scaleFactor = 1.0;
+    }
+
+    @SuppressWarnings("unused")
+    private void fitToWindow() {
+        boolean fitToWindow = fitToWindowAct.isChecked();
+
+        scrollArea.setWidgetResizable(fitToWindow);
+        if (!fitToWindow) {
+            normalSize();
+        }
+        updateActions();
+    }
+
+    @SuppressWarnings("unused")
 	private void copy() {
-		QApplication.clipboard().setImage(chartImage);
+		QApplication.clipboard().setPixmap(chartLabel.pixmap());
 	}
-	
+
+    @SuppressWarnings("unused")
 	private void saveAs() {
 		// Show dialog
 		String filter = tr("PNG Image (*.png)");
-		String file = MessageDialog.getSaveFileName(window(), tr("Save As"), filter.toString());
+		String file = MessageDialog.getSaveFileName(window(), tr("Save As"), filter);
 		
 		if (file == null || file.isEmpty())
 			return;
 		
 		// Write to file
-		QImageWriter writer = new QImageWriter(file, new QByteArray("png"));
-		
-		writer.write(chartImage);
-		
-		if (writer.error() == QImageWriter.ImageWriterError.DeviceError) {
-			QIODevice dev = writer.device();
-			
-			if (dev != null) {
-				String errMsg = "Unable to save chart: " + dev.errorString();
-				Exception ex = new RuntimeException(errMsg);
-				
-				MessageDialog.showException(window(), ex);
-			}
-		}
+        boolean result = chartLabel.pixmap().save(file, "png");
+
+		if (!result) {
+            MessageDialog.showException(window(),
+                    new RuntimeException("Unable to save chart"));
+        }
 	}
 }
