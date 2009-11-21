@@ -4,10 +4,10 @@
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
- * - Redistributions of source code must retain the above copyright notice,
+ * - Redistribution of source code must retain the above copyright notice, 
  *   this list of conditions and the following disclaimer.
  *
- * - Redistributions in binary form must reproduce the above copyright notice,
+ * - Redistribution in binary form must reproduce the above copyright notice,
  *   this list of conditions and the following disclaimer in the documentation
  *   and/or other materials provided with the distribution.
  *
@@ -29,17 +29,25 @@
  */
 package negev.giyusit;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import com.google.common.collect.Lists;
+import com.trolltech.qt.QVariant;
+import com.trolltech.qt.core.*;
 import com.trolltech.qt.gui.*;
 
+import java.util.List;
+
+import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
+
 import negev.giyusit.db.RulerCache;
+import negev.giyusit.util.DBValuesTranslator;
+import negev.giyusit.util.MessageDialog;
+import negev.giyusit.util.Ruler;
+import negev.giyusit.util.RulerEntry;
 
 public class RulerAdminDialog extends QDialog {
+
+    private static final int ORIGINAL_NAME_ROLE = Qt.ItemDataRole.UserRole + 1;
+    private static final int IS_PRIMARY_ROLE = Qt.ItemDataRole.UserRole + 2;
 
     private QComboBox rulerList;
     private QListWidget hiddenKeys;
@@ -51,7 +59,11 @@ public class RulerAdminDialog extends QDialog {
         initUI();
 
         // Initialize data
-        rulerList.addItems(Lists.newArrayList(RulerCache.getRulers()));
+        for (String ruler : RulerCache.getRulers()) {
+            rulerList.addItem(DBValuesTranslator.translate(ruler));
+            rulerList.setItemData(rulerList.count() - 1, ruler);
+        }
+        rulerSelected(0);
     }
 
     private void initUI() {
@@ -61,11 +73,41 @@ public class RulerAdminDialog extends QDialog {
         // Widgets
         //
         rulerList = new QComboBox();
-        rulerList.activated.connect(this, "rulerSelected(String)");
+        rulerList.currentIndexChanged.connect(this, "rulerSelected(int)");
 
         hiddenKeys = new QListWidget();
+        hiddenKeys.itemDoubleClicked.connect(this, "makeVisible()");
 
         visibleKeys = new QListWidget();
+        visibleKeys.itemDoubleClicked.connect(this, "makeHidden()");
+
+        QPushButton makeVisibleButton = new QPushButton(">>");
+        makeVisibleButton.setToolTip(tr("Make key visible"));
+        makeVisibleButton.setMaximumWidth(35);
+        makeVisibleButton.clicked.connect(this, "makeVisible()");
+
+        QPushButton makeHiddenButton = new QPushButton("<<");
+        makeHiddenButton.setToolTip(tr("Make key hidden"));
+        makeHiddenButton.setMaximumWidth(35);
+        makeHiddenButton.clicked.connect(this, "makeHidden()");
+
+        QPushButton moveUpButton = new QPushButton(tr("Move Up"));
+        moveUpButton.clicked.connect(this, "moveUp()");
+
+        QPushButton moveDownButton = new QPushButton(tr("Move Down"));
+        moveDownButton.clicked.connect(this, "moveDown()");
+
+        QPushButton saveButton = new QPushButton(tr("Save"));
+        saveButton.setIcon(new QIcon("classpath:/icons/save.png"));
+        saveButton.clicked.connect(this, "save()");
+
+        QPushButton restoreButton = new QPushButton(tr("Restore"));
+        restoreButton.setIcon(new QIcon("classpath:/icons/revert.png"));
+        restoreButton.clicked.connect(this, "restore()");
+
+        QPushButton closeButton = new QPushButton(tr("Close"));
+        closeButton.setIcon(new QIcon("classpath:/icons/close.png"));
+        closeButton.clicked.connect(this, "close()");
 
         //
         // Layout
@@ -74,49 +116,173 @@ public class RulerAdminDialog extends QDialog {
         topLayout.addWidget(new QLabel(tr("Ruler: ")));
         topLayout.addWidget(rulerList, 1);
 
+        QGroupBox hiddenKeysBox = new QGroupBox(tr("Hidden Keys"));
+
+        QVBoxLayout hiddenKeyLayout = new QVBoxLayout(hiddenKeysBox);
+        hiddenKeyLayout.addWidget(hiddenKeys);
+
+        QGroupBox visibleKeysBox = new QGroupBox(tr("Visible Keys"));
+
+        QHBoxLayout visibleKeysButtonLayout = new QHBoxLayout();
+        visibleKeysButtonLayout.addStretch(1);
+        visibleKeysButtonLayout.addWidget(moveUpButton);
+        visibleKeysButtonLayout.addWidget(moveDownButton);
+        visibleKeysButtonLayout.addStretch(1);
+
+        QVBoxLayout visibleKeysLayout = new QVBoxLayout(visibleKeysBox);
+        visibleKeysLayout.addWidget(visibleKeys, 1);
+        visibleKeysLayout.addLayout(visibleKeysButtonLayout);
+
+        QVBoxLayout middleButtonsLayout = new QVBoxLayout();
+        middleButtonsLayout.addStretch(1);
+        middleButtonsLayout.addWidget(makeVisibleButton);
+        middleButtonsLayout.addWidget(makeHiddenButton);
+        middleButtonsLayout.addStretch(1);
+
         QHBoxLayout centralLayout = new QHBoxLayout();
-        centralLayout.addWidget(hiddenKeys);
-        centralLayout.addWidget(visibleKeys);
+        centralLayout.addWidget(hiddenKeysBox);
+        centralLayout.addLayout(middleButtonsLayout);
+        centralLayout.addWidget(visibleKeysBox);
+
+        QHBoxLayout buttonLayout = new QHBoxLayout();
+        buttonLayout.addWidget(saveButton);
+        buttonLayout.addWidget(restoreButton);
+        buttonLayout.addStretch(1);
+        buttonLayout.addWidget(closeButton);
 
         QVBoxLayout layout = new QVBoxLayout(this);
         layout.addLayout(topLayout);
         layout.addLayout(centralLayout, 1);
+        layout.addLayout(buttonLayout);
     }
 
-    private void rulerSelected(String name) {
-        String ruler = RulerCache.getRulerFromCache(name);
+    @SuppressWarnings("unused")
+    private void rulerSelected(int index) {
+        if(rulerList.itemData(index) == null)
+            return;
 
         hiddenKeys.clear();
         visibleKeys.clear();
 
-        // Parse ruler
-        // TODO: This duplicates code with RowSetModel. See if can unify
-        Pattern markerPattern = Pattern.compile("(\\*|\\+)");
+        // Get untranslated ruler name and parse it
+        String name = rulerList.itemData(index).toString();
+        Ruler ruler = new Ruler(RulerCache.getRulerFromCache(name));
 
-        String[] arr = rulerString.split(",");
+        //
+        fillKeysList(visibleKeys, ruler.getVisibleRuler());
+        fillKeysList(hiddenKeys, ruler.getHiddenRuler());
+    }
 
-		List<String> visibleKeysList = Lists.newArrayList();
-		List<String> hiddenKeysList = Lists.newArrayList();
-		shadowRuler = new ArrayList<String>();
+    //
+    // Helper method to fill a QListWidget with the keys
+    // contained in a ruler
+    //
+    private void fillKeysList(QListWidget list, Ruler ruler) {
+        for (RulerEntry entry : ruler) {
+            QListWidgetItem item = new QListWidgetItem(list);
 
-		for (String str : arr) {
-			Matcher matcher = rulerMarkerChars.matcher(str);
+            item.setText(DBValuesTranslator.translate(entry.getName()));
+            item.setData(ORIGINAL_NAME_ROLE, entry.getName());
+            item.setData(IS_PRIMARY_ROLE, entry.isPrimary());
 
-			if (matcher.find()) {
-				// Strip marker chars
-				String key = matcher.replaceAll("");
+            if (entry.isPrimary()) {
+                QFont font = item.font();
 
-				if (str.lastIndexOf('*') > 0)
-					idKey = key;
+                font.setBold(true);
+                item.setFont(font);
+            }
+        }
+    }
 
-				if (str.lastIndexOf('+') > 0)
-					shadowRuler.add(key);
-				else
-					ruler.add(key);
-			}
-			else
-				ruler.add(str);
-		}
+    @SuppressWarnings("unused")
+    private void save() {
+        // Serialize ruler into a string
+        List<String> rulerParts = Lists.newArrayList();
+        int k;
 
+        k = visibleKeys.count();
+        for (int i = 0; i < k; i++) {
+            QListWidgetItem item = visibleKeys.item(i);
+            String part = item.data(ORIGINAL_NAME_ROLE).toString();
+
+            if (QVariant.toBoolean(item.data(IS_PRIMARY_ROLE)))
+                part += '*';
+
+            rulerParts.add(part);
+        }
+
+        k = hiddenKeys.count();
+        for (int i = 0; i < k; i++) {
+            QListWidgetItem item = hiddenKeys.item(i);
+            String part = item.data(ORIGINAL_NAME_ROLE).toString() + '+';
+
+            if (QVariant.toBoolean(item.data(IS_PRIMARY_ROLE)))
+                part += '*';
+
+            rulerParts.add(part);
+        }
+
+        // Save to database
+        String name = rulerList.itemData(rulerList.currentIndex()).toString();
+        String rulerString = Joiner.on(',').join(rulerParts);
+
+        try {
+            RulerCache.updateRuler(name, rulerString);
+        }
+        catch (Exception e) {
+            MessageDialog.showException(this, e);    
+        }
+    }
+
+    @SuppressWarnings("unused")
+    private void restore() {
+        rulerSelected(rulerList.currentIndex());
+    }
+
+    @SuppressWarnings("unused")
+    private void makeVisible() {
+        QListWidgetItem item = hiddenKeys.takeItem(hiddenKeys.currentRow());
+        if (item == null)
+            return;
+
+        visibleKeys.addItem(item);
+    }
+
+    @SuppressWarnings("unused")
+    private void makeHidden() {
+        QListWidgetItem item = visibleKeys.takeItem(visibleKeys.currentRow());
+        if (item == null)
+            return;
+
+        hiddenKeys.addItem(item);
+        
+    }
+
+    @SuppressWarnings("unused")
+    private void moveUp() {
+        int row = visibleKeys.currentRow();
+        if (row <= 0)
+            return;
+
+        QListWidgetItem item = visibleKeys.takeItem(row);
+        if (item == null)
+            return;
+
+        visibleKeys.insertItem(row - 1, item);
+        visibleKeys.setCurrentRow(row - 1);
+    }
+
+    @SuppressWarnings("unused")
+    private void moveDown() {
+        int row = visibleKeys.currentRow();
+        if (row >= visibleKeys.count() - 1)
+            return;
+
+        QListWidgetItem item = visibleKeys.takeItem(row);
+        if (item == null)
+            return;
+
+        visibleKeys.insertItem(row + 1, item);
+        visibleKeys.setCurrentRow(row + 1);
     }
 }

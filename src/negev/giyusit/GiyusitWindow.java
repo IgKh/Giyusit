@@ -70,8 +70,9 @@ public class GiyusitWindow extends QMainWindow {
 	
 	private QAction addEventAct;
 	
-	private QAction statsticsAct;
+	private QAction statisticsAct;
 	private QAction staffAdminAct;
+    private QAction rulerAdminAct;
 	private QAction tableAdminAct;
 	
 	private QAction aboutGiyusitAct;
@@ -88,8 +89,8 @@ public class GiyusitWindow extends QMainWindow {
 	
 	// Properties
 	private String currentFileName;
-	
-	public GiyusitWindow() {
+
+    public GiyusitWindow() {
 		this(null);
 	}
 	
@@ -184,12 +185,15 @@ public class GiyusitWindow extends QMainWindow {
 		addEventAct.setIcon(new QIcon("classpath:/icons/add-event.png"));
 		addEventAct.triggered.connect(this, "addEvent()");
 		
-		statsticsAct = new QAction(tr("&Statistics..."), this);
-		statsticsAct.triggered.connect(this, "statstics()");
+		statisticsAct = new QAction(tr("&Statistics..."), this);
+		statisticsAct.triggered.connect(this, "statistics()");
 		
 		staffAdminAct = new QAction(tr("&Staff Admin..."), this);
 		staffAdminAct.triggered.connect(this, "staffAdmin()");
-		
+
+        rulerAdminAct = new QAction(tr("&Ruler Admin..."), this);
+        rulerAdminAct.triggered.connect(this, "rulerAdmin()");
+
 		tableAdminAct = new QAction(tr("&Table Admin..."), this);
 		tableAdminAct.triggered.connect(this, "tableAdmin()");
 		
@@ -223,9 +227,10 @@ public class GiyusitWindow extends QMainWindow {
 		eventsMenu.addAction(addEventAct);
 			
 		toolsMenu = menuBar().addMenu(tr("&Tools"));
-		toolsMenu.addAction(statsticsAct);
+		toolsMenu.addAction(statisticsAct);
 		toolsMenu.addSeparator();
 		toolsMenu.addAction(staffAdminAct);
+		toolsMenu.addAction(rulerAdminAct);
 		toolsMenu.addAction(tableAdminAct);
 			
 		QMenu helpMenu = menuBar().addMenu(tr("&Help"));
@@ -387,7 +392,7 @@ public class GiyusitWindow extends QMainWindow {
 		
 		//
 		restoreViewListState(settings);
-		
+
 		updateWindowTitle();
 		setUIEnabled(true);
 	}
@@ -447,7 +452,7 @@ public class GiyusitWindow extends QMainWindow {
 			dataTable.refresh();
 	}
 	
-	private void statstics() {
+	private void statistics() {
 		StatisticsDialog dlg = new StatisticsDialog(this);
 		
 		dlg.exec();
@@ -458,6 +463,13 @@ public class GiyusitWindow extends QMainWindow {
 		
 		dlg.exec();
 	}
+
+    private void rulerAdmin() {
+        RulerAdminDialog dlg = new RulerAdminDialog(this);
+
+        dlg.exec();
+        dataTable.refresh();
+    }
 	
 	private void tableAdmin() {
 		TableAdminDialog dlg = new TableAdminDialog(this);

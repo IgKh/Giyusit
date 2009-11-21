@@ -29,12 +29,11 @@
  */
 package negev.giyusit.util;
 
+import com.google.common.collect.Lists;
 import com.trolltech.qt.core.*;
 import com.trolltech.qt.gui.*;
 
-import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.List;
 
 import negev.giyusit.util.row.RowSet;
 
@@ -43,9 +42,7 @@ import negev.giyusit.util.row.RowSet;
  * <br><br>
  * RowSetModel has the concept of <em>ruler</em>: a list of key names that 
  * defines the model's columns. Every row in the underlying row set is expected
- * to have the keys listed in the model's ruler. In addition to the main ruler,
- * the model maintains an additional <em>shadow ruler</em>: a list of key names
- * that by default are not exposed to views displaying the model.
+ * to have the keys listed in the model's ruler.
  * <br><br>
  * The model can also have an ID key, which is the primary key of the rows in
  * the row set. The ID key is exposed to views using the item data role ID_ROLE.
@@ -58,60 +55,31 @@ public class RowSetModel extends QAbstractTableModel {
 	 * The item data role used to expose the value of the model's ID key.
 	 */
 	public static final int ID_ROLE = Qt.ItemDataRole.UserRole + 1;
-	
-	// Regular expression to catch marker characters
-	private static final Pattern rulerMarkerChars = Pattern.compile("(\\*|\\+)");
-	
+
 	private RowSet rowSet;
 	
-	private ArrayList<String> ruler;
-	private ArrayList<String> shadowRuler;
-	private ArrayList<String> headers;
-	private String idKey;
+	private Ruler ruler;
+	private List<String> headers;
+	private String idKey = null;
 	
 	/**
 	 * Creates a new model instance using a specified ruler string.
-	 * <br><br>
-	 * The ruler string is used to define the model's ruler. It is a comma
-	 * separated list of key names. The key names can have special marker
-	 * characters appended to them: The star character (*) will cause the
-	 * key to be used as the model ID key, and the plus character (+) will
-	 * cause the key to be added to the model's shadow ruler instead of the
-	 * main ruler. More than one marker character can be applied to a key.   
-	 * 
+	 *
 	 * @param rulerString - the ruler string that will define the model's ruler
+     * @see negev.giyusit.util.Ruler#Ruler(String) 
 	 */
 	public RowSetModel(String rulerString) {
-		if (rulerString == null)
-			throw new NullPointerException("null ruler string");
-		
-		// Parse the ruler string, handling marker characters
-		String[] arr = rulerString.split(",");
-		
-		ruler = new ArrayList<String>(arr.length);
-		shadowRuler = new ArrayList<String>();
-		
-		for (String str : arr) {
-			Matcher matcher = rulerMarkerChars.matcher(str);
-			
-			if (matcher.find()) {
-				// Strip marker chars
-				String key = matcher.replaceAll("");
-				
-				if (str.lastIndexOf('*') > 0)
-					idKey = key;
-				
-				if (str.lastIndexOf('+') > 0)
-					shadowRuler.add(key);
-				else
-					ruler.add(key);
-			}
-			else
-				ruler.add(str);
-		}
-		
-		// Copy the ruler into the headers array
-		headers = new ArrayList<String>(ruler);
+		ruler = new Ruler(rulerString);
+
+        // Get the primary key
+        RulerEntry primary = ruler.getPrimaryKey();
+        idKey = (primary == null) ? null : primary.getName();
+
+        // Reduce the ruler to just its visible part
+        ruler = ruler.getVisibleRuler();
+
+		// Copy the ruler into the headers list
+		headers = Lists.newArrayList(ruler.getKeyNames());
 	}
 	
 	/**
@@ -156,7 +124,7 @@ public class RowSetModel extends QAbstractTableModel {
 		
 		switch (role) {
 			case Qt.ItemDataRole.DisplayRole:
-				return rowSet.rowAt(index.row()).get(ruler.get(index.column()));
+				return rowSet.rowAt(index.row()).get(ruler.getKeyName(index.column()));
 			
 			case ID_ROLE: {
 				if (idKey == null)

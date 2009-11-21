@@ -24,12 +24,21 @@ OwnerID : קוד אחראי
 RecruiterID : קוד מגייס
 StatusID : קוד סטטוס
 
+FullName : שם מלא
 Owner : אחראי
 Status : סטטוס
 StatusName : סטטוס
+
+ActiveInd : פעיל?
+SignedDahashInd : חתם דח"ש?
+CanceledDahashInd : ביטל דח"ש?
 
 # Events
 Type : סוג
 Location : מיקום
 ActiveAttendants : משתתפים פעילים
 AttType : סוג השתתפות
+
+# Rulers
+StdCandidatesRuler : סרגל פרטי מועמדים
+StdEventsRuler : סרגל פרטי אירועים

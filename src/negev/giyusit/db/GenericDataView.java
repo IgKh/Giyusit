@@ -58,16 +58,18 @@ public class GenericDataView extends DataView {
 	
 	@Override
 	public QAbstractItemModel getModel() {
-		if (model == null) {
-			// Is this a stored ruler?
+		if (model == null || RulerCache.isDirty()) {
+			String finalRuler = ruler;
+
+            // Is this a stored ruler?
 			if (ruler.startsWith("@")) {
-				ruler = RulerCache.getRulerFromCache(ruler.substring(1));
+				finalRuler = RulerCache.getRulerFromCache(ruler.substring(1));
 				
-				if (ruler == null)
+				if (finalRuler == null)
 					throw new RuntimeException("Ruler " + ruler + " not in library");
 			}
 			
-			model = new RowSetModel(ruler);
+			model = new RowSetModel(finalRuler);
 			
 			// Translate model
 			DBValuesTranslator.translateModelHeaders(model);
@@ -77,9 +79,7 @@ public class GenericDataView extends DataView {
 		Connection conn = ConnectionProvider.getConnection();
 		
 		try {
-			QueryWrapper wrapper = new QueryWrapper(conn);
-			
-			model.setRowSet(wrapper.queryForRowSet(query));
+			model.setRowSet(new QueryWrapper(conn).queryForRowSet(query));
 			
 			return model;
 		}

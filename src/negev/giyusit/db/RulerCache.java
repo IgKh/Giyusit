@@ -29,23 +29,60 @@
  */
 package negev.giyusit.db;
 
-import java.util.HashMap;
 import java.sql.Connection;
+import java.util.Map;
+import java.util.Set;
+
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Maps;
 
 import negev.giyusit.util.row.Row;
 import negev.giyusit.util.row.RowSet;
 
 public class RulerCache {
 
-	private static HashMap<String, String> rulerCache;
-	
-	static {
-		rulerCache = new HashMap<String, String>();
-	}
-	
+	private static Map<String, String> rulerCache = Maps.newHashMap();
+    private static boolean dirty = false;
+
+    /**
+     * Returns the set of rulers contained in the cache 
+     */
+    public static Set<String> getRulers() {
+        return rulerCache.keySet();
+    }
+
 	public static String getRulerFromCache(String key) {
 		return rulerCache.get(key);
 	}
+
+    /**
+     * Returns true if one or more rulers have been modified in this session
+     */
+    public static boolean isDirty() {
+        return dirty;
+    }
+
+    public static void updateRuler(String key, String value) {
+        Preconditions.checkArgument(rulerCache.containsKey(key), "Ruler '%s' not in cache", key);
+
+        // Update database
+        Connection conn = ConnectionProvider.getConnection();
+
+		try {
+			QueryWrapper wrapper = new QueryWrapper(conn);
+			String sql = "update RulerLibrary set Ruler = ? where Name = ?";
+
+			wrapper.execute(sql, value, key);
+		}
+		finally {
+			try { conn.close(); } catch (Exception e) { e.printStackTrace(); }
+		}
+
+        // Update cache
+        rulerCache.put(key, value);
+
+        dirty = true;
+    }
 	
 	public static void rebuildCache() {
 		rulerCache.clear();
