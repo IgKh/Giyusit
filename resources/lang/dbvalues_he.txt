@@ -4,6 +4,9 @@ Name : שם
 StartDate : תאריך תחילה 
 EndDate : תאריך סיום
 Active : פעיל
+Total : סה"כ
+Planning: תכנון
+Execution : ביצוע
 
 # Candidates
 NationalID : ת"ז

@@ -4,7 +4,7 @@
 <context>
     <name>negev.giyusit.DataTable</name>
     <message>
-        <location filename="../../src/negev/giyusit/DataTable.java" line="+85"/>
+        <location filename="../../src/negev/giyusit/DataTable.java" line="+86"/>
         <source>F7</source>
         <translation>F7</translation>
     </message>
@@ -35,10 +35,6 @@
             <numerusform>רשומה אחת מוצגת</numerusform>
             <numerusform>%n רשומות מוצגות</numerusform>
         </translation>
-    </message>
-    <message>
-        <source>(out of one)</source>
-        <translation type="obsolete">(מתוך אחת)</translation>
     </message>
     <message numerus="yes">
         <location line="+3"/>
@@ -115,7 +111,7 @@
 <context>
     <name>negev.giyusit.GiyusitWindow</name>
     <message>
-        <location filename="../../src/negev/giyusit/GiyusitWindow.java" line="+133"/>
+        <location filename="../../src/negev/giyusit/GiyusitWindow.java" line="+146"/>
         <source>&lt;b&gt;No file loaded!&lt;/b&gt;</source>
         <translation>&lt;b&gt;לא נטען קובץ!&lt;/b&gt;</translation>
     </message>
@@ -161,8 +157,18 @@
     </message>
     <message>
         <location line="+4"/>
+        <source>&amp;Statistics...</source>
+        <translation>&amp;דו&quot;חות סטטיסטיים...</translation>
+    </message>
+    <message>
+        <location line="+4"/>
         <source>&amp;Staff Admin...</source>
         <translation>מנהלן &amp;סגל...</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>&amp;Ruler Admin...</source>
+        <translation>מנהלן ס&amp;רגלים...</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -205,7 +211,7 @@
         <translation>&amp;כלים</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+7"/>
         <source>&amp;Help</source>
         <translation>&amp;עזרה</translation>
     </message>
@@ -225,7 +231,7 @@
         <translation>גיוסית</translation>
     </message>
     <message>
-        <location line="+102"/>
+        <location line="+105"/>
         <source>New File</source>
         <translation>קובץ חדש</translation>
     </message>
@@ -241,7 +247,7 @@
         <translation>טעינת קובץ</translation>
     </message>
     <message>
-        <location line="+69"/>
+        <location line="+82"/>
         <source>&lt;span style=&quot;font-weight: bold; font-size: large&quot;&gt;Giyusit version {0}&lt;/span&gt;&lt;br&gt;Copyright (c) 2008-2009 The Negev Project&lt;br&gt;&lt;br&gt;Giyusit is a free software under the terms of the &lt;a href=&quot;http://www.opensource.org/licenses/bsd-license.php&quot;&gt;BSD license&lt;/a&gt;.&lt;br&gt;&lt;br&gt;Giyusit uses icons from the &lt;a href=&quot;http://www.oxygen-icons.org/&quot;&gt;Oxygen Project&lt;/a&gt;, available under the terms &lt;br&gt; of the &lt;a href=&quot;http://creativecommons.org/licenses/by-sa/3.0/&quot;&gt;CC-by-SA 3.0 license&lt;/a&gt;.</source>
         <translation>&lt;span style=&quot;font-weight: bold; font-size: large&quot;&gt;גיוסית גרסא {0}&lt;/span&gt;&lt;br&gt;Copyright (c) 2008-2009 The Negev Project&lt;br&gt;&lt;br&gt;גיוסית היא תוכנה חופשית, בכפוף לתנאי &lt;a href=&quot;http://www.opensource.org/licenses/bsd-license.php&quot;&gt;רישיון BSD&lt;/a&gt;.&lt;br&gt;&lt;br&gt;גיוסית מכילה צלמיות מתוך &lt;a href=&quot;http://www.oxygen-icons.org/&quot;&gt;פרויקט Oxygen&lt;/a&gt;, הזמינות תחת תנאי &lt;br&gt; &lt;a href=&quot;http://creativecommons.org/licenses/by-sa/3.0/&quot;&gt;רישיון CC-by-SA 3.0&lt;/a&gt;.</translation>
     </message>
@@ -252,18 +258,61 @@
     </message>
 </context>
 <context>
-    <name>negev.giyusit.TableAdminDialog</name>
+    <name>negev.giyusit.RulerAdminDialog</name>
     <message>
-        <source>Candidate Statuses</source>
-        <translation type="obsolete">סטטוסים למועמד</translation>
+        <location filename="../../src/negev/giyusit/RulerAdminDialog.java" line="+70"/>
+        <source>Ruler Admin</source>
+        <translation>מנהלן סרגלים</translation>
     </message>
     <message>
-        <source>Table Admin</source>
-        <translation type="obsolete">מנהלן טבלאות</translation>
+        <location line="+15"/>
+        <source>Make key visible</source>
+        <translation>הפוך עמודה לגלויה</translation>
     </message>
     <message>
+        <location line="+5"/>
+        <source>Make key hidden</source>
+        <translation>הפוך עמודה לנסתרת</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Move Up</source>
+        <translation>הזז למעלה</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Move Down</source>
+        <translation>הזז למטה</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Save</source>
+        <translation>שמור</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Restore</source>
+        <translation>שחזר</translation>
+    </message>
+    <message>
+        <location line="+4"/>
         <source>Close</source>
-        <translation type="obsolete">סגור</translation>
+        <translation>סגור</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Ruler: </source>
+        <translation>סרגל: </translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Hidden Keys</source>
+        <translation>עמודות מוסתרות</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Visible Keys</source>
+        <translation>עמודות גלויות</translation>
     </message>
 </context>
 <context>
@@ -275,7 +324,7 @@
         <translation>[זנ]</translation>
     </message>
     <message>
-        <location line="+61"/>
+        <location line="+71"/>
         <source>Add Candidates</source>
         <translation>הוספת מועמדים</translation>
     </message>
@@ -290,7 +339,7 @@
         <translation>הוסף</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+5"/>
         <source>Cancel</source>
         <translation>בטל</translation>
     </message>
@@ -335,27 +384,11 @@
         <source>Please enter a name</source>
         <translation>יש להזין שם</translation>
     </message>
-    <message>
-        <source>Please enter a name for the event</source>
-        <translation type="obsolete">יש להזין שם לאירוע</translation>
-    </message>
 </context>
 <context>
     <name>negev.giyusit.candidates.CandidateDialog</name>
     <message>
-        <source>Giyusit</source>
-        <translation type="obsolete">גיוסית</translation>
-    </message>
-    <message>
-        <source>&lt;b&gt;There are unsaved changed in the form&lt;/b&gt;</source>
-        <translation type="obsolete">&lt;b&gt;ישנם שינויים שלא נשמרו על גבי הטופס&lt;/b&gt;</translation>
-    </message>
-    <message>
-        <source>Would you like to save your cahnges?</source>
-        <translation type="obsolete">האם ברצונך לשמור את השינויים?</translation>
-    </message>
-    <message>
-        <location filename="../../src/negev/giyusit/candidates/CandidateDialog.java" line="+150"/>
+        <location filename="../../src/negev/giyusit/candidates/CandidateDialog.java" line="+147"/>
         <source>&amp;Save</source>
         <translation>&amp;שמור</translation>
     </message>
@@ -388,14 +421,6 @@
         <location line="+3"/>
         <source>Candidate Events</source>
         <translation>אירועים למועמד</translation>
-    </message>
-    <message>
-        <source>Save</source>
-        <translation type="obsolete">שמור</translation>
-    </message>
-    <message>
-        <source>Reset</source>
-        <translation type="obsolete">אפס</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -513,7 +538,7 @@
         <translation>הערות</translation>
     </message>
     <message>
-        <location line="+88"/>
+        <location line="+92"/>
         <source>First name can&apos;t be empty</source>
         <translation>השם הפרטי לא יכול להיות ריק</translation>
     </message>
@@ -521,7 +546,7 @@
 <context>
     <name>negev.giyusit.candidates.CandidateEventsDialog</name>
     <message>
-        <location filename="../../src/negev/giyusit/candidates/CandidateEventsDialog.java" line="+91"/>
+        <location filename="../../src/negev/giyusit/candidates/CandidateEventsDialog.java" line="+88"/>
         <source>Add to Event...</source>
         <translation>הוסף לאירוע...</translation>
     </message>
@@ -643,20 +668,9 @@
     </message>
 </context>
 <context>
-    <name>negev.giyusit.candidates.CandidateStatusValuesAdmin</name>
-    <message>
-        <source>Add...</source>
-        <translation type="obsolete">הוסף...</translation>
-    </message>
-    <message>
-        <source>Remove</source>
-        <translation type="obsolete">הסר</translation>
-    </message>
-</context>
-<context>
     <name>negev.giyusit.candidates.CandidateStatusesDialog</name>
     <message>
-        <location filename="../../src/negev/giyusit/candidates/CandidateDialog.java" line="+152"/>
+        <location filename="../../src/negev/giyusit/candidates/CandidateStatusesDialog.java" line="+98"/>
         <source>Update</source>
         <translation>עדכן</translation>
     </message>
@@ -727,39 +741,6 @@
         <location line="+31"/>
         <source>Candidate deleted successfuly</source>
         <translation>המועמד נמחק בהצלחה</translation>
-    </message>
-</context>
-<context>
-    <name>negev.giyusit.candidates.EventPickerDialog</name>
-    <message>
-        <location filename="../../src/negev/giyusit/candidates/CandidateEventsDialog.java" line="+136"/>
-        <source>Add to Event</source>
-        <translation>הוספה לאירוע</translation>
-    </message>
-    <message>
-        <location line="+10"/>
-        <source>OK</source>
-        <translation>אישור</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>Cancel</source>
-        <translation>ביטול</translation>
-    </message>
-    <message>
-        <location line="+12"/>
-        <source>&lt;b&gt;Event:&lt;/b&gt; </source>
-        <translation>&lt;b&gt;אירוע:&lt;/b&gt; </translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>&lt;b&gt;Type: &lt;/b&gt;</source>
-        <translation>&lt;b&gt;סוג: &lt;/b&gt;</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>&lt;b&gt;Start Date: &lt;/b&gt;</source>
-        <translation>&lt;b&gt;תאריך תחילה: &lt;/b&gt;</translation>
     </message>
 </context>
 <context>
@@ -872,51 +853,9 @@
     </message>
 </context>
 <context>
-    <name>negev.giyusit.candidates.ItemDialog</name>
-    <message>
-        <source>&lt;New&gt;</source>
-        <translation type="obsolete">&lt;חדש&gt;</translation>
-    </message>
-    <message>
-        <source>New Status</source>
-        <translation type="obsolete">סטטוס חדש</translation>
-    </message>
-    <message>
-        <source>OK</source>
-        <translation type="obsolete">אישור</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation type="obsolete">ביטול</translation>
-    </message>
-    <message>
-        <source>ID: </source>
-        <translation type="obsolete">קוד: </translation>
-    </message>
-    <message>
-        <source>Name: </source>
-        <translation type="obsolete">שם: </translation>
-    </message>
-    <message>
-        <source>Active? </source>
-        <translation type="obsolete">פעיל?</translation>
-    </message>
-</context>
-<context>
-    <name>negev.giyusit.config.GenericAdminItemDialog</name>
-    <message>
-        <source>OK</source>
-        <translation type="obsolete">אישור</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation type="obsolete">ביטול</translation>
-    </message>
-</context>
-<context>
     <name>negev.giyusit.config.GenericAdminSheet</name>
     <message>
-        <location filename="../../src/negev/giyusit/config/GenericAdminSheet.java" line="+80"/>
+        <location filename="../../src/negev/giyusit/config/GenericAdminSheet.java" line="+85"/>
         <source>Add...</source>
         <translation>הוסף...</translation>
     </message>
@@ -926,12 +865,12 @@
         <translation>הסר</translation>
     </message>
     <message>
-        <location line="+34"/>
+        <location line="+36"/>
         <source>New Item</source>
         <translation>פריט חדש</translation>
     </message>
     <message>
-        <location line="+46"/>
+        <location line="+45"/>
         <source>Edit Item</source>
         <translation>עריכת פריט</translation>
     </message>
@@ -939,12 +878,12 @@
 <context>
     <name>negev.giyusit.config.TableAdminDialog</name>
     <message>
-        <location filename="../../src/negev/giyusit/config/TableAdminDialog.java" line="+53"/>
+        <location filename="../../src/negev/giyusit/config/TableAdminDialog.java" line="+54"/>
         <source>Candidate Statuses</source>
         <translation>סטטוסים למועמד</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+8"/>
         <source>Table Admin</source>
         <translation>מנהלן טבלאות</translation>
     </message>
@@ -975,29 +914,6 @@
         <location line="+4"/>
         <source>Cancel</source>
         <translation>בטל</translation>
-    </message>
-</context>
-<context>
-    <name>negev.giyusit.events.AttendanceItemDialog</name>
-    <message>
-        <source>Giyusit</source>
-        <translation type="obsolete">גיוסית</translation>
-    </message>
-    <message>
-        <source>OK</source>
-        <translation type="obsolete">אישור</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation type="obsolete">ביטול</translation>
-    </message>
-    <message>
-        <source>Attendance Type: </source>
-        <translation type="obsolete">סוג השתתפות: </translation>
-    </message>
-    <message>
-        <source>Notes: </source>
-        <translation type="obsolete">הערות: </translation>
     </message>
 </context>
 <context>
@@ -1079,7 +995,7 @@
 <context>
     <name>negev.giyusit.events.EventDialog</name>
     <message>
-        <location filename="../../src/negev/giyusit/events/EventDialog.java" line="+100"/>
+        <location filename="../../src/negev/giyusit/events/EventDialog.java" line="+102"/>
         <source>Show active attendants only</source>
         <translation>הצג משתתפים פעילים בלבד</translation>
     </message>
@@ -1122,6 +1038,39 @@
         <location line="+11"/>
         <source>Event Attendance</source>
         <translation>משתתפים באירוע</translation>
+    </message>
+</context>
+<context>
+    <name>negev.giyusit.events.EventPickerDialog</name>
+    <message>
+        <location filename="../../src/negev/giyusit/events/EventPickerDialog.java" line="+77"/>
+        <source>Add to Event</source>
+        <translation>הוספה לאירוע</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>OK</source>
+        <translation>אישור</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Cancel</source>
+        <translation>ביטול</translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>&lt;b&gt;Event:&lt;/b&gt; </source>
+        <translation>&lt;b&gt;אירוע:&lt;/b&gt; </translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>&lt;b&gt;Type: &lt;/b&gt;</source>
+        <translation>&lt;b&gt;סוג: &lt;/b&gt;</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>&lt;b&gt;Start Date: &lt;/b&gt;</source>
+        <translation>&lt;b&gt;תאריך תחילה: &lt;/b&gt;</translation>
     </message>
 </context>
 <context>
@@ -1245,6 +1194,83 @@
     </message>
 </context>
 <context>
+    <name>negev.giyusit.statistics.GoalsAdminHelper$ItemDialog</name>
+    <message>
+        <location filename="../../src/negev/giyusit/statistics/GoalsAdminHelper.java" line="+63"/>
+        <source>Name: </source>
+        <translation>שם: </translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Planning: </source>
+        <translation>תכנון: </translation>
+    </message>
+</context>
+<context>
+    <name>negev.giyusit.statistics.GoalsReport</name>
+    <message>
+        <location filename="../../src/negev/giyusit/statistics/GoalsReport.java" line="+105"/>
+        <source>Planning</source>
+        <translation>תכנון</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Execution</source>
+        <translation>ביצוע</translation>
+    </message>
+</context>
+<context>
+    <name>negev.giyusit.statistics.StatisticReportResults</name>
+    <message>
+        <location filename="../../src/negev/giyusit/statistics/StatisticReportResults.java" line="+64"/>
+        <source>Export Data...</source>
+        <translation>יצוא נתונים...</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Close</source>
+        <translation>סגור</translation>
+    </message>
+</context>
+<context>
+    <name>negev.giyusit.statistics.StatisticsDialog</name>
+    <message>
+        <location filename="../../src/negev/giyusit/statistics/StatisticsDialog.java" line="+61"/>
+        <source>Statistics</source>
+        <translation>דו&quot;חות סטטיסטיים</translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <source>Run Report...</source>
+        <translation>הרץ דו&quot;ח...</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Close</source>
+        <translation>סגור</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Report List</source>
+        <translation>רשימת דו&quot;חות</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Report Information</source>
+        <translation>נתוני דו&quot;ח</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>&lt;b&gt;Description:&lt;/b&gt; </source>
+        <translation>&lt;b&gt;תיאור:&lt;/b&gt; </translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>&lt;b&gt;Creation Date:&lt;/b&gt; </source>
+        <translation>&lt;b&gt;תאריך יצירה&lt;/b&gt; </translation>
+    </message>
+</context>
+<context>
     <name>negev.giyusit.util.DataTableDialog</name>
     <message>
         <location filename="../../src/negev/giyusit/util/DataTableDialog.java" line="+57"/>
@@ -1260,7 +1286,7 @@
 <context>
     <name>negev.giyusit.util.GenericItemDialog</name>
     <message>
-        <location filename="../../src/negev/giyusit/util/GenericItemDialog.java" line="+58"/>
+        <location filename="../../src/negev/giyusit/util/GenericItemDialog.java" line="+60"/>
         <source>OK</source>
         <translation>אישור</translation>
     </message>
@@ -1338,6 +1364,59 @@
         <location line="+3"/>
         <source>&amp;Save</source>
         <translation>&amp;שמור</translation>
+    </message>
+</context>
+<context>
+    <name>negev.giyusit.widgets.ChartViewer</name>
+    <message>
+        <location filename="../../src/negev/giyusit/widgets/ChartViewer.java" line="+95"/>
+        <source>&amp;Copy</source>
+        <translation>&amp;העתק</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>&amp;Save As...</source>
+        <translation>&amp;שמור בשם...</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Zoom &amp;In</source>
+        <translation>ה&amp;גדל</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Ctrl++</source>
+        <translation>Ctrl++</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Zoom &amp;Out</source>
+        <translation>ה&amp;קטן</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Ctrl+-</source>
+        <translation>Ctrl+-</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>&amp;Normal Size</source>
+        <translation>גודל &amp;רגיל</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>&amp;Fit to Window</source>
+        <translation>התאם &amp;לחלון</translation>
+    </message>
+    <message>
+        <location line="+127"/>
+        <source>PNG Image (*.png)</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Save As</source>
+        <translation>שמור בשם</translation>
     </message>
 </context>
 </TS>

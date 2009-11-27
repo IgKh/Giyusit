@@ -93,6 +93,7 @@ public class ChartViewer extends QWidget {
     private void initToolBar() {
         // Actions
         QAction copyAction = new QAction(tr("&Copy"), this);
+	copyAction.setIcon(new QIcon("classpath:/icons/copy.png"));
 		copyAction.triggered.connect(this, "copy()");
 
 		QAction saveAsAction = new QAction(tr("&Save As..."), this);
@@ -100,20 +101,24 @@ public class ChartViewer extends QWidget {
 		saveAsAction.triggered.connect(this, "saveAs()");
 
         zoomInAct = new QAction(tr("Zoom &In"), this);
+	zoomInAct.setIcon(new QIcon("classpath:/icons/zoom-in.png"));
         zoomInAct.setShortcut(tr("Ctrl++"));
         zoomInAct.setEnabled(false);
         zoomInAct.triggered.connect(this, "zoomIn()");
 
         zoomOutAct = new QAction(tr("Zoom &Out"), this);
+	zoomOutAct.setIcon(new QIcon("classpath:/icons/zoom-out.png"));
         zoomOutAct.setShortcut(tr("Ctrl+-"));
         zoomOutAct.setEnabled(false);
         zoomOutAct.triggered.connect(this, "zoomOut()");
 
         normalSizeAct = new QAction(tr("&Normal Size"), this);
+	normalSizeAct.setIcon(new QIcon("classpath:/icons/zoom-original.png"));
         normalSizeAct.setEnabled(false);
         normalSizeAct.triggered.connect(this, "normalSize()");
 
         fitToWindowAct = new QAction(tr("&Fit to Window"), this);
+	fitToWindowAct.setIcon(new QIcon("classpath:/icons/zoom-fit-best.png"));
         fitToWindowAct.setEnabled(false);
         fitToWindowAct.setCheckable(true);
         fitToWindowAct.triggered.connect(this, "fitToWindow()");
