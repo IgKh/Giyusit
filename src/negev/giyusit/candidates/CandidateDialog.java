@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2009 The Negev Project
+ * Copyright (c) 2008-2011 The Negev Project
  *
  * Redistribution and use in source and binary forms, with or without 
  * modification, are permitted provided that the following conditions are met:
@@ -80,7 +80,7 @@ public class CandidateDialog extends QWidget {
 	
 	// Properties
 	private int candidateId = -1;
-	private boolean dbModified;
+	private boolean dbModified = false;
 	private QDateTime firstEdit;
 	
 	private LookupTableModel staffModel;
@@ -88,8 +88,6 @@ public class CandidateDialog extends QWidget {
 		
 	public CandidateDialog(QWidget parent) {
 		super(parent);
-		
-		this.dbModified = false;
 		
 		watcher = new DirtyStateWatcher(this);
 		watcher.dirtyChanged.connect(this, "dirtyChanged(Boolean)");
@@ -104,6 +102,7 @@ public class CandidateDialog extends QWidget {
 	
 	public void showCandidate(int id) {
 		this.candidateId = id;
+        this.dbModified = false;
 		
 		initComboModelsAndCompleters();
 		
