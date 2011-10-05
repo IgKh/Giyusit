@@ -1,13 +1,13 @@
 /*
- * Copyright (c) 2008-2009 The Negev Project
+ * Copyright (c) 2008-2011 The Negev Project
  *
  * Redistribution and use in source and binary forms, with or without 
  * modification, are permitted provided that the following conditions are met:
  *
- * - Redistributions of source code must retain the above copyright notice, 
+ * - Redistribution of source code must retain the above copyright notice,
  *   this list of conditions and the following disclaimer.
  *
- * - Redistributions in binary form must reproduce the above copyright notice, 
+ * - Redistribution in binary form must reproduce the above copyright notice,
  *   this list of conditions and the following disclaimer in the documentation 
  *   and/or other materials provided with the distribution.
  *
@@ -29,50 +29,49 @@
  */
 package negev.giyusit.db;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.Statement;
 import java.sql.SQLException;
 import java.util.Scanner;
 
-import negev.giyusit.db.ConnectionProvider;
+import com.google.common.base.Objects;
 
 /**
- * This is a utility class containing various, mostly urelated, database
+ * This is a utility class containing various, mostly unrelated, database
  * values and operations
  */
 public class DatabaseUtils {
 
 	/**
-	 * A value containing the most recent database schema revision this
-	 * version of the application is aware of.
-	 */
-	public static final int APPLICATIVE_SCHEMA_REVISION = 5;
-	
-	/*
-	 *
-	 */
+	 *  Writes a value to the current file's parameters table. If the parameter
+     *  <i>key</i> doesn't exist yet, it will be created.
+     *
+     * @param key The name of the parameter to update
+     * @param value The new value for the parameter
+     */
 	public static void setFileParameter(String key, String value) {
 		Connection conn = ConnectionProvider.getConnection();
 		
 		try {
 			QueryWrapper wrapper = new QueryWrapper(conn);
-			String sql = "replace into FileParams set Value = ? where Key = ?";
+			String sql = "replace into FileParams(Key, Value) values(?,?)";
 			
-			wrapper.execute(sql, value, key);
+			wrapper.execute(sql, key, value);
 		}
 		finally {
 			if (conn != null) {
-				try { conn.close(); } catch (SQLException e) {}
+				try { conn.close(); } catch (SQLException ignored) {}
 			}
 		}
 	}
 	
-	/*
-	 *
-	 */
+	/**
+	 *  Reads a value from the current file's parameters table.
+     *
+     * @param key Parameter to fetch
+     * @return Value of the parameter or the empty string if it doesn't exist
+     */
 	public static String getFileParameter(String key) {
 		Connection conn = ConnectionProvider.getConnection();
 		
@@ -82,61 +81,12 @@ public class DatabaseUtils {
 			
 			Object result = wrapper.queryForObject(sql, key);
 			
-			return (result == null) ? null : result.toString();
+			return Objects.firstNonNull(result, "").toString();
 		}
 		finally {
 			if (conn != null) {
-				try { conn.close(); } catch (SQLException e) {}
+				try { conn.close(); } catch (SQLException ignored) {}
 			}
-		}
-	}
-	
-	public static int getFileSchemaRevision() {
-		return Integer.parseInt(getFileParameter("SchemaRevision"));
-	}
-	
-	/**
-	 *
-	 */
-	public static void upgradeDatabaseSchema(int fromRev, int toRev) {
-		Class<?> clazz = DatabaseUtils.class;
-		
-		// Run all upgrade script in the specified range
-		for (int i = fromRev; i < toRev; i++) {
-			String scriptPath = "/sql/upgrade-" + i + "-" + (i + 1) + ".sql";
-			
-			runSqlScript(clazz.getResourceAsStream(scriptPath));
-		}
-		
-		// Make sure we are OK
-		assert getFileSchemaRevision() == toRev : "Schema revisions don't match after upgrade";
-	}
-	
-	/**
-	 * Initializes the current (presumably blank) database with the baseline
-	 * schema revision, and then upgrades it to the latest revision
-	 */
-	public static void initializeDatabase() {
-		Class<?> clazz = DatabaseUtils.class;
-		
-		// Baseline schema
-		runSqlScript(clazz.getResourceAsStream("/sql/base-schema.sql"));
-		runSqlScript(clazz.getResourceAsStream("/sql/base-dataviews.sql"));
-		
-		// Upgrade
-		upgradeDatabaseSchema(getFileSchemaRevision(), APPLICATIVE_SCHEMA_REVISION);
-	}
-
-	/**
-	 * Executes the SQL statements read from the provided file in the
-	 * current database
-	 */
-	public static void runSqlScript(String fileName) {
-		try {
-			runSqlScript(new FileInputStream(fileName));
-		}
-		catch (FileNotFoundException e) {
-			throw new RuntimeException(e);
 		}
 	}
 
@@ -144,9 +94,11 @@ public class DatabaseUtils {
 	 * Executes the SQL statements read from the provided stream in the
 	 * current database.
 	 *
-	 * This operation is atomic - either all of the statements are successfuly
+	 * This operation is atomic - either all of the statements are successfully
 	 * executed, or none are.
-	 */
+     *
+     * @param stream Stream to read SQL from
+     */
 	public static void runSqlScript(InputStream stream) {
 		Scanner scanner = new Scanner(stream, "UTF-8");
 		
@@ -174,7 +126,7 @@ public class DatabaseUtils {
 					if (line.isEmpty() || line.startsWith("--"))
 						continue;
 						
-					// Trigger entrace/exit control
+					// Trigger entrance/exit control
 					String upper = line.toUpperCase();
 					
 					if (upper.startsWith("CREATE TRIGGER"))
@@ -213,10 +165,10 @@ public class DatabaseUtils {
 			}
 			finally {
 				if (stmnt != null) {
-					try { stmnt.close(); } catch (SQLException e) {}
+					try { stmnt.close(); } catch (SQLException ignored) {}
 				}
 				if (conn != null) {
-					try { conn.close(); } catch (SQLException e) {}
+					try { conn.close(); } catch (SQLException ignored) {}
 				}
 			}
 		}

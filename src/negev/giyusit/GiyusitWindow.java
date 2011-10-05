@@ -1,13 +1,13 @@
 /*
- * Copyright (c) 2008-2009 The Negev Project
+ * Copyright (c) 2008-2010 The Negev Project
  *
  * Redistribution and use in source and binary forms, with or without 
  * modification, are permitted provided that the following conditions are met:
  *
- * - Redistributions of source code must retain the above copyright notice, 
+ * - Redistribution of source code must retain the above copyright notice,
  *   this list of conditions and the following disclaimer.
  *
- * - Redistributions in binary form must reproduce the above copyright notice, 
+ * - Redistribution in binary form must reproduce the above copyright notice,
  *   this list of conditions and the following disclaimer in the documentation 
  *   and/or other materials provided with the distribution.
  *
@@ -46,7 +46,7 @@ import negev.giyusit.statistics.StatisticsDialog;
 
 import negev.giyusit.db.ConnectionProvider;
 import negev.giyusit.db.DatabaseException;
-import negev.giyusit.db.DatabaseUtils;
+import negev.giyusit.db.SchemaUpgrader;
 import negev.giyusit.db.RulerCache;
 import negev.giyusit.util.MessageDialog;
 
@@ -324,13 +324,15 @@ public class GiyusitWindow extends QMainWindow {
 			// Check to see if the file was deleted from the last time
 			boolean stillExists = new File(fileName).exists();
 			
-			if (!stillExists)
+			if (!stillExists) {
 				return;
+            }
 		}
 		
 		// If there is a file already loaded save the DataViewList state
-		if (!currentFileName.isEmpty())
+		if (!currentFileName.isEmpty()) {
 			saveViewListState(settings);
+        }
 		
 		// Make sure the UI is disabled
 		currentFileName = "";
@@ -338,8 +340,7 @@ public class GiyusitWindow extends QMainWindow {
 		updateWindowTitle();
 		setUIEnabled(false);
 		
-		// If a initialize has been requested, and the database already exists,
-		// delete it
+		// If an initialize has been requested, and the database already exists, delete it
 		File file = new File(fileName);
 		
 		if (initialize && file.exists()) {
@@ -352,28 +353,28 @@ public class GiyusitWindow extends QMainWindow {
 			}
 		}
 		
-		// If this is a load operation, and the file does't exist - abort
+		// If this is a load operation, and the file doesn't exist - abort
 		if (!initialize && !file.exists())
 			return;
 		
-		//
+		// Set the requested file as the current database
 		ConnectionProvider.setJdbcUrl("jdbc:sqlite:" + fileName);
 		
-		// 
 		try {
 			if (!initialize) {
-				int schemaRev = DatabaseUtils.getFileSchemaRevision();
-				int appRev = DatabaseUtils.APPLICATIVE_SCHEMA_REVISION;
-				
-				if (schemaRev < appRev) {
-					// The file's schema revision is older than the one 
-					// expected by the application, so upgrade it
-					DatabaseUtils.upgradeDatabaseSchema(schemaRev, appRev);
-				}
+                System.out.println("upgrade");
+
+                // See if we can upgrade the schema
+                if (SchemaUpgrader.schemaUpgradePossible()) {
+                    // A schema upgrade is possible, do it
+                    SchemaUpgrader.trySchemaUpgrade();
+                }
 			}
 			else {
+                System.out.println("initialize");
+
 				// Initialize
-				DatabaseUtils.initializeDatabase();
+				SchemaUpgrader.initializeDatabase();
 			}
 		}
 		catch (DatabaseException e) {

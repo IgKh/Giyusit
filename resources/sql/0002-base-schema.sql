@@ -12,7 +12,6 @@ CREATE TABLE FileParams
 	Value	VARCHAR
 );
 
-INSERT INTO FileParams (Key, Value) VALUES ('SchemaRevision', '3');
 INSERT INTO FileParams (Key, Value) VALUES ('DefaultCandidateStatus', '1');
 INSERT INTO FileParams (Key, Value) VALUES ('DefaultAttendaceType', '2');
 

@@ -1,9 +1,6 @@
 --
--- Upgrade script from schema revision 3 to revision 4
+-- Upgraded data views (Revision 4)
 --
-
--- Update schema revision
-UPDATE FileParams SET Value = '4' WHERE Key = 'SchemaRevision';
 
 -- Patch the data views table
 ALTER TABLE DataViews ADD SeqNo 		INTEGER;
