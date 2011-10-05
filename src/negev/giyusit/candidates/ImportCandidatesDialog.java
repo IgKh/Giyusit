@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2009 The Negev Project
+ * Copyright (c) 2008-2011 The Negev Project
  *
  * Redistribution and use in source and binary forms, with or without 
  * modification, are permitted provided that the following conditions are met:
@@ -36,11 +36,13 @@ import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import jxl.Sheet;
 import jxl.Workbook;
 
@@ -57,15 +59,24 @@ public class ImportCandidatesDialog extends QDialog {
                         "EMail", "Address", "City", "ZipCode",
                         "Origin", "School", "Notes"
     );
+
+    // User information label
+    private static final String FILE_INFORMATION_LABEL = QApplication.translate(
+            ImportCandidatesDialog.class.getName(),
+            "Please select an Excel workbook file with at least one worksheet containing " +
+            "a table of candidates you wish to import.<br><br>The first row of the worksheet " +
+            "should contain column titles. These will help you associate the data in the Excel " +
+            "worksheet with Giyusit's data fields. All subsequent non empty rows will be imported " +
+            "according to the selected mapping.<br><br><b>Note:</b> Currently only older format " +
+            "Excel files are supported (files with *.xls extension, and not files with *.xlsx extension).");
 	
 	// Widgets
+    private QLabel selectedFile;
 	private QComboBox sheetsCombo;
 	private MappingList mappingsList;
 	private QProgressBar progressBar;
-	
-	// Buttons
-	private QPushButton fileSelectButton;
-	private QPushButton importButton;
+
+    private QPushButton importButton;
 	private QPushButton cancelButton;
 	
 	// Properties
@@ -80,14 +91,23 @@ public class ImportCandidatesDialog extends QDialog {
 	
 	private void initUI() {
 		setWindowTitle(tr("Import Candidates"));
+        setMinimumSize(new QSize(370, 400));
                 
         //
         // Widgets
         //
-        fileSelectButton = new QPushButton(tr("Select File..."));
+        String informationLabel = MessageFormat.format("<a href=\"#\">{0}</a>",
+                tr("What kind of file do I need?"));
+
+        QLabel informationLink = new QLabel(informationLabel);
+        informationLink.linkActivated.connect(this, "openInformationBubble()");
+
+        selectedFile = new QLabel(tr("Select File..."));
+
+        QPushButton fileSelectButton = new QPushButton();
         fileSelectButton.setIcon(new QIcon("classpath:/icons/open.png"));
         fileSelectButton.clicked.connect(this, "selectFile()");
-        
+
         sheetsCombo = new QComboBox();
         sheetsCombo.setEnabled(false);
         sheetsCombo.currentIndexChanged.connect(this, "initMappings()");
@@ -108,10 +128,15 @@ public class ImportCandidatesDialog extends QDialog {
         //
        	// Layout
         //
+        QHBoxLayout selectedFileLayout = new QHBoxLayout();
+        selectedFileLayout.addWidget(new QLabel(tr("<b>Selected File: </b>")));
+        selectedFileLayout.addWidget(selectedFile, 1);
+        selectedFileLayout.addWidget(fileSelectButton);
+
 		QHBoxLayout sheetsLayout = new QHBoxLayout();
         sheetsLayout.addWidget(new QLabel(tr("Worksheet in file: ")));
         sheetsLayout.addWidget(sheetsCombo, 1);
-        
+
         QGroupBox mappingGroup = new QGroupBox(tr("Mapping"));
         
         QVBoxLayout mappingLayout = new QVBoxLayout(mappingGroup);
@@ -124,20 +149,27 @@ public class ImportCandidatesDialog extends QDialog {
         buttonLayout.addWidget(cancelButton);
         
         QVBoxLayout layout = new QVBoxLayout(this);
-		layout.addWidget(fileSelectButton);
+        layout.addLayout(selectedFileLayout);
+        layout.addWidget(informationLink);
         layout.addWidget(mappingGroup, 1);
 		layout.addWidget(progressBar);
         layout.addLayout(buttonLayout);
 	}
+
+    private void openInformationBubble() {
+        QWhatsThis.showText(mapToGlobal(selectedFile.pos()), FILE_INFORMATION_LABEL, this);
+    }
 	
 	private void selectFile() {
-		String fileName = MessageDialog.getOpenFileName(this, tr("Select Import File"), 
-        						tr("Excel Workbook (*.xls)"));
+		String fileName = MessageDialog.getOpenFileName(this,
+                tr("Select Import File"),
+        		tr("Excel Workbook (*.xls)"));
         
-       	if (fileName == null || fileName.isEmpty())
+       	if (fileName == null || fileName.isEmpty()) {
                return;
+        }
         
-       	// Load
+       	// Load the selected workbook
        	try {
        		 currentWorkbook = Workbook.getWorkbook(new File(fileName));
        	}
@@ -146,21 +178,18 @@ public class ImportCandidatesDialog extends QDialog {
        		return;
        	}
        	
-       	// Update the select file button to relect the selected file
-       	String label = tr("Select File ({0})...");
-       	
-       	//fileSelectButton.setText(MessageFormat.format(label, 
-       	//									new File(fileName).getName()));
-       	
+       	selectedFile.setText(new File(fileName).getName());
+
         // Update the worksheets combo. The first one will be selected automatically
         sheetsCombo.setEnabled(true);
         sheetsCombo.clear();
         
         String[] sheets = currentWorkbook.getSheetNames();
-        for (int i = 0; i < sheets.length; i++)
-        	sheetsCombo.addItem(sheets[i]);
+        for (String sheet : sheets) {
+            sheetsCombo.addItem(sheet);
+        }
    	}
-   	
+
    	private void initMappings() {
        	currentSheet = currentWorkbook.getSheet(sheetsCombo.currentIndex());
        	
@@ -206,37 +235,23 @@ public class ImportCandidatesDialog extends QDialog {
 	
 	private int doImportInternal() {
 		int count = 0;
-		
-		// Assemble a list of the database columns that were mapped by the
-		// user and their corresponding excel columns
-		HashMap<String, Integer> mappedCols = new HashMap<String, Integer>();
-		
-		int k = mappingsList.count();
-		for (int i = 0; i < k; i++) {
-			String mapping = mappingsList.getSelectedMapping(i);
-			
-			if (!mapping.isEmpty())
-				mappedCols.put(mapping, i);
-		}
+        Map<String, Integer> mappedCols = mappingsList.getMappings();
 		
 		// If no columns were mapped, there is no reason to continue
 		if (mappedCols.isEmpty()) {
 			MessageDialog.showUserError(this, tr("No mappings were defined"));
-			
 			return -1;
 		}
 			
 		// Make sure the first name is mapped
 		if (!mappedCols.containsKey("FirstName")) {
 			MessageDialog.showUserError(this, tr("First Name column wasn't mapped"));
-			
 			return -1;
 		}
-		
 		int firstNameCol = mappedCols.get("FirstName");
 		
 		// I need the mapped columns in a stable order, and with random access
-		ArrayList<String> mappedColsList = new ArrayList<String>(mappedCols.keySet());
+		List<String> mappedColsList = ImmutableList.copyOf(mappedCols.keySet());
 				
 		// Create a SQL template for the mapped columns
 		String sql = CandidateHelper.createInsertTemplate("Candidates", mappedColsList);
@@ -246,26 +261,28 @@ public class ImportCandidatesDialog extends QDialog {
 		PreparedStatement stmnt = null;
 		
 		try {
-			stmnt = conn.prepareStatement(sql.toString());
+			stmnt = conn.prepareStatement(sql);
 			
 			// For every row, starting from the second one
 			int rows = currentSheet.getRows();
 			for (int i = 1; i < rows; i++) {
 				// Check if there is a first name
-				String fname = currentSheet.getCell(firstNameCol, i).getContents();	
+				String firstName = currentSheet.getCell(firstNameCol, i).getContents();
 				
-				if (fname == null || fname.isEmpty())
+				if (firstName == null || firstName.isEmpty()) {
 					continue;
-				
-				// Proccess the row
+                }
+
 				for (int j = 0; j < mappedColsList.size(); j++) {
 					String value = currentSheet.getCell(
 							mappedCols.get(mappedColsList.get(j)), i).getContents();
 					
-					if (value == null || value.isEmpty())
+					if (value == null || value.isEmpty()) {
 						stmnt.setNull(j + 1, java.sql.Types.VARCHAR);
-					else
+                    }
+					else {
 						stmnt.setObject(j + 1, value);
+                    }
 				}
 				stmnt.addBatch();
 				
@@ -286,10 +303,10 @@ public class ImportCandidatesDialog extends QDialog {
 		}
 		finally {
 			if (stmnt != null) {
-				try { stmnt.close(); } catch (Exception e) {}
+				try { stmnt.close(); } catch (Exception ignored) {}
 			}
 			
-			try { conn.close(); } catch (Exception e) {}
+			try { conn.close(); } catch (Exception ignored) {}
 		}
 		return count;
 	}
@@ -302,15 +319,14 @@ public class ImportCandidatesDialog extends QDialog {
 class MappingList extends QScrollArea {
 	
 	private QVBoxLayout innerLayout;
-	private QWidget innerWidget;
-	
-	private ArrayList<MappingWidget> mappings;
+
+    private List<MappingWidget> mappings;
 	
 	public MappingList() {
-		mappings = new ArrayList<MappingWidget>();
+		mappings = Lists.newArrayList();
 		
 		// The inner widget
-		innerWidget = new QWidget();
+        QWidget innerWidget = new QWidget();
 		
 		innerLayout = new QVBoxLayout(innerWidget);
 		innerLayout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize);
@@ -325,16 +341,24 @@ class MappingList extends QScrollArea {
         innerLayout.addWidget(widget);
         mappings.add(widget);
     }
-        
-    public String getSelectedMapping(int mappingNo) {
-        // Return the DB column selected as the mapping for
-        // the mapping at mappingNo
-		return mappings.get(mappingNo).selectedDBField();
-	}
-	    
-    public int count() {
-    	return mappings.size();
-   	}
+
+    /**
+     * @return  The selected mapping between database columns and their corresponding
+     *          Excel columns.
+     */
+    public Map<String, Integer> getMappings() {
+        Map<String, Integer> map = Maps.newHashMap();
+
+        int k = mappings.size();
+        for (int i = 0; i < k; i++) {
+            String mapping = mappings.get(i).selectedDBField();
+
+            if (!mapping.isEmpty()) {
+                map.put(mapping, i);
+            }
+        }
+        return map;
+    }
     
     public void clear() {
     	for (MappingWidget mapping : mappings)
