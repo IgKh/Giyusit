@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2009 The Negev Project
+ * Copyright (c) 2008-2011 The Negev Project
  *
  * Redistribution and use in source and binary forms, with or without 
  * modification, are permitted provided that the following conditions are met:
@@ -33,11 +33,15 @@ import com.trolltech.qt.core.*;
 import com.trolltech.qt.gui.*;
 import com.trolltech.qt.*;
 
+import java.util.Set;
+
+import com.google.common.collect.ImmutableSet;
+
 public abstract class AbstractExporter extends QtJambiObject {
 
 	private String outputTitle;
 	private QPrinter.Orientation orientation;
-	private int[] exportedColumns;
+	private Set<Integer> exportedColumns;
 	
 	public String getOutputTitle() {
 		return outputTitle;
@@ -58,27 +62,15 @@ public abstract class AbstractExporter extends QtJambiObject {
 	public boolean isColumnExported(int column) {
 		// If no exported columns array is set, all columns are considered
 		// exported
-		if (exportedColumns == null)
-			return true;
-		
-		int i = 0;
-		boolean found = false;
-		
-		while (i < exportedColumns.length && !found) {
-			if (exportedColumns[i] == column)
-				found = true;
-			else
-				i++;
-		}
-		return found;
+        return exportedColumns == null || exportedColumns.contains(column);
+    }
+	
+	public Set<Integer> getExportedColumns() {
+		return ImmutableSet.copyOf(exportedColumns);
 	}
 	
-	public int[] getExportedColumns() {
-		return exportedColumns;
-	}
-	
-	public void setExportedColumns(int[] exportedColumns) {
-		this.exportedColumns = exportedColumns;
+	public void setExportedColumns(Set<Integer> exportedColumns) {
+		this.exportedColumns = ImmutableSet.copyOf(exportedColumns);
 	}
 	
 	public abstract void exportModel(QAbstractItemModel model, String fileName);

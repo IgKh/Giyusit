@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2009 The Negev Project
+ * Copyright (c) 2008-2011 The Negev Project
  *
  * Redistribution and use in source and binary forms, with or without 
  * modification, are permitted provided that the following conditions are met:
@@ -33,11 +33,14 @@ import com.trolltech.qt.core.*;
 import com.trolltech.qt.gui.*;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.util.Set;
+
+import com.google.common.collect.ImmutableSet;
 
 import negev.giyusit.exporters.AbstractExporter;
 import negev.giyusit.exporters.CsvExporter;
 import negev.giyusit.exporters.ExcelExporter;
+import negev.giyusit.exporters.HtmlExporter;
 import negev.giyusit.exporters.PdfExporter;
 import negev.giyusit.util.MessageDialog;
 import negev.giyusit.widgets.DialogField;
@@ -47,11 +50,7 @@ public class ExportDataDialog extends QDialog {
 	private QLineEdit title;
 	private QGridLayout columnsLayout;
 
-	private QPushButton saveButton;
-	private QPushButton printButton;
-	private QPushButton closeButton;
-	
-	private QAbstractItemModel model;
+    private QAbstractItemModel model;
 
 	public ExportDataDialog(QWidget parent, QAbstractItemModel model) {
 		super(parent);
@@ -85,16 +84,16 @@ public class ExportDataDialog extends QDialog {
 		//
 		title = new QLineEdit();
 		title.setText(tr("Report"));
-		
-		saveButton = new QPushButton(tr("Save"));
+
+        QPushButton saveButton = new QPushButton(tr("Save"));
 		saveButton.setIcon(new QIcon("classpath:/icons/save.png"));
 		saveButton.clicked.connect(this, "save()");
-		
-		printButton = new QPushButton(tr("Print"));
+
+        QPushButton printButton = new QPushButton(tr("Print"));
 		printButton.setIcon(new QIcon("classpath:/icons/print.png"));
 		printButton.clicked.connect(this, "print()");
-		
-		closeButton = new QPushButton(tr("Close"));
+
+        QPushButton closeButton = new QPushButton(tr("Close"));
 		closeButton.clicked.connect(this, "close()");
 		
 		//
@@ -122,6 +121,7 @@ public class ExportDataDialog extends QDialog {
 		
 		filters.append(tr("Excel Workbook (*.xls)"));
 		filters.append(";;").append(tr("CSV file (*.csv)"));
+        filters.append(";;").append(tr("HTML file (*.html)"));
 		filters.append(";;").append(tr("PDF Document (*.pdf)"));
 		
 		// Show file dialog
@@ -141,6 +141,9 @@ public class ExportDataDialog extends QDialog {
 		else if (ext.equalsIgnoreCase("CSV")) {
 			exporter = new CsvExporter();
 		}
+        else if (ext.equalsIgnoreCase("HTML")) {
+			exporter = new HtmlExporter();
+		}
 		else if (ext.equalsIgnoreCase("PDF")) {
 			exporter = new PdfExporter();
 		}
@@ -152,13 +155,22 @@ public class ExportDataDialog extends QDialog {
 		//		
 		exporter.setOutputTitle(title.text());
 		exporter.setExportedColumns(getExportedColumns());
-		
+
+        QApplication.setOverrideCursor(new QCursor(Qt.CursorShape.WaitCursor));
+        setEnabled(false);
+
+        QApplication.processEvents();
+
 		try {
 			exporter.exportModel(model, fileName);
+            accept();
 		}
 		catch (Exception e) {
 			MessageDialog.showException(this, e); 
 		}
+        finally {
+            QApplication.restoreOverrideCursor();
+        }
 	}
 	
 	private void print() {
@@ -169,22 +181,29 @@ public class ExportDataDialog extends QDialog {
 		
 		exporter.setOutputTitle(title.text());
 		exporter.setExportedColumns(getExportedColumns());
+
+        QApplication.setOverrideCursor(new QCursor(Qt.CursorShape.WaitCursor));
+        setEnabled(false);
+
+        QApplication.processEvents();
 		
 		try {
 			String fileName = File.createTempFile("giyusit_", ".pdf").getAbsolutePath();
-			
 			exporter.exportModel(model, fileName);
 			
 			QDesktopServices.openUrl(QUrl.fromLocalFile(fileName));
+            accept();
 		}
 		catch (Exception e) {
 			MessageDialog.showException(this, e); 
 		}
+        finally {
+            QApplication.restoreOverrideCursor();
+        }
 	}
 	
-	private int[] getExportedColumns() {
-		// Build a list
-		ArrayList<Integer> exportedCols = new ArrayList<Integer>();
+	private Set<Integer> getExportedColumns() {
+		ImmutableSet.Builder<Integer> columnSetBuilder = ImmutableSet.builder();
 		
 		int k = columnsLayout.count();
 		for (int i = 0; i < k; i++) {
@@ -193,17 +212,11 @@ public class ExportDataDialog extends QDialog {
 			if (widget instanceof QCheckBox) {
 				QCheckBox cb = (QCheckBox) widget;
 				
-				if (cb.isChecked())
-					exportedCols.add(i);
+				if (cb.isChecked()) {
+					columnSetBuilder.add(i);
+                }
 			}
 		}
-		
-		// Convert it into an array
-		int[] arr = new int[exportedCols.size()];
-		
-		for (int i = 0; i < exportedCols.size(); i++)
-			arr[i] = exportedCols.get(i);
-		
-		return arr;
+        return columnSetBuilder.build();
 	}
 }
