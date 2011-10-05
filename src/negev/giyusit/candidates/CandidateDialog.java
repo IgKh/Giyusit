@@ -40,21 +40,22 @@ import negev.giyusit.util.MessageDialog;
 import negev.giyusit.util.row.BasicRow;
 import negev.giyusit.util.row.Row;
 import negev.giyusit.widgets.DialogField;
+import negev.giyusit.widgets.ValidatingLineEdit;
 
 public class CandidateDialog extends QWidget {
 	
 	// Dialog Widgets
 	private QLabel id;
-	private QLineEdit nationalId;
-	private QLineEdit firstName;
-	private QLineEdit lastName;
-	private QLineEdit gender;
-	private QLineEdit address;
-	private QLineEdit city;
-	private QLineEdit zipCode;
-	private QLineEdit homePhone;
-	private QLineEdit cellPhone;
-	private QLineEdit email;
+	private ValidatingLineEdit nationalId;
+	private ValidatingLineEdit firstName;
+	private ValidatingLineEdit lastName;
+	private ValidatingLineEdit gender;
+	private ValidatingLineEdit address;
+	private ValidatingLineEdit city;
+	private ValidatingLineEdit zipCode;
+	private ValidatingLineEdit homePhone;
+	private ValidatingLineEdit cellPhone;
+	private ValidatingLineEdit email;
 	private QCheckBox wrongDetailsInd;
 		
 	private QLabel status;
@@ -165,35 +166,45 @@ public class CandidateDialog extends QWidget {
 		//
 		id = new QLabel();
 			
-		nationalId = new QLineEdit();
+		nationalId = new ValidatingLineEdit();
+        nationalId.setSoftValidator(new QIntValidator(0, Integer.MAX_VALUE, this));
 		watcher.watchWidget(nationalId);
 			
-		firstName = new QLineEdit();
+		firstName = new ValidatingLineEdit();
 		watcher.watchWidget(firstName);
 			
-		lastName = new QLineEdit();
+		lastName = new ValidatingLineEdit();
 		watcher.watchWidget(lastName);
 			
-		gender = new QLineEdit();
+		gender = new ValidatingLineEdit();
+        gender.setSoftValidator(CandidateValidators.GENDER_VALIDATOR);
 		gender.setMaximumWidth(15);
 		watcher.watchWidget(gender);
 			
-		address = new QLineEdit();
+		address = new ValidatingLineEdit();
 		watcher.watchWidget(address);
 			
-		city = new QLineEdit();
+		city = new ValidatingLineEdit();
+        city.setSoftValidator(CandidateValidators.CITY_VALIDATOR);
 		watcher.watchWidget(city);
 			
-		zipCode = new QLineEdit();
+		zipCode = new ValidatingLineEdit();
+        zipCode.setSoftValidator(CandidateValidators.ZIP_CODE_VALIDATOR);
+        zipCode.setLayoutDirection(Qt.LayoutDirection.LeftToRight);
 		watcher.watchWidget(zipCode);
 			
-		homePhone = new QLineEdit();
+		homePhone = new ValidatingLineEdit();
+        homePhone.setSoftValidator(CandidateValidators.PHONE_VALIDATOR);
+        homePhone.setLayoutDirection(Qt.LayoutDirection.LeftToRight);
 		watcher.watchWidget(homePhone);
 			
-		cellPhone = new QLineEdit();
+		cellPhone = new ValidatingLineEdit();
+        cellPhone.setSoftValidator(CandidateValidators.PHONE_VALIDATOR);
+        cellPhone.setLayoutDirection(Qt.LayoutDirection.LeftToRight);
 		watcher.watchWidget(cellPhone);
 			
-		email = new QLineEdit();
+		email = new ValidatingLineEdit();
+        email.setSoftValidator(CandidateValidators.EMAIL_VALIDATOR);
 		email.setLayoutDirection(Qt.LayoutDirection.LeftToRight);
 		watcher.watchWidget(email);
 		

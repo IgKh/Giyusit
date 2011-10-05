@@ -1,13 +1,13 @@
 /*
- * Copyright (c) 2008-2009 The Negev Project
+ * Copyright (c) 2008-2011 The Negev Project
  *
  * Redistribution and use in source and binary forms, with or without 
  * modification, are permitted provided that the following conditions are met:
  *
- * - Redistributions of source code must retain the above copyright notice, 
+ * - Redistribution of source code must retain the above copyright notice,
  *   this list of conditions and the following disclaimer.
  *
- * - Redistributions in binary form must reproduce the above copyright notice, 
+ * - Redistribution in binary form must reproduce the above copyright notice,
  *   this list of conditions and the following disclaimer in the documentation 
  *   and/or other materials provided with the distribution.
  *
@@ -66,28 +66,17 @@ public class AddCandidatesDialog extends QDialog {
 	private final static String SNAPSHOT_PATH = QDir.homePath() + "/.giyusit_snapshot";
 	private final static String NULL_STRING = new String(new char[] {'\0'});
 	
-	private final QRegExp genderPattern = new QRegExp(tr("[MF]", "Gender Regexp"));
-	private final QRegExp zipCodePattern = new QRegExp("\\d{5}");
-	private final QRegExp phonePattern = new QRegExp("0\\d{1,2}(\\-)?\\d{7}");
-	private final QRegExp emailPattern = new QRegExp("\\S+@\\S+\\.\\S+");
-	
-	// Validators
-	private final QValidator genderValidator = new QRegExpValidator(genderPattern, this);
-	private final QValidator zipCodeValidator = new QRegExpValidator(zipCodePattern, this);
-	private final QValidator phoneValidator = new QRegExpValidator(phonePattern, this);
-	private final QValidator emailValidator = new QRegExpValidator(emailPattern, this);
-	
 	// Table columns
 	final DataColumn[] columns = {
 		new DataColumn("FirstName", false, null, null),
 		new DataColumn("LastName", false, null, null),
-		new DataColumn("Gender", true, null, genderValidator),
+		new DataColumn("Gender", true, null, CandidateValidators.GENDER_VALIDATOR),
 		new DataColumn("Address", false, null, null),
-		new DataColumn("City", false, new CitiesCompleter(), null),
-		new DataColumn("ZipCode", true, null, zipCodeValidator),
-		new DataColumn("HomePhone", false, null, phoneValidator),
-		new DataColumn("CellPhone", false, null, phoneValidator),
-		new DataColumn("EMail", false, null, emailValidator),
+		new DataColumn("City", false, new CitiesCompleter(), CandidateValidators.CITY_VALIDATOR),
+		new DataColumn("ZipCode", true, null, CandidateValidators.ZIP_CODE_VALIDATOR),
+		new DataColumn("HomePhone", false, null, CandidateValidators.PHONE_VALIDATOR),
+		new DataColumn("CellPhone", false, null, CandidateValidators.PHONE_VALIDATOR),
+		new DataColumn("EMail", false, null, CandidateValidators.EMAIL_VALIDATOR),
 		new DataColumn("School", false, new DBColumnCompleter("Candidates", "School"), null)
 	};
 	
@@ -95,12 +84,8 @@ public class AddCandidatesDialog extends QDialog {
 	private QTableWidget tableWidget;
 	private QLineEdit origin;
 	private QLabel statusLabel;
-	
-	// Buttons
-	private QPushButton addButton;
-	private QPushButton cancelButton;
-	
-	// Properties
+
+    // Properties
 	private QTimer persistTimer;
 	
 	public AddCandidatesDialog(QWidget parent) {
@@ -114,7 +99,7 @@ public class AddCandidatesDialog extends QDialog {
 		tableWidget.setItemDelegate(new ExTableDelegate(this));
 		
 		// 15 is a nice default, but ideally this should be Excel-like 
-		// inifinite rows
+		// infinite rows
 		tableWidget.setRowCount(15);
 		
 		// Other completers
@@ -152,13 +137,13 @@ public class AddCandidatesDialog extends QDialog {
 		clearButton.setToolTip(tr("Clear data"));
 		clearButton.setIcon(new QIcon("classpath:/icons/clear.png"));
 		clearButton.clicked.connect(this, "initTable()");
-		
-		addButton = new QPushButton(tr("Add"));
+
+        QPushButton addButton = new QPushButton(tr("Add"));
 		addButton.setDefault(true);
 		addButton.setIcon(new QIcon("classpath:/icons/add.png"));
 		addButton.clicked.connect(this, "add()");
-		
-		cancelButton = new QPushButton(tr("Cancel"));
+
+        QPushButton cancelButton = new QPushButton(tr("Cancel"));
 		cancelButton.clicked.connect(this, "reject()");
 		
 		this.rejected.connect(this, "close()");
@@ -335,12 +320,13 @@ public class AddCandidatesDialog extends QDialog {
 			int count = doAdd();
 			
 			// Show success message
-			String msg = tr("%n candidate(s) added succesfully", "", count);
+			String msg = tr("%n candidate(s) added successfully", "", count);
 			MessageDialog.showSuccess(this, msg); 
 			
 			// Delete snapshot file and close the dialog
-			if (QFile.exists(SNAPSHOT_PATH))
+			if (QFile.exists(SNAPSHOT_PATH)) {
 				QFile.remove(SNAPSHOT_PATH);
+            }
 			
 			accept();
 		}
@@ -477,7 +463,7 @@ class ExTableDelegate extends QItemDelegate {
 	public QWidget createEditor(QWidget parent, QStyleOptionViewItem option, QModelIndex index) {
 		QLineEdit editor = new QLineEdit(parent);
 		
-		// Set completer, if neccessary
+		// Set completer, if necessary
 		DataColumn col = dialog.columns[index.column()];
 		
 		if (col.completer != null) {
