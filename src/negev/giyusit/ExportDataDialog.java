@@ -33,8 +33,11 @@ import com.trolltech.qt.core.*;
 import com.trolltech.qt.gui.*;
 
 import java.io.File;
+import java.util.Map;
 import java.util.Set;
 
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
 import negev.giyusit.exporters.AbstractExporter;
@@ -46,6 +49,13 @@ import negev.giyusit.util.MessageDialog;
 import negev.giyusit.widgets.DialogField;
 
 public class ExportDataDialog extends QDialog {
+
+    private static final Map<String, AbstractExporter> EXPORTERS =
+            ImmutableMap.of(
+                    "PDF", new PdfExporter(),
+                    "CSV", new CsvExporter(),
+                    "XLS", new ExcelExporter(),
+                    "HTML", new HtmlExporter());
 
 	private QLineEdit title;
 	private QGridLayout columnsLayout;
@@ -128,25 +138,17 @@ public class ExportDataDialog extends QDialog {
 		String fileName = MessageDialog.getSaveFileName(this, tr("Save File"), 
 				filters.toString());
 		
-		if (fileName == null || fileName.isEmpty())
+		if (Strings.isNullOrEmpty(fileName)) {
 			return;
+        }
 		
 		// Select the correct exporter based on the extension
-		String ext = new QFileInfo(fileName).suffix();
+		String ext = new QFileInfo(fileName).suffix().toUpperCase();
 		AbstractExporter exporter;
 		
-		if (ext.equalsIgnoreCase("XLS")) {
-			exporter = new ExcelExporter();
-		}
-		else if (ext.equalsIgnoreCase("CSV")) {
-			exporter = new CsvExporter();
-		}
-        else if (ext.equalsIgnoreCase("HTML")) {
-			exporter = new HtmlExporter();
-		}
-		else if (ext.equalsIgnoreCase("PDF")) {
-			exporter = new PdfExporter();
-		}
+		if (EXPORTERS.containsKey(ext)) {
+            exporter = EXPORTERS.get(ext);
+        }
 		else {
 			MessageDialog.showUserError(this, tr("Unknown file extension: ") + ext);
 			return;

@@ -45,6 +45,11 @@ public abstract class TextDocumentExporter extends AbstractExporter {
     private QFont headerFont;
     private QFont bodyFont;
 
+    private QTextOption textOption;
+    private QTextTableFormat tableFormat;
+    private QTextCharFormat headerFormat;
+    private QTextCharFormat alternateRowFormat;
+
     TextDocumentExporter() {
         headerFont = new QFont(QApplication.font());
         headerFont.setPointSize(9);
@@ -53,32 +58,32 @@ public abstract class TextDocumentExporter extends AbstractExporter {
 
         bodyFont = new QFont(QApplication.font());
         bodyFont.setPointSize(9);
+
+        // Formats
+        textOption = new QTextOption();
+        textOption.setTextDirection(QApplication.layoutDirection());
+
+        tableFormat = new QTextTableFormat();
+        tableFormat.setAlignment(Qt.AlignmentFlag.AlignRight);
+        tableFormat.setHeaderRowCount(1);
+        tableFormat.setBorder(0);
+
+        headerFormat = new QTextCharFormat();
+        headerFormat.setFont(headerFont);
+
+        alternateRowFormat = new QTextCharFormat();
+        alternateRowFormat.setBackground(new QBrush(QColor.lightGray));
     }
 
     protected QTextDocument createTextDocument(QAbstractItemModel model) {
         QTextDocument document = new QTextDocument();
         document.setDefaultFont(bodyFont);
+        document.setDefaultTextOption(textOption);
         document.setMetaInformation(QTextDocument.MetaInformation.DocumentTitle,
                 getOutputTitle());
 
         int rowCount = model.rowCount();
         int colCount = model.columnCount();
-
-        // Formats
-        QTextOption textOption = document.defaultTextOption();
-        textOption.setTextDirection(QApplication.layoutDirection());
-        document.setDefaultTextOption(textOption);
-
-        QTextTableFormat tableFormat = new QTextTableFormat();
-        tableFormat.setAlignment(Qt.AlignmentFlag.AlignRight);
-        tableFormat.setHeaderRowCount(1);
-        tableFormat.setBorder(0);
-
-        QTextCharFormat headerFormat = new QTextCharFormat();
-        headerFormat.setFont(headerFont);
-
-        QTextCharFormat alternateRowFormat = new QTextCharFormat();
-        alternateRowFormat.setBackground(new QBrush(QColor.lightGray));
 
         // Table
         QTextCursor cursor = new QTextCursor(document);
