@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2009 The Negev Project
+ * Copyright (c) 2008-2011 The Negev Project
  *
  * Redistribution and use in source and binary forms, with or without 
  * modification, are permitted provided that the following conditions are met:
@@ -60,11 +60,16 @@ public class DeleteCandidateDialog extends QDialog {
 		String warning = tr("<b>Warning!</b> This operation is irreversible. " + 
 							"Deleting a candidate will pernametly remove it<br> " + 
 							"and all associated information!");
-		
+
 		deleteButton = new QPushButton(tr("Delete"));
-		deleteButton.setEnabled(false);
+		deleteButton.setIcon(new QIcon("classpath:/icons/warning.png"));
+        deleteButton.setEnabled(false);
 		deleteButton.clicked.connect(this, "doDelete()");
-		
+
+        QFont font = new QFont(deleteButton.font());
+        font.setBold(true);
+        deleteButton.setFont(font);
+
 		cancelButton = new QPushButton(tr("Cancel"));
 		cancelButton.clicked.connect(this, "reject()");
 		
