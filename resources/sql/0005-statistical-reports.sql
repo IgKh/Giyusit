@@ -2,9 +2,6 @@
 -- User editable rulers and statistical reports (Revision 5)
 --
 
--- Update schema revision
-UPDATE FileParams SET Value = '5' WHERE Key = 'SchemaRevision';
-
 -- Patch standard rulers with marker characters
 UPDATE RulerLibrary SET Ruler = "ID*,FirstName,LastName,Gender,City,Status,Owner,Notes,NationalID+,Address+,ZipCode+,HomePhone+,CellPhone+,EMail+,Origin+,School+,ActiveInd+,SignedDahashInd+,CanceledDahashInd+,FullName+" WHERE Name = "StdCandidatesRuler";
 UPDATE RulerLibrary SET Ruler = "ID*,Name,Type,StartDate,EndDate,ActiveAttendants,Location,Owner,Notes" WHERE Name = "StdEventsRuler";
