@@ -82,7 +82,11 @@ public class AddCandidatesDialog extends QDialog {
 	
 	// Widgets
 	private QTableWidget tableWidget;
-	private QLineEdit origin;
+
+    private QLineEdit origin;
+    private QLineEdit subOrigin;
+    private QLineEdit page;
+
 	private QLabel statusLabel;
 
     // Properties
@@ -130,6 +134,8 @@ public class AddCandidatesDialog extends QDialog {
 		tableWidget = new ExTableWidget();
 		
 		origin = new QLineEdit();
+        subOrigin = new QLineEdit();
+        page = new QLineEdit();
 		
 		statusLabel = new QLabel();
 		
@@ -156,6 +162,8 @@ public class AddCandidatesDialog extends QDialog {
 		
 		QHBoxLayout groupDataLayout = new QHBoxLayout(groupData);
 		groupDataLayout.addWidget(new DialogField(tr("Origin: "), origin), 1);
+        groupDataLayout.addWidget(new DialogField(tr("Sub Origin: "), subOrigin), 1);
+        groupDataLayout.addWidget(new DialogField(tr("Page: "), page), 1);
 		groupDataLayout.addStretch(3);
 		
 		QHBoxLayout buttonLayout = new QHBoxLayout();
@@ -189,6 +197,8 @@ public class AddCandidatesDialog extends QDialog {
 		
 		// Clear group data
 		origin.setText("");
+        subOrigin.setText("");
+        page.setText("");
 	}
 	
 	private void saveWindowState() {
@@ -244,6 +254,8 @@ public class AddCandidatesDialog extends QDialog {
 		
 		// Write group data
 		stream.writeString(origin.text());
+        stream.writeString(subOrigin.text());
+        stream.writeString(page.text());
 		
 		// Close file
 		file.close();
@@ -288,6 +300,8 @@ public class AddCandidatesDialog extends QDialog {
 		
 		// Read group data
 		origin.setText(stream.readString());
+        subOrigin.setText(stream.readString());
+        page.setText(stream.readString());
 		
 		// Close file
 		file.close();
@@ -341,11 +355,13 @@ public class AddCandidatesDialog extends QDialog {
 	private int doAdd() {
 		// Create a SQL template
 		ArrayList<String> colsToInsert = new ArrayList<String>();
-		
-		for (int i = 0; i < columns.length; i++) {
-			colsToInsert.add(columns[i].name);
-		}
+
+        for (DataColumn column : columns) {
+            colsToInsert.add(column.name);
+        }
 		colsToInsert.add("Origin");
+        colsToInsert.add("SubOrigin");
+        colsToInsert.add("Page");
 		
 		String sql = CandidateHelper.createInsertTemplate("Candidates", colsToInsert);
 		
@@ -383,6 +399,8 @@ public class AddCandidatesDialog extends QDialog {
 				
 				// Group data
 				stmnt.setObject(j + 1, origin.text());
+                stmnt.setObject(j + 2, subOrigin.text());
+                stmnt.setObject(j + 3, page.text());
 				
 				// Add to the batch
 				stmnt.addBatch();
@@ -401,10 +419,10 @@ public class AddCandidatesDialog extends QDialog {
 		}
 		finally {
 			if (stmnt != null) {
-				try { stmnt.close(); } catch (Exception e) {}
+				try { stmnt.close(); } catch (Exception ignored) {}
 			}
 			
-			try { conn.close(); } catch (Exception e) {}
+			try { conn.close(); } catch (Exception ignored) {}
 		}
 	}
 }

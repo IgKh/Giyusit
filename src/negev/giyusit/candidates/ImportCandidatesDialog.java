@@ -57,7 +57,7 @@ public class ImportCandidatesDialog extends QDialog {
                         "", "NationalID", "FirstName", "LastName",
                         "Gender", "HomePhone", "CellPhone",
                         "EMail", "Address", "City", "ZipCode",
-                        "Origin", "School", "Notes"
+                        "Origin", "SubOrigin", "Page", "School", "Notes"
     );
 
     // User information label

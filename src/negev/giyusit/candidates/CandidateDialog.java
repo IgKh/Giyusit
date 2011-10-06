@@ -61,6 +61,8 @@ public class CandidateDialog extends QWidget {
 	private QLabel status;
 	private QLineEdit school;
 	private QLineEdit origin;
+    private QLineEdit subOrigin;
+    private QLineEdit page;
 	private QComboBox owner;
 	private QComboBox recruiter;
 	private QCheckBox signedDahashInd;
@@ -219,6 +221,13 @@ public class CandidateDialog extends QWidget {
 		
 		origin = new QLineEdit();
 		watcher.watchWidget(origin);
+
+        subOrigin = new QLineEdit();
+        watcher.watchWidget(subOrigin);
+
+        page = new QLineEdit();
+        page.setMaximumWidth(35);
+        watcher.watchWidget(page);
 			
 		owner = new QComboBox();
 		watcher.watchWidget(owner);
@@ -299,11 +308,19 @@ public class CandidateDialog extends QWidget {
 		QGroupBox giyusDataBox = new QGroupBox(tr("Giyus Data"));
 		
 		QGridLayout giyusDataLayout = new QGridLayout(giyusDataBox);
-		giyusDataLayout.addWidget(new DialogField(tr("School: "), school), 1, 1);
-		giyusDataLayout.addWidget(new DialogField(tr("Owner: "), owner),   2, 1);
-		giyusDataLayout.addWidget(new DialogField(tr("Origin: "), origin), 1, 2);
-		giyusDataLayout.addWidget(new DialogField(tr("Recruiter: "), recruiter), 2, 2);
-		
+        giyusDataLayout.addWidget(new QLabel(tr("Owner: ")),        1, 1);
+        giyusDataLayout.addWidget(owner,                           1, 2);
+		giyusDataLayout.addWidget(new QLabel(tr("Recruiter: ")),    1, 3);
+		giyusDataLayout.addWidget(recruiter,                       1, 4);
+		giyusDataLayout.addWidget(new QLabel(tr("Origin: ")),       2, 1);
+		giyusDataLayout.addWidget(origin,                          2, 2);
+		giyusDataLayout.addWidget(new QLabel(tr("Sub Origin: ")),   2, 3);
+		giyusDataLayout.addWidget(subOrigin,                       2, 4);
+        giyusDataLayout.addWidget(new QLabel(tr("School: ")),       3, 1);
+        giyusDataLayout.addWidget(school,                           3, 2);
+		giyusDataLayout.addWidget(new QLabel(tr("Page: ")),         3, 3);
+		giyusDataLayout.addWidget(page,                             3, 4);
+
 		QGroupBox giyusIndBox = new QGroupBox(tr("Indicators"));
 		
 		QVBoxLayout giyusIndLayout = new QVBoxLayout(giyusIndBox);
@@ -311,7 +328,7 @@ public class CandidateDialog extends QWidget {
 		giyusIndLayout.addWidget(canceledDahashInd);
 		giyusIndLayout.addStretch(1);
 		
-		giyusDataLayout.addWidget(giyusIndBox, 1, 3, 2, 1);
+		giyusDataLayout.addWidget(giyusIndBox, 1, 5, 3, 1);
 		
 		QHBoxLayout giyusBottomLayout = new QHBoxLayout();
 		giyusBottomLayout.setMargin(0);
@@ -320,7 +337,7 @@ public class CandidateDialog extends QWidget {
 		giyusBottomLayout.addWidget(candidateStatusesButton);
 		giyusBottomLayout.addWidget(candidateEventsButton);
 		
-		giyusDataLayout.addLayout(giyusBottomLayout, 3, 1, 1, 3);
+		giyusDataLayout.addLayout(giyusBottomLayout, 4, 1, 1, 5);
 		
 		//--------------------------------------------------------------
 		
@@ -384,6 +401,8 @@ public class CandidateDialog extends QWidget {
 			email.setText(candidate.getString("EMail"));
 			school.setText(candidate.getString("School"));
 			origin.setText(candidate.getString("Origin"));
+            subOrigin.setText(candidate.getString("SubOrigin"));
+            page.setText(candidate.getString("Page"));
 			
 			notes.setPlainText(candidate.getString("Notes"));
 			
@@ -439,6 +458,8 @@ public class CandidateDialog extends QWidget {
 			candidate.put("EMail", email.text());
 			candidate.put("School", school.text());
 			candidate.put("Origin", origin.text());
+            candidate.put("SubOrigin", subOrigin.text());
+            candidate.put("Page", page.text());
 			
 			candidate.put("Notes", notes.toPlainText());
 			
