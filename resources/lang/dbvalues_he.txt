@@ -16,11 +16,14 @@ Gender : מין
 Address : כתובת
 City : ישוב
 ZipCode : מיקוד
+CityArea : אזור מגורים
 HomePhone : טלפון בבית
 CellPhone : טלפון נייד
 EMail : דוא"ל
 
 Origin : מקור
+SubOrigin : תת מקור
+Page : עמוד
 School : בית ספר
 Notes  : הערות
 OwnerID : קוד אחראי

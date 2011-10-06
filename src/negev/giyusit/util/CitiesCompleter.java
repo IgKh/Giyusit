@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2010 The Negev Project
+ * Copyright (c) 2008-2011 The Negev Project
  *
  * Redistribution and use in source and binary forms, with or without 
  * modification, are permitted provided that the following conditions are met:
@@ -31,43 +31,56 @@ package negev.giyusit.util;
 
 import com.trolltech.qt.gui.*;
 
-import java.util.ArrayList;
+import java.util.Map;
 import java.util.Scanner;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSortedMap;
 
 public class CitiesCompleter extends QCompleter {
 	
-	private static ArrayList<String> citiesList;
+	private static final Map<String, String> CITIES;
 	
 	static {
-		citiesList = new ArrayList<String>();
-		
+        ImmutableSortedMap.Builder<String, String> mapBuilder = ImmutableSortedMap.naturalOrder();
+
 		// Load from file
-		Class<?> clazz = CitiesCompleter.class;
-		
 		Scanner scanner = new Scanner(
-						clazz.getResourceAsStream("/israel_cities.txt"), "UTF-8");
+				CitiesCompleter.class.getResourceAsStream("/israel_cities.txt"),
+                "UTF-8");
 		
 		try {
 			while (scanner.hasNextLine()) {
 				String line = scanner.nextLine().trim();
 				
 				// Skip empty lines
-				if (line.isEmpty())
+				if (line.isEmpty()) {
 					continue;
-				
-				citiesList.add(line);
+                }
+				String[] parts = line.split(";");
+
+				mapBuilder.put(parts[0], parts[1]);
 			}
+            CITIES = mapBuilder.build();
 		}
+        catch (Exception e) {
+            e.printStackTrace();
+            throw new ExceptionInInitializerError(e);
+        }
 		finally {
 			scanner.close();
 		}
 	}
 
     public static boolean containsCity(String city) {
-        return citiesList.contains(city);
+        return CITIES.keySet().contains(city);
+    }
+
+    public static String getCityArea(String city) {
+        return CITIES.get(city);
     }
 	
 	public CitiesCompleter() {
-		super(citiesList);
+		super(ImmutableList.copyOf(CITIES.keySet()));
 	}	
 }

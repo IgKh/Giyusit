@@ -1,13 +1,13 @@
 /*
- * Copyright (c) 2008-2009 The Negev Project
+ * Copyright (c) 2008-2011 The Negev Project
  *
  * Redistribution and use in source and binary forms, with or without 
  * modification, are permitted provided that the following conditions are met:
  *
- * - Redistributions of source code must retain the above copyright notice, 
+ * - Redistribution of source code must retain the above copyright notice,
  *   this list of conditions and the following disclaimer.
  *
- * - Redistributions in binary form must reproduce the above copyright notice, 
+ * - Redistribution in binary form must reproduce the above copyright notice,
  *   this list of conditions and the following disclaimer in the documentation 
  *   and/or other materials provided with the distribution.
  *
@@ -32,11 +32,22 @@
  import java.sql.DriverManager;
  import java.sql.Connection;
  import java.sql.SQLException;
- 
- // TODO: Thread safety
+
+ import org.sqlite.Function;
+
+ import negev.giyusit.util.CitiesCompleter;
+
+// TODO: Thread safety
  public class ConnectionProvider {
  
  	private static String jdbcUrl;
+
+    private static final Function getCityAreaFunction = new Function() {
+        @Override
+        protected void xFunc() throws SQLException {
+            result(CitiesCompleter.getCityArea(value_text(0)));
+        }
+    };
  	
  	static {
  		// Load JDBC driver
@@ -57,7 +68,11 @@
  	
  	public static Connection getConnection() {
  		try {
- 			return DriverManager.getConnection(jdbcUrl);
+ 			Connection conn = DriverManager.getConnection(jdbcUrl);
+
+             Function.create(conn, "getCityArea", getCityAreaFunction);
+
+             return conn;
  		}
  		catch (SQLException e) {
  			throw new DatabaseException(e);
