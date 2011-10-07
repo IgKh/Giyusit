@@ -108,6 +108,8 @@ public class AddCandidatesDialog extends QDialog {
 		
 		// Other completers
 		origin.setCompleter(new DBColumnCompleter("Candidates", "Origin"));
+        subOrigin.setCompleter(
+                new DBColumnCompleter("Candidates", "SubOrigin", "Origin", origin));
 		
 		// Create the persist timer. By default, persist every minute
 		persistTimer = new QTimer(this);

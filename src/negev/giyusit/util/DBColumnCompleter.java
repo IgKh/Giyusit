@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2009 The Negev Project
+ * Copyright (c) 2008-2011 The Negev Project
  *
  * Redistribution and use in source and binary forms, with or without 
  * modification, are permitted provided that the following conditions are met:
@@ -34,28 +34,73 @@ import com.trolltech.qt.gui.*;
 
 import java.sql.Connection;
 
+import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
+
 import negev.giyusit.db.ConnectionProvider;
 import negev.giyusit.db.QueryWrapper;
 
 public class DBColumnCompleter extends QCompleter {
-	
-	public DBColumnCompleter(String table, String column) {
-		// SQL query
-		String sql = "select distinct " + column + " from " + table;
-		
+
+    private String column;
+    private String query;
+    private QLineEdit dependantEditor;
+
+    public DBColumnCompleter(String table, String column) {
+        this(table, column, "", null);
+    }
+
+	public DBColumnCompleter(String table, String column,
+                             String dependantColumn, QLineEdit dependantEditor) {
+
+        Preconditions.checkNotNull(table);
+        Preconditions.checkState(
+                (Strings.isNullOrEmpty(dependantColumn) && dependantEditor == null) ||
+                (!Strings.isNullOrEmpty(dependantColumn) && dependantEditor != null));
+
+        this.column = Preconditions.checkNotNull(column);
+
+        this.dependantEditor = dependantEditor;
+        this.query = createQuery(table, column, dependantColumn);
+
+        setCompletionRole(Qt.ItemDataRole.DisplayRole);
+        refresh();
+
+        if (dependantEditor != null) {
+            dependantEditor.textChanged.connect(this, "refresh()");
+        }
+	}
+
+    private void refresh() {
 		// Do the query
 		Connection conn = ConnectionProvider.getConnection();
-		
+
 		try {
+            QueryWrapper wrapper = new QueryWrapper(conn);
 			RowSetModel model = new RowSetModel(column);
-			
-			model.setRowSet(new QueryWrapper(conn).queryForRowSet(sql));
-			
+
+            if (dependantEditor != null) {
+                model.setRowSet(wrapper.queryForRowSet(query, dependantEditor.text()));
+            }
+            else {
+                model.setRowSet(wrapper.queryForRowSet(query));
+            }
 			setModel(model);
-			setCompletionRole(Qt.ItemDataRole.DisplayRole);
 		}
 		finally {
-			try { conn.close(); } catch (Exception e) { e.printStackTrace(); }
+			try { conn.close(); } catch (Exception ignored) { }
 		}
-	}	
+    }
+
+    private String createQuery(String table, String column, String dependantColumn) {
+        StringBuilder sql = new StringBuilder("select distinct ").
+                append(column).
+                append(" from ").
+                append(table);
+
+        if (!Strings.isNullOrEmpty(dependantColumn)) {
+            sql.append(" where ").append(dependantColumn).append(" = ?");
+        }
+        return sql.toString();
+    }
 }

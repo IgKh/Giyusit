@@ -379,6 +379,7 @@ public class CandidateDialog extends QWidget {
 		city.setCompleter(new CitiesCompleter());
 		school.setCompleter(new DBColumnCompleter("Candidates", "School"));
 		origin.setCompleter(new DBColumnCompleter("Candidates", "Origin"));
+        subOrigin.setCompleter(new DBColumnCompleter("Candidates", "SubOrigin", "Origin", origin));
 	}
 	
 	private void loadCandidateData() {
