@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2009 The Negev Project
+ * Copyright (c) 2008-2011 The Negev Project
  *
  * Redistribution and use in source and binary forms, with or without 
  * modification, are permitted provided that the following conditions are met:
@@ -36,28 +36,28 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.MessageFormat;
 
+import com.google.common.base.Preconditions;
+
 /**
- * A convinience class for displaying various types of messages to the user.
+ * A convenience class for displaying various types of messages to the user.
  * This class is used via one of its static methods.
  */
 public class MessageDialog extends QMessageBox {
 
 	public enum UserResponse {
-		Yes, No, Save, Discard, Cancel
+		Save, Discard, Cancel
 	}
 
 	private static final QSize ICON_SIZE = new QSize(48, 48);
 	
-	private int forcedWidth = -1;
-
 	private MessageDialog(QWidget parent) {
 		super(parent);
 		
 		setWindowTitle(tr("Giyusit"));
 	}
-		
-	/**
-	 * Shows a message indicating success of a proccess
+
+    /**
+	 * Shows a message indicating success of a process
 	 */
 	public static void showSuccess(QWidget parent, String msg) {
 		MessageDialog dlg = new MessageDialog(parent);
@@ -91,18 +91,44 @@ public class MessageDialog extends QMessageBox {
 		
 		dlg.exec();
 	}
+
+    /**
+     * Shows a general "Are you sure?" dialog
+     *
+     * @param parent Parent window for the dialog
+     * @param text Master text. Will be shown in bold
+     * @param informativeText Extra informative text. Can be null if not needed
+     * @return <i>true</i> if the user chose "yes" or <i>false</i> otherwise
+     */
+    public static boolean areYouSure(QWidget parent, String text, String informativeText) {
+        MessageDialog dlg = new MessageDialog(parent);
+
+        if (informativeText == null) {
+            informativeText = "";
+        }
+
+        dlg.setText("<b>" + text + "</b>");
+        dlg.setInformativeText(informativeText);
+        dlg.setIconPixmap(new QPixmap("classpath:/icons/warning.png").scaled(ICON_SIZE));
+
+		dlg.setStandardButtons(StandardButton.Yes, StandardButton.No);
+        dlg.setDefaultButton(StandardButton.No);
+
+        int ret = dlg.exec();
+        return (ret == StandardButton.Yes.value());
+    }
 	
 	/**
 	 * Displays an exception to the user in the form of an error message. The
 	 * exception's stack trace is added to the message.
 	 */
 	public static void showException(QWidget parent, Throwable th) {
-		if (th == null)
-			throw new RuntimeException("Null throwable provided");
+        Preconditions.checkNotNull(th, "Null throwable provided");
 		
 		MessageDialog dlg = new MessageDialog(parent);
 		dlg.setIconPixmap(new QPixmap("classpath:/icons/error.png").scaled(ICON_SIZE));
-		dlg.setText(dlg.tr("<b>An unexpected system error has occured</b>"));
+
+        dlg.setText(dlg.tr("<b>An unexpected system error has occurred</b>"));
 		dlg.setInformativeText(dlg.tr("More details about the error are available " + 
 								 	 	"by clicking the \"Show Details\" button"));
 		
@@ -119,7 +145,7 @@ public class MessageDialog extends QMessageBox {
 	
 	/**
 	 * Warns the user about unsaved data in the current dialog, and asks
-	 * him how to procced.
+	 * him how to proceed.
 	 *
 	 * If the <i>firstEdit</i> argument is a non-null, valid date/time object,
 	 * the message box will contain a human-friendly duration since the first
@@ -190,36 +216,34 @@ public class MessageDialog extends QMessageBox {
 	}
 	
 	/**
-	 * A convinience method to display an open file dialog whose start dir
+	 * A convenience method to display an open file dialog whose start dir
 	 * is "My Documents" on Windows and the home directory on *nix systems,
 	 * and takes a regular string for the filter
 	 */
 	public static String getOpenFileName(QWidget parent, String title, String filter) {
-		return QFileDialog.getOpenFileName(parent, title, getPlatfromStartDir(),
+		return QFileDialog.getOpenFileName(parent, title, getPlatformStartDir(),
 				new QFileDialog.Filter(filter));
 	}
 	
 	/**
-	 * A convinience method to display a save file dialog whose start dir
+	 * A convenience method to display a save file dialog whose start dir
 	 * is "My Documents" on Windows and the home directory on *nix systems,
 	 * and takes a regular string for the filter
 	 */
 	public static String getSaveFileName(QWidget parent, String title, String filter) {
-		return QFileDialog.getSaveFileName(parent, title, getPlatfromStartDir(),
+		return QFileDialog.getSaveFileName(parent, title, getPlatformStartDir(),
 				new QFileDialog.Filter(filter));
 	}
 	
-	private static String getPlatfromStartDir() {
+	private static String getPlatformStartDir() {
 		String os = System.getProperty("os.name").toLowerCase();
-		String startDir = "";
-		
-		if (os.indexOf("win") != -1) {
+
+		if (os.contains("win")) {
 			// On Windows
-			startDir = QDesktopServices.storageLocation(QDesktopServices.StandardLocation.DocumentsLocation);
+			return QDesktopServices.storageLocation(QDesktopServices.StandardLocation.DocumentsLocation);
 		}
-		else
-			startDir = System.getProperty("user.home");
-		
-		return startDir;
+		else {
+			return System.getProperty("user.home");
+        }
 	}
 }

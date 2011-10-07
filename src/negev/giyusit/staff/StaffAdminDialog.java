@@ -186,6 +186,7 @@ public class StaffAdminDialog extends QDialog {
 		try {
 			staffModel.rebuildModel();
             staffTree.expandAll();
+            staffTree.setCurrentIndex(staffModel.getRootIndex());
 		}
 		catch (Exception e) {
 			MessageDialog.showException(this, e);
@@ -221,11 +222,18 @@ public class StaffAdminDialog extends QDialog {
         	
         	try {
         		int id = staffModel.indexId(index);
-        		Row member = helper.fetchById(id);
+
+                Row member = helper.fetchById(id);
+                int ownedCandidates = helper.getOwnedCandidatesCount(id);
         		
         		name.setText(member.getString("Name"));
         		role.setText(member.getString("Role"));
         		isReal.setChecked(member.getBoolean("RealInd"));
+
+                if (!isReal.isChecked()) {
+                    ownedCandidatesButton.setEnabled(false);
+                }
+                isReal.setEnabled(ownedCandidates == 0);
         	}
         	catch (Exception e) {
 				MessageDialog.showException(this, e);
@@ -257,6 +265,8 @@ public class StaffAdminDialog extends QDialog {
     		
     		// Update the relevant item in the tree
     		staffModel.updateName(index, name.text());
+
+            ownedCandidatesButton.setEnabled(isReal.isChecked());
     	}
     	catch (Exception e) {
 			MessageDialog.showException(this, e);
@@ -318,25 +328,25 @@ public class StaffAdminDialog extends QDialog {
 		int id = staffModel.indexId(currentIndex);
 		String name = staffModel.text(staffModel.indexToValue(currentIndex));
 		
-		// "Are you sure?"
-		QMessageBox.StandardButton ret;
-		QMessageBox.StandardButtons buttons = new QMessageBox.StandardButtons();
-		
-		buttons.set(QMessageBox.StandardButton.Yes);
-		buttons.set(QMessageBox.StandardButton.No);
-		
-		String msg = MessageFormat.format(tr("Are you sure that you wish to remove" + 
-											 	" the staff member {0}?"), name);
-		
-		ret = QMessageBox.question(this, tr("Giyusit"), msg, buttons);
-		
-		if (ret == QMessageBox.StandardButton.No)
-			return;
-		
-		// Update DB
 		StaffHelper helper = new StaffHelper();
 		
 		try {
+            String msg = tr("Are you sure that you wish to remove the staff member {0}?");
+
+            String informative = "";
+            int ownedCandidates = helper.getOwnedCandidatesCount(id);
+            if (ownedCandidates > 0) {
+                informative = tr("If you do, %n candidate(s) will become owner-less",
+                        "", ownedCandidates);
+            }
+
+            boolean ret = MessageDialog.areYouSure(window(),
+                    MessageFormat.format(msg, name), informative);
+
+            if (!ret) {
+                return;
+            }
+
     		helper.deleteRecord(id);
     		
     		// Refresh tree

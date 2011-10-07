@@ -57,19 +57,19 @@ public class StaffHelper extends GenericHelper {
 		return getQueryWrapper().queryForRowSet(sql, parentId);
 	}
 	
-	/*
 	public int getOwnedCandidatesCount(int id) {
 		String sql = "select count(*) from Candidates where OwnerID = ?";
 		
 		Object result = getQueryWrapper().queryForObject(sql, id);
 		
-		if (result == null)
+		if (result == null) {
 			return 0;
-		else
+        }
+		else {
 			return Integer.parseInt(result.toString());
+        }
 	}
-	*/
-	
+
 	public RowSet getOwnedCandidates(int id) {
 		String sql = "select * from AllCandidates where OwnerID = ?";
 		

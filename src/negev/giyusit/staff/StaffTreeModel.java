@@ -100,6 +100,10 @@ public class StaffTreeModel extends QTreeModel {
         return ((Item) Preconditions.checkNotNull(indexToValue(index)));
     }
 
+    public QModelIndex getRootIndex() {
+        return valueToIndex(rootItem);
+    }
+
     public boolean isRoot(QModelIndex index) {
         return indexToItem(index) == rootItem;
     }
