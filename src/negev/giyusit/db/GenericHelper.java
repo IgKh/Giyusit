@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2009 The Negev Project
+ * Copyright (c) 2008-2011 The Negev Project
  *
  * Redistribution and use in source and binary forms, with or without 
  * modification, are permitted provided that the following conditions are met:
@@ -73,7 +73,7 @@ public class GenericHelper {
  		return getQueryWrapper().queryForRow(sql, id);
  	}
  	
-	public void insertRecord(Row record) {
+	public int insertRecord(Row record) {
  		if (record == null)
  			throw new NullPointerException("Null record");
  		
@@ -91,6 +91,10 @@ public class GenericHelper {
 		
 		// Into the DB
 		getQueryWrapper().execute(sql, values.toArray());
+
+        // Get ID of the newly inserted row
+        Object object = getQueryWrapper().queryForObject("select last_insert_rowid()");
+        return Integer.parseInt(object.toString());
 	}
 	
 	public void updateRecord(int id, Row record) {
