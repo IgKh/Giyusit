@@ -1,13 +1,13 @@
 /*
- * Copyright (c) 2008-2009 The Negev Project
+ * Copyright (c) 2008-2011 The Negev Project
  *
  * Redistribution and use in source and binary forms, with or without 
  * modification, are permitted provided that the following conditions are met:
  *
- * - Redistributions of source code must retain the above copyright notice, 
+ * - Redistribution of source code must retain the above copyright notice,
  *   this list of conditions and the following disclaimer.
  *
- * - Redistributions in binary form must reproduce the above copyright notice, 
+ * - Redistribution in binary form must reproduce the above copyright notice,
  *   this list of conditions and the following disclaimer in the documentation 
  *   and/or other materials provided with the distribution.
  *
@@ -165,7 +165,7 @@ public class StatisticsDialog extends QDialog {
 
         StatisticReportResults dlg = new StatisticReportResults(this, id);
 
-        dlg.resize((int) (dlg.width() * 1.1), dlg.height());
-        dlg.exec();
+        dlg.setModal(true);
+        dlg.showMaximized();
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2009 The Negev Project
+ * Copyright (c) 2008-2011 The Negev Project
  *
  * Redistribution and use in source and binary forms, with or without 
  * modification, are permitted provided that the following conditions are met:
@@ -55,8 +55,7 @@ public class DataTable extends QWidget {
 		super(parent);
 		
 		proxyModel = new DataTableProxyModel(this);
-		proxyModel.setDynamicSortFilter(true);
-		
+
 		//
 		// Widgets
 		//
@@ -128,6 +127,10 @@ public class DataTable extends QWidget {
 	public QItemSelectionModel selectionModel() {
 		return dataGrid.selectionModel();
 	}
+
+    public void setSortingEnabled(boolean enabled) {
+        dataGrid.setSortingEnabled(enabled);
+    }
 	
 	public boolean isFilterEnabled() {
 		return filterWidget.isVisible();
