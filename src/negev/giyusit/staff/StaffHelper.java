@@ -84,4 +84,10 @@ public class StaffHelper extends GenericHelper {
 		}
 		return result;
 	}
+
+    public void reparentStaffMember(int id, Integer newParentId) {
+        String sql = "update Staff set ParentID = ? where ID = ?";
+
+        getQueryWrapper().execute(sql, newParentId, id);
+    }
 }

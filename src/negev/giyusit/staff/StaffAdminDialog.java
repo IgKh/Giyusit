@@ -81,6 +81,7 @@ public class StaffAdminDialog extends QDialog {
 		super(parent);
 
         staffModel = new StaffTreeModel();
+        staffModel.treeModified.connect(this, "rebuildTree()");
 		
 		initUI();
 		rebuildTree();
@@ -97,12 +98,10 @@ public class StaffAdminDialog extends QDialog {
 		staffTree.header().hide();
 		
 		// Active drag-and-drop moving of items in the tree
-		/*
 		staffTree.setDragEnabled(true);
+        staffTree.setAcceptDrops(true);
 		staffTree.setDropIndicatorShown(true);
-		staffTree.viewport().setAcceptDrops(true);
-		staffTree.setDragDropMode(QAbstractItemView.DragDropMode.InternalMove);
-		*/
+		//staffTree.setDragDropMode(QAbstractItemView.DragDropMode.InternalMove);
 
         staffTree.collapsed.connect(staffModel, "releaseChildren(QModelIndex)");
 		staffTree.selectionModel().currentChanged.connect(
