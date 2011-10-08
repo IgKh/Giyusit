@@ -2,6 +2,8 @@ build/*
 dist/out/*
 dist/jnlp/*
 *.exe
+*.dll
+*.so
 
 build.properties
 giyusit.properties
