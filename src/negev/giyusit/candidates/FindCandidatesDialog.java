@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2009 The Negev Project
+ * Copyright (c) 2008-2011 The Negev Project
  *
  * Redistribution and use in source and binary forms, with or without 
  * modification, are permitted provided that the following conditions are met:
@@ -178,6 +178,8 @@ class CandidateSearchPane extends QWidget {
 	
 	private QLineEdit city;
 	private QLineEdit origin;
+    private QLineEdit subOrigin;
+    private QLineEdit page;
 	private QLineEdit school;
 	private QComboBox owner;
 	private QComboBox recruiter;
@@ -212,6 +214,12 @@ class CandidateSearchPane extends QWidget {
 		
 		origin = new QLineEdit();
 		origin.setCompleter(new DBColumnCompleter("Candidates", "Origin"));
+
+        subOrigin = new QLineEdit();
+        subOrigin.setCompleter(new DBColumnCompleter("Candidates", "SubOrigin"));
+
+        page = new QLineEdit();
+        page.setMaximumWidth(50);
 		
 		school = new QLineEdit();
 		school.setCompleter(new DBColumnCompleter("Candidates", "School"));
@@ -249,22 +257,26 @@ class CandidateSearchPane extends QWidget {
 		layout.addWidget(new QLabel(tr("First Name: ")), 	1, 5);
 		layout.addWidget(firstName, 						1, 6);
 		layout.addWidget(new QLabel(tr("Last Name: ")), 	1, 7);
-		layout.addWidget(lastName, 							1, 8);
-		layout.addWidget(new QLabel(tr("Gender: ")), 		1, 9);
-		layout.addWidget(gender, 							1, 10);
-		layout.addWidget(new QLabel(tr("Status: ")), 		1, 11);
-		layout.addWidget(status, 							1, 12);
-		
-		layout.addWidget(new QLabel(tr("City: ")), 			2, 1);
-		layout.addWidget(city, 								2, 2);
-		layout.addWidget(new QLabel(tr("Origin: ")), 		2, 3);
+		layout.addWidget(lastName, 						1, 8);
+		layout.addWidget(new QLabel(tr("Status: ")), 		1, 9);
+		layout.addWidget(status, 							1, 10);
+        layout.addWidget(new QLabel(tr("Owner: ")), 		1, 11);
+		layout.addWidget(owner, 							1, 12);
+        layout.addWidget(new QLabel(tr("Gender: ")), 		1, 13);
+		layout.addWidget(gender, 							1, 14);
+
+        layout.addWidget(new QLabel(tr("Page: ")), 		    2, 1);
+		layout.addWidget(page, 							    2, 2);
+        layout.addWidget(new QLabel(tr("Origin: ")), 		2, 3);
 		layout.addWidget(origin, 							2, 4);
-		layout.addWidget(new QLabel(tr("School: ")), 		2, 5);
-		layout.addWidget(school, 							2, 6);
-		layout.addWidget(new QLabel(tr("Owner: ")), 		2, 7);
-		layout.addWidget(owner, 							2, 8);
-		layout.addWidget(new QLabel(tr("Recruiter: ")), 	2, 9);
-		layout.addWidget(recruiter, 						2, 10);
+        layout.addWidget(new QLabel(tr("Sub Origin: ")), 	2, 5);
+		layout.addWidget(subOrigin, 						2, 6);
+		layout.addWidget(new QLabel(tr("City: ")), 			2, 7);
+		layout.addWidget(city, 								2, 8);
+		layout.addWidget(new QLabel(tr("School: ")), 		2, 9);
+		layout.addWidget(school, 							2, 10);
+		layout.addWidget(new QLabel(tr("Recruiter: ")), 	2, 11);
+		layout.addWidget(recruiter, 						2, 12);
 		
 		layout.addWidget(isActive, 							3, 1, 1, 4);
 	}
@@ -299,6 +311,12 @@ class CandidateSearchPane extends QWidget {
 		}
 		if (!origin.text().isEmpty()) {
 			query.append(" and Origin like '").append(origin.text()).append("'");
+		}
+        if (!subOrigin.text().isEmpty()) {
+			query.append(" and SubOrigin like '").append(subOrigin.text()).append("'");
+		}
+        if (!page.text().isEmpty()) {
+			query.append(" and Page like '").append(page.text()).append("'");
 		}
 		if (!school.text().isEmpty()) {
 			query.append(" and School like '").append(school.text()).append("'");
@@ -335,4 +353,11 @@ class CandidateSearchPane extends QWidget {
 		
 		isActive.setChecked(false);
 	}
+
+    @Override
+    public QSize minimumSizeHint() {
+        QSize oldHint = super.minimumSizeHint();
+
+        return new QSize(oldHint.width() + 100, oldHint.height());
+    }
 }
