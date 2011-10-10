@@ -138,7 +138,7 @@
 	
 	<target name="installer" depends="exe" description="Generates a Windows installer">
 		<taskdef name="nsis" 
-				classname="net.sf.nsisant.Task" 
+				classname="com.danielreese.nsisant.Task"
 				classpath="${nsisant.jar}"/>
 		
 		<nsis script="${dist.dir}/installer.nsi">
