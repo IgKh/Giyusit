@@ -55,7 +55,10 @@ public class GiyusitWindow extends QMainWindow {
 	// Widgets
 	private DataTable dataTable;
 	private DataViewList dataViewList;
-	
+
+    private QToolButton newFileCoverButton;
+    private QToolButton loadFileCoverButton;
+
 	private QStackedWidget centralStack;
 		
 	// Actions
@@ -88,7 +91,7 @@ public class GiyusitWindow extends QMainWindow {
 	private QToolBar toolBar;
 	
 	// Properties
-	private String currentFileName;
+    private String currentFileName;
 
     public GiyusitWindow() {
 		this(null);
@@ -140,12 +143,21 @@ public class GiyusitWindow extends QMainWindow {
 		workspaceLayout.addWidget(dataTable, 3);
 		
 		// Cover widget
-		QWidget coverWidget = new QWidget();
-		QHBoxLayout coverLayout = new QHBoxLayout(coverWidget);
-			
-		coverLayout.addWidget(new QLabel(tr("<b>No file loaded!</b>")), 0, 
-									Qt.AlignmentFlag.AlignCenter);
-		
+        newFileCoverButton = new QToolButton();
+        newFileCoverButton.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon);
+
+        loadFileCoverButton = new QToolButton();
+        loadFileCoverButton.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon);
+
+        QWidget coverWidget = new QWidget();
+		QGridLayout coverLayout = new QGridLayout(coverWidget);
+
+        coverLayout.addWidget(new QLabel(tr("<b>No file loaded!</b>")),
+                                    0, 0, 1, 2, Qt.AlignmentFlag.AlignCenter);
+
+        coverLayout.addWidget(newFileCoverButton, 1, 0, Qt.AlignmentFlag.AlignCenter);
+        coverLayout.addWidget(loadFileCoverButton, 1, 1, Qt.AlignmentFlag.AlignCenter);
+
 		// Central Stack
 		centralStack = new QStackedWidget();
 		centralStack.addWidget(workspace);
@@ -250,6 +262,9 @@ public class GiyusitWindow extends QMainWindow {
 		toolBar.addAction(findCandidatesAct);
 		toolBar.addSeparator();
 		toolBar.addAction(exportDataAct);
+
+        newFileCoverButton.setDefaultAction(newFileAct);
+        loadFileCoverButton.setDefaultAction(loadFileAct);
 	}
 		
 	private void initStatusBar() {
