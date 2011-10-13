@@ -4,7 +4,7 @@
 <context>
     <name>negev.giyusit.DataTable</name>
     <message>
-        <location filename="../../src/negev/giyusit/DataTable.java" line="+86"/>
+        <location filename="../../src/negev/giyusit/DataTable.java" line="+85"/>
         <source>F7</source>
         <translation>F7</translation>
     </message>
@@ -24,7 +24,7 @@
         <translation>סינון מהיר: </translation>
     </message>
     <message>
-        <location line="+68"/>
+        <location line="+72"/>
         <source>Working...</source>
         <translation>עובד...</translation>
     </message>
@@ -48,7 +48,7 @@
 <context>
     <name>negev.giyusit.ExportDataDialog</name>
     <message>
-        <location filename="../../src/negev/giyusit/ExportDataDialog.java" line="+81"/>
+        <location filename="../../src/negev/giyusit/ExportDataDialog.java" line="+90"/>
         <source>Export Data</source>
         <translation>יצוא נתונים</translation>
     </message>
@@ -94,6 +94,11 @@
     </message>
     <message>
         <location line="+1"/>
+        <source>HTML file (*.html)</source>
+        <translation>קובץ HTML (*.html)</translation>
+    </message>
+    <message>
+        <location line="+1"/>
         <source>PDF Document (*.pdf)</source>
         <translation>מסמך PDF (*.pdf)</translation>
     </message>
@@ -103,7 +108,7 @@
         <translation>שמירת קובץ</translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+15"/>
         <source>Unknown file extension: </source>
         <translation>סיומת קובץ לא ידועה: </translation>
     </message>
@@ -111,12 +116,12 @@
 <context>
     <name>negev.giyusit.GiyusitWindow</name>
     <message>
-        <location filename="../../src/negev/giyusit/GiyusitWindow.java" line="+146"/>
+        <location filename="../../src/negev/giyusit/GiyusitWindow.java" line="+155"/>
         <source>&lt;b&gt;No file loaded!&lt;/b&gt;</source>
         <translation>&lt;b&gt;לא נטען קובץ!&lt;/b&gt;</translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="+15"/>
         <source>&amp;New File...</source>
         <translation>קובץ &amp;חדש...</translation>
     </message>
@@ -221,17 +226,23 @@
         <translation>סרגל כלים</translation>
     </message>
     <message>
-        <location line="+49"/>
+        <location line="+52"/>
         <source>Giyusit - {0}</source>
         <translation>גיוסית - {0}</translation>
     </message>
     <message>
         <location line="+6"/>
+        <location line="+77"/>
         <source>Giyusit</source>
         <translation>גיוסית</translation>
     </message>
     <message>
-        <location line="+105"/>
+        <location line="+4"/>
+        <source>The file {0} was edited in a newer version of Giyusit. Opening it with this version may not function properly, and could result in data loss.&lt;br&gt;&lt;br&gt;Please upgrade to the latest version.</source>
+        <translation>הקובץ {0} נערך בגרסא חדשה יותר של גיוסית. טעינת הקובץ בגרסא הנוכחית עשויה שלא לעבוד כראוי ועלולה לגרום לאובדן נתונים.&lt;br&gt;&lt;br&gt;נא לשדרג את גיוסית לגרסא האחרונה.</translation>
+    </message>
+    <message>
+        <location line="+32"/>
         <source>New File</source>
         <translation>קובץ חדש</translation>
     </message>
@@ -318,18 +329,17 @@
 <context>
     <name>negev.giyusit.candidates.AddCandidatesDialog</name>
     <message>
-        <location filename="../../src/negev/giyusit/candidates/AddCandidatesDialog.java" line="+69"/>
         <source>[MF]</source>
         <comment>Gender Regexp</comment>
-        <translation>[זנ]</translation>
+        <translation type="obsolete">[זנ]</translation>
     </message>
     <message>
-        <location line="+71"/>
+        <location filename="../../src/negev/giyusit/candidates/AddCandidatesDialog.java" line="+131"/>
         <source>Add Candidates</source>
         <translation>הוספת מועמדים</translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="+14"/>
         <source>Clear data</source>
         <translation>נקה נתונים</translation>
     </message>
@@ -354,14 +364,31 @@
         <translation>מקור: </translation>
     </message>
     <message>
-        <location line="+153"/>
+        <location line="+1"/>
+        <source>Sub Origin: </source>
+        <translation>תת מקור:</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Page: </source>
+        <translation>עמוד: </translation>
+    </message>
+    <message>
+        <location line="+159"/>
         <source>Data autosaved at {0}</source>
         <translation>גיבוי נשמר אוטומטית בשעה {0}</translation>
     </message>
     <message numerus="yes">
         <location line="+12"/>
-        <source>%n candidate(s) added succesfully</source>
+        <source>%n candidate(s) added successfully</source>
         <translation>
+            <numerusform>מועמד אחד נוסף בהצלחה</numerusform>
+            <numerusform>%n מועמדים נוספו בהצלחה</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <source>%n candidate(s) added succesfully</source>
+        <translation type="obsolete">
             <numerusform>מועמד אחד נוסף בהצלחה</numerusform>
             <numerusform>%n מועמדים נוספו בהצלחה</numerusform>
         </translation>
@@ -388,7 +415,7 @@
 <context>
     <name>negev.giyusit.candidates.CandidateDialog</name>
     <message>
-        <location filename="../../src/negev/giyusit/candidates/CandidateDialog.java" line="+147"/>
+        <location filename="../../src/negev/giyusit/candidates/CandidateDialog.java" line="+149"/>
         <source>&amp;Save</source>
         <translation>&amp;שמור</translation>
     </message>
@@ -398,12 +425,12 @@
         <translation>&amp;אפס</translation>
     </message>
     <message>
-        <location line="+48"/>
+        <location line="+58"/>
         <source>Wrong Details</source>
         <translation>פרטים שגויים</translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+25"/>
         <source>Signed Dahash</source>
         <translation>חתם דח&quot;ש</translation>
     </message>
@@ -503,27 +530,37 @@
         <translation>נתוני גיוס</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+9"/>
+        <source>Sub Origin: </source>
+        <translation>תת מקור: </translation>
+    </message>
+    <message>
+        <location line="+2"/>
         <source>School: </source>
         <translation>בית ספר: </translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="-8"/>
         <source>Owner: </source>
         <translation>אחראי: </translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+4"/>
         <source>Origin: </source>
         <translation>מקור: </translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="-2"/>
         <source>Recruiter: </source>
         <translation>מגייס: </translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+8"/>
+        <source>Page: </source>
+        <translation>עמוד: </translation>
+    </message>
+    <message>
+        <location line="+3"/>
         <source>Indicators</source>
         <translation>אינדיקציות</translation>
     </message>
@@ -538,7 +575,7 @@
         <translation>הערות</translation>
     </message>
     <message>
-        <location line="+92"/>
+        <location line="+95"/>
         <source>First name can&apos;t be empty</source>
         <translation>השם הפרטי לא יכול להיות ריק</translation>
     </message>
@@ -597,7 +634,7 @@
 <context>
     <name>negev.giyusit.candidates.CandidateSearchPane</name>
     <message>
-        <location filename="../../src/negev/giyusit/candidates/FindCandidatesDialog.java" line="+206"/>
+        <location filename="../../src/negev/giyusit/candidates/FindCandidatesDialog.java" line="+208"/>
         <source>M</source>
         <translation>ז</translation>
     </message>
@@ -607,14 +644,14 @@
         <translation>נ</translation>
     </message>
     <message>
-        <location line="+17"/>
+        <location line="+23"/>
         <source>Active Candidates Only</source>
         <translation>מועמדים פעילים בלבד</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>ID: </source>
-        <translation>קןד: </translation>
+        <translation>קוד: </translation>
     </message>
     <message>
         <location line="+2"/>
@@ -632,37 +669,47 @@
         <translation>שם משפחה: </translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+6"/>
         <source>Gender: </source>
         <translation>מין: </translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="-4"/>
         <source>Status: </source>
         <translation>סטטוס: </translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+7"/>
+        <source>Page: </source>
+        <translation>עמוד: </translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Sub Origin: </source>
+        <translation>תת מקור: </translation>
+    </message>
+    <message>
+        <location line="+2"/>
         <source>City: </source>
         <translation>ישוב: </translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="-4"/>
         <source>Origin: </source>
         <translation>מקור: </translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+6"/>
         <source>School: </source>
         <translation>בית ספר: </translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="-13"/>
         <source>Owner: </source>
         <translation>אחראי: </translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+15"/>
         <source>Recruiter: </source>
         <translation>מגייס: </translation>
     </message>
@@ -716,6 +763,15 @@
     </message>
 </context>
 <context>
+    <name>negev.giyusit.candidates.CandidateValidators</name>
+    <message>
+        <location filename="../../src/negev/giyusit/candidates/CandidateValidators.java" line="+48"/>
+        <source>[MF]</source>
+        <comment>Gender Regexp</comment>
+        <translation>[זנ]</translation>
+    </message>
+</context>
+<context>
     <name>negev.giyusit.candidates.DeleteCandidateDialog</name>
     <message>
         <location filename="../../src/negev/giyusit/candidates/DeleteCandidateDialog.java" line="+52"/>
@@ -733,7 +789,7 @@
         <translation>מחק</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+9"/>
         <source>Cancel</source>
         <translation>בטל</translation>
     </message>
@@ -746,7 +802,7 @@
 <context>
     <name>negev.giyusit.candidates.FindCandidatesDialog</name>
     <message>
-        <location filename="../../src/negev/giyusit/candidates/FindCandidatesDialog.java" line="-182"/>
+        <location filename="../../src/negev/giyusit/candidates/FindCandidatesDialog.java" line="-194"/>
         <source>Find Candidates</source>
         <translation>איתור מועמדים</translation>
     </message>
@@ -789,9 +845,19 @@
 <context>
     <name>negev.giyusit.candidates.ImportCandidatesDialog</name>
     <message>
-        <location filename="../../src/negev/giyusit/candidates/ImportCandidatesDialog.java" line="+82"/>
+        <location filename="../../src/negev/giyusit/candidates/ImportCandidatesDialog.java" line="+71"/>
+        <source>Please select an Excel workbook file with at least one worksheet containing a table of candidates you wish to import.&lt;br&gt;&lt;br&gt;The first row of the worksheet should contain column titles. These will help you associate the data in the Excel worksheet with Giyusit&apos;s data fields. All subsequent non empty rows will be imported according to the selected mapping.&lt;br&gt;&lt;br&gt;&lt;b&gt;Note:&lt;/b&gt; Currently only older format Excel files are supported (files with *.xls extension, and not files with *.xlsx extension).</source>
+        <translation>יש לבחור חוברת עבודה של Excel עם לפחות גליון אחד, המכיל טבלה של מועמדים שברצונך ליבא.&lt;br&gt;&lt;br&gt;השורה הראשונה של הגליון צריכה להכיל כותרות עבור עמודות הטבלה. אלה יסייעו לך לקשר בין הנתונים שבגליון ה-Excel לבין שדות הנתונים של גיוסית. כל השורות הלא ריקות מהשורה השנייה ואילך יומרו לרשומות מועמד בהתאם למיפוי שנבחר.&lt;br&gt;&lt;br&gt;&lt;b&gt;הערה:&lt;/b&gt; נכון לעתה רק קבצי Excel מפורמט ישן יותר נתמכים (דהיינו, קבצים בעלי סיומת *.xls ולא קבצים בעלי סיומת *.xlsx).</translation>
+    </message>
+    <message>
+        <location line="+22"/>
         <source>Import Candidates</source>
         <translation>יבוא מועמדים</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>What kind of file do I need?</source>
+        <translation>איזה סוג קובץ נדרש?</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -799,7 +865,7 @@
         <translation>בחר קובץ...</translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+16"/>
         <source>Cancel</source>
         <translation>בטל</translation>
     </message>
@@ -810,6 +876,11 @@
     </message>
     <message>
         <location line="+8"/>
+        <source>&lt;b&gt;Selected File: &lt;/b&gt;</source>
+        <translation>&lt;b&gt;הקובץ הנבחר: &lt;/b&gt;</translation>
+    </message>
+    <message>
+        <location line="+5"/>
         <source>Worksheet in file: </source>
         <translation>גיליון עבודה בקובץ: </translation>
     </message>
@@ -819,7 +890,7 @@
         <translation>מיפוי</translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+25"/>
         <source>Select Import File</source>
         <translation>בחר קובץ ליבוא</translation>
     </message>
@@ -829,12 +900,11 @@
         <translation>חוברת עבודה של Execl (*.xls)</translation>
     </message>
     <message>
-        <location line="+15"/>
         <source>Select File ({0})...</source>
-        <translation>בחר קובץ ({0})...</translation>
+        <translation type="obsolete">בחר קובץ ({0})...</translation>
     </message>
     <message numerus="yes">
-        <location line="+47"/>
+        <location line="+60"/>
         <source>%n candidate(s) added succesfully</source>
         <translation>
             <numerusform>מועמד אחד נוסף בהצלחה</numerusform>
@@ -842,12 +912,12 @@
         </translation>
     </message>
     <message>
-        <location line="+27"/>
+        <location line="+16"/>
         <source>No mappings were defined</source>
         <translation>לא הוגדרו מיפויים</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+6"/>
         <source>First Name column wasn&apos;t mapped</source>
         <translation>לא הוגדר מיפוי עבור עמודת שם פרטי</translation>
     </message>
@@ -1076,7 +1146,7 @@
 <context>
     <name>negev.giyusit.exporters.PdfExporter</name>
     <message>
-        <location filename="../../src/negev/giyusit/exporters/PdfExporter.java" line="+88"/>
+        <location filename="../../src/negev/giyusit/exporters/PdfExporter.java" line="+57"/>
         <source>Page {0} of {1}</source>
         <translation>עמוד {0} מתוך {1}</translation>
     </message>
@@ -1086,7 +1156,17 @@
         <translation>הופק במערכת גיוסית ב- {0} {1} על ידי {2}</translation>
     </message>
     <message numerus="yes">
-        <location line="+271"/>
+        <source>%n record(s) in printout</source>
+        <translation type="obsolete">
+            <numerusform>רשומה אחת בתדפיס</numerusform>
+            <numerusform>%n רשומות בתדפיס</numerusform>
+        </translation>
+    </message>
+</context>
+<context>
+    <name>negev.giyusit.exporters.TextDocumentExporter</name>
+    <message numerus="yes">
+        <location filename="../../src/negev/giyusit/exporters/TextDocumentExporter.java" line="+122"/>
         <source>%n record(s) in printout</source>
         <translation>
             <numerusform>רשומה אחת בתדפיס</numerusform>
@@ -1097,7 +1177,7 @@
 <context>
     <name>negev.giyusit.staff.StaffAdminDialog</name>
     <message>
-        <location filename="../../src/negev/giyusit/staff/StaffAdminDialog.java" line="+86"/>
+        <location filename="../../src/negev/giyusit/staff/StaffAdminDialog.java" line="+91"/>
         <source>Staff Admin</source>
         <translation>מנהלן גורמי סגל</translation>
     </message>
@@ -1156,13 +1236,20 @@
         <source>Details</source>
         <translation>פרטים</translation>
     </message>
-    <message>
-        <location line="+38"/>
-        <source>Staff Members</source>
-        <translation>גורמי סגל</translation>
+    <message numerus="yes">
+        <location line="+188"/>
+        <source>If you do, %n candidate(s) will become owner-less</source>
+        <translation>
+            <numerusform>אם תעשה זאת, מועמד אחד יהפוך לחסר אחראי</numerusform>
+            <numerusform>אם תעשה זאת, %n מועמדים יהפכו לחסרי אחראי</numerusform>
+        </translation>
     </message>
     <message>
-        <location line="+117"/>
+        <source>Staff Members</source>
+        <translation type="obsolete">גורמי סגל</translation>
+    </message>
+    <message>
+        <location line="-60"/>
         <source>New Staff Member</source>
         <translation>גורם סגל חדש</translation>
     </message>
@@ -1172,17 +1259,16 @@
         <translation>הזן שם לגורם החדש</translation>
     </message>
     <message>
-        <location line="+55"/>
+        <location line="+53"/>
         <source>Are you sure that you wish to remove the staff member {0}?</source>
         <translation>האם אתה בטוח שברצונך למחוק את חבר הסגל {0}?</translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>Giyusit</source>
-        <translation>גיוסית</translation>
+        <translation type="obsolete">גיוסית</translation>
     </message>
     <message>
-        <location line="+39"/>
+        <location line="+47"/>
         <location line="+82"/>
         <source>Candidates owned by {0}</source>
         <translation>מועמדים באחריות {0}</translation>
@@ -1191,6 +1277,14 @@
         <location line="-44"/>
         <source>Candidates tree owned by {0}</source>
         <translation>מועמדים באחריות עץ הגורם {0}</translation>
+    </message>
+</context>
+<context>
+    <name>negev.giyusit.staff.StaffTreeModel</name>
+    <message>
+        <location filename="../../src/negev/giyusit/staff/StaffTreeModel.java" line="+70"/>
+        <source>Staff Members</source>
+        <translation>גורמי סגל</translation>
     </message>
 </context>
 <context>
@@ -1222,7 +1316,7 @@
 <context>
     <name>negev.giyusit.statistics.StatisticReportResults</name>
     <message>
-        <location filename="../../src/negev/giyusit/statistics/StatisticReportResults.java" line="+64"/>
+        <location filename="../../src/negev/giyusit/statistics/StatisticReportResults.java" line="+65"/>
         <source>Export Data...</source>
         <translation>יצוא נתונים...</translation>
     </message>
@@ -1304,8 +1398,12 @@
         <translation>גיוסית</translation>
     </message>
     <message>
-        <location line="+49"/>
         <source>&lt;b&gt;An unexpected system error has occured&lt;/b&gt;</source>
+        <translation type="obsolete">&lt;b&gt;שגיאה מערכת בלתי צפויה התרחשה&lt;/b&gt;</translation>
+    </message>
+    <message>
+        <location line="+75"/>
+        <source>&lt;b&gt;An unexpected system error has occurred&lt;/b&gt;</source>
         <translation>&lt;b&gt;שגיאה מערכת בלתי צפויה התרחשה&lt;/b&gt;</translation>
     </message>
     <message>
@@ -1369,12 +1467,12 @@
 <context>
     <name>negev.giyusit.widgets.ChartViewer</name>
     <message>
-        <location filename="../../src/negev/giyusit/widgets/ChartViewer.java" line="+95"/>
+        <location filename="../../src/negev/giyusit/widgets/ChartViewer.java" line="+136"/>
         <source>&amp;Copy</source>
         <translation>&amp;העתק</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>&amp;Save As...</source>
         <translation>&amp;שמור בשם...</translation>
     </message>
@@ -1384,32 +1482,30 @@
         <translation>ה&amp;גדל</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Ctrl++</source>
         <translation>Ctrl++</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+3"/>
         <source>Zoom &amp;Out</source>
         <translation>ה&amp;קטן</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Ctrl+-</source>
         <translation>Ctrl+-</translation>
     </message>
     <message>
-        <location line="+4"/>
         <source>&amp;Normal Size</source>
-        <translation>גודל &amp;רגיל</translation>
+        <translation type="obsolete">גודל &amp;רגיל</translation>
     </message>
     <message>
-        <location line="+4"/>
         <source>&amp;Fit to Window</source>
-        <translation>התאם &amp;לחלון</translation>
+        <translation type="obsolete">התאם &amp;לחלון</translation>
     </message>
     <message>
-        <location line="+127"/>
+        <location line="+80"/>
         <source>PNG Image (*.png)</source>
         <translation></translation>
     </message>

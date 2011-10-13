@@ -44,7 +44,9 @@ public class CandidateValidators {
      * A validator for gender fields. Expects a single letter gender code.
      */
    	public static final QValidator GENDER_VALIDATOR = new QRegExpValidator(
-            new QRegExp(obj.tr("[MF]", "Gender Regexp")), obj);
+            new QRegExp(QApplication.translate(
+                    "negev.giyusit.candidates.CandidateValidators", "[MF]", "Gender Regexp")),
+            obj);
 
     /**
      * A validator for an Israeli post code. Expects a five digit number.

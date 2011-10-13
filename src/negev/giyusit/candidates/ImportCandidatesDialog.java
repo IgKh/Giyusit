@@ -62,7 +62,7 @@ public class ImportCandidatesDialog extends QDialog {
 
     // User information label
     private static final String FILE_INFORMATION_LABEL = QApplication.translate(
-            ImportCandidatesDialog.class.getName(),
+            "negev.giyusit.candidates.ImportCandidatesDialog",
             "Please select an Excel workbook file with at least one worksheet containing " +
             "a table of candidates you wish to import.<br><br>The first row of the worksheet " +
             "should contain column titles. These will help you associate the data in the Excel " +
