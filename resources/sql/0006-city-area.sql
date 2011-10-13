@@ -46,6 +46,6 @@ INSERT INTO StatisticReports (SeqNo, Name, Description, Class, Query, Ruler) VAL
 	'התפלגות מקורות ותת מקורות',
 	'מספר המועמדים מכל מקור ותת מקור, ללא קשר לסטטוס נוכחי',
 	'negev.giyusit.statistics.GenericReport',
-	'select * from OriginAndSubOriginReportView,
+	'select * from OriginAndSubOriginReportView',
 	'Origin,SubOrigin,Total'
 );
