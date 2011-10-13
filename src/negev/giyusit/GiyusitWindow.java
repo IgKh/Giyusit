@@ -377,18 +377,25 @@ public class GiyusitWindow extends QMainWindow {
 		
 		try {
 			if (!initialize) {
-                System.out.println("upgrade");
+                SchemaUpgrader.UpgradeOption option =
+                        SchemaUpgrader.schemaUpgradeOption();
 
-                // See if we can upgrade the schema
-                if (SchemaUpgrader.schemaUpgradePossible()) {
-                    // A schema upgrade is possible, do it
-                    SchemaUpgrader.trySchemaUpgrade();
+                switch (option) {
+                    case SCHEMA_UPGRADABLE:
+                        SchemaUpgrader.trySchemaUpgrade();
+                        break;
+
+                    case SCHMEA_TOO_NEW:
+                        QMessageBox.critical(this, tr("Giyusit"), MessageFormat.format(
+                                tr("The file {0} was edited in a newer version of Giyusit. " +
+                                   "Opening it with this version may not function properly, " +
+                                   "and could result in data loss.<br><br>Please upgrade to " +
+                                   "the latest version."), file.getName()));
+
+                        return;
                 }
 			}
 			else {
-                System.out.println("initialize");
-
-				// Initialize
 				SchemaUpgrader.initializeDatabase();
 			}
 		}

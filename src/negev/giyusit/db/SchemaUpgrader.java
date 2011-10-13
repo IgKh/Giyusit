@@ -45,6 +45,12 @@ public class SchemaUpgrader {
 
     private static final String SCHEMA_REVISION_DB_PARAMETER = "SchemaRevision";
 
+    public enum UpgradeOption {
+        SCHEMA_UP_TO_DATE,
+        SCHEMA_UPGRADABLE,
+        SCHMEA_TOO_NEW
+    }
+
     /**
      * @return The schema revision of the current database
      */
@@ -92,12 +98,23 @@ public class SchemaUpgrader {
         }
     }
 
-    public static boolean schemaUpgradePossible() {
-        return getCurrentFileSchemaRevision() < maximalApplicativeSchmeaRevison();
+    public static UpgradeOption schemaUpgradeOption() {
+        int currentRev = getCurrentFileSchemaRevision();
+        int maxRev = maximalApplicativeSchmeaRevison();
+
+        if (currentRev < maxRev) {
+            return UpgradeOption.SCHEMA_UPGRADABLE;
+        }
+        else if (currentRev > maxRev) {
+            return UpgradeOption.SCHMEA_TOO_NEW;
+        }
+        else {
+            return UpgradeOption.SCHEMA_UP_TO_DATE;
+        }
     }
 
     public static void trySchemaUpgrade() {
-        if (!schemaUpgradePossible()) {
+        if (schemaUpgradeOption() != UpgradeOption.SCHEMA_UPGRADABLE) {
             return;
         }
 
