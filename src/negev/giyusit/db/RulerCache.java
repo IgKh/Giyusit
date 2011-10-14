@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2009 The Negev Project
+ * Copyright (c) 2008-2011 The Negev Project
  *
  * Redistribution and use in source and binary forms, with or without 
  * modification, are permitted provided that the following conditions are met:
@@ -41,7 +41,7 @@ import negev.giyusit.util.row.RowSet;
 
 public class RulerCache {
 
-	private static Map<String, String> rulerCache = Maps.newHashMap();
+	private static Map<String, String> rulerCache = Maps.newTreeMap();
     private static boolean dirty = false;
 
     /**
@@ -80,7 +80,6 @@ public class RulerCache {
 
         // Update cache
         rulerCache.put(key, value);
-
         dirty = true;
     }
 	
@@ -99,7 +98,7 @@ public class RulerCache {
 			}
 		}
 		finally {
-			try { conn.close(); } catch (Exception e) { e.printStackTrace(); }
+			try { conn.close(); } catch (Exception ignored) { }
 		}
 	}
 }
