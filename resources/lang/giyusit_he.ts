@@ -259,8 +259,12 @@
     </message>
     <message>
         <location line="+82"/>
+        <source>&lt;span style=&quot;font-weight: bold; font-size: large&quot;&gt;Giyusit version {0}&lt;/span&gt;&lt;br&gt;Copyright (c) 2008-2011 The Negev Project&lt;br&gt;&lt;br&gt;Giyusit is a free software under the terms of the &lt;a href=&quot;http://www.opensource.org/licenses/bsd-license.php&quot;&gt;BSD license&lt;/a&gt;.&lt;br&gt;&lt;br&gt;Giyusit uses icons from the &lt;a href=&quot;http://www.oxygen-icons.org/&quot;&gt;Oxygen Project&lt;/a&gt;, available under the terms &lt;br&gt; of the &lt;a href=&quot;http://creativecommons.org/licenses/by-sa/3.0/&quot;&gt;CC-by-SA 3.0 license&lt;/a&gt;.</source>
+        <translation>&lt;span style=&quot;font-weight: bold; font-size: large&quot;&gt;גיוסית גרסא {0}&lt;/span&gt;&lt;br&gt;Copyright (c) 2008-2011 The Negev Project&lt;br&gt;&lt;br&gt;גיוסית היא תוכנה חופשית, בכפוף לתנאי &lt;a href=&quot;http://www.opensource.org/licenses/bsd-license.php&quot;&gt;רישיון BSD&lt;/a&gt;.&lt;br&gt;&lt;br&gt;גיוסית מכילה צלמיות מתוך &lt;a href=&quot;http://www.oxygen-icons.org/&quot;&gt;פרויקט Oxygen&lt;/a&gt;, הזמינות תחת תנאי &lt;br&gt; &lt;a href=&quot;http://creativecommons.org/licenses/by-sa/3.0/&quot;&gt;רישיון CC-by-SA 3.0&lt;/a&gt;.</translation>
+    </message>
+    <message>
         <source>&lt;span style=&quot;font-weight: bold; font-size: large&quot;&gt;Giyusit version {0}&lt;/span&gt;&lt;br&gt;Copyright (c) 2008-2009 The Negev Project&lt;br&gt;&lt;br&gt;Giyusit is a free software under the terms of the &lt;a href=&quot;http://www.opensource.org/licenses/bsd-license.php&quot;&gt;BSD license&lt;/a&gt;.&lt;br&gt;&lt;br&gt;Giyusit uses icons from the &lt;a href=&quot;http://www.oxygen-icons.org/&quot;&gt;Oxygen Project&lt;/a&gt;, available under the terms &lt;br&gt; of the &lt;a href=&quot;http://creativecommons.org/licenses/by-sa/3.0/&quot;&gt;CC-by-SA 3.0 license&lt;/a&gt;.</source>
-        <translation>&lt;span style=&quot;font-weight: bold; font-size: large&quot;&gt;גיוסית גרסא {0}&lt;/span&gt;&lt;br&gt;Copyright (c) 2008-2009 The Negev Project&lt;br&gt;&lt;br&gt;גיוסית היא תוכנה חופשית, בכפוף לתנאי &lt;a href=&quot;http://www.opensource.org/licenses/bsd-license.php&quot;&gt;רישיון BSD&lt;/a&gt;.&lt;br&gt;&lt;br&gt;גיוסית מכילה צלמיות מתוך &lt;a href=&quot;http://www.oxygen-icons.org/&quot;&gt;פרויקט Oxygen&lt;/a&gt;, הזמינות תחת תנאי &lt;br&gt; &lt;a href=&quot;http://creativecommons.org/licenses/by-sa/3.0/&quot;&gt;רישיון CC-by-SA 3.0&lt;/a&gt;.</translation>
+        <translation type="obsolete">&lt;span style=&quot;font-weight: bold; font-size: large&quot;&gt;גיוסית גרסא {0}&lt;/span&gt;&lt;br&gt;Copyright (c) 2008-2009 The Negev Project&lt;br&gt;&lt;br&gt;גיוסית היא תוכנה חופשית, בכפוף לתנאי &lt;a href=&quot;http://www.opensource.org/licenses/bsd-license.php&quot;&gt;רישיון BSD&lt;/a&gt;.&lt;br&gt;&lt;br&gt;גיוסית מכילה צלמיות מתוך &lt;a href=&quot;http://www.oxygen-icons.org/&quot;&gt;פרויקט Oxygen&lt;/a&gt;, הזמינות תחת תנאי &lt;br&gt; &lt;a href=&quot;http://creativecommons.org/licenses/by-sa/3.0/&quot;&gt;רישיון CC-by-SA 3.0&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1467,7 +1471,7 @@
 <context>
     <name>negev.giyusit.widgets.ChartViewer</name>
     <message>
-        <location filename="../../src/negev/giyusit/widgets/ChartViewer.java" line="+136"/>
+        <location filename="../../src/negev/giyusit/widgets/ChartViewer.java" line="+95"/>
         <source>&amp;Copy</source>
         <translation>&amp;העתק</translation>
     </message>
@@ -1487,7 +1491,7 @@
         <translation>Ctrl++</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>Zoom &amp;Out</source>
         <translation>ה&amp;קטן</translation>
     </message>
@@ -1497,15 +1501,17 @@
         <translation>Ctrl+-</translation>
     </message>
     <message>
+        <location line="+4"/>
         <source>&amp;Normal Size</source>
-        <translation type="obsolete">גודל &amp;רגיל</translation>
+        <translation>גודל &amp;רגיל</translation>
     </message>
     <message>
+        <location line="+5"/>
         <source>&amp;Fit to Window</source>
-        <translation type="obsolete">התאם &amp;לחלון</translation>
+        <translation>התאם &amp;לחלון</translation>
     </message>
     <message>
-        <location line="+80"/>
+        <location line="+128"/>
         <source>PNG Image (*.png)</source>
         <translation></translation>
     </message>

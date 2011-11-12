@@ -504,7 +504,7 @@ public class GiyusitWindow extends QMainWindow {
 	private void aboutGiyusit() {
 		String aboutStr = tr("<span style=\"font-weight: bold; font-size: large\">" + 
 							 "Giyusit version {0}</span><br>" + 
-							 "Copyright (c) 2008-2009 The Negev Project<br><br>" +
+							 "Copyright (c) 2008-2011 The Negev Project<br><br>" +
 							 "Giyusit is a free software under the terms of the " + 
 							 "<a href=\"http://www.opensource.org/licenses/bsd-license.php\">" + 
 							 "BSD license</a>.<br><br>" + 
